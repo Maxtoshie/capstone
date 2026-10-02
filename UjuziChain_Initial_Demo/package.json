@@ -1,0 +1,16 @@
+{
+  "name": "ujuzichain-initial-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "UjuziChain initial blockchain credential verification MVP",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "node": "hardhat node",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.0"
+  }
+}
