@@ -126,19 +126,3 @@ The current prototype demonstrates the following candidate flow:
 8. Employers can consider verified credentials, match scores, simulations, and applications together.
 
 ---
-
-## Screenshot Files
-
-```text
-applications.png
-compiling.png
-credentials.png
-deployed-contract.png
-hardhat-local-network.png
-jobs.png
-node-versions.png
-overview.png
-simulations.png
-smart-contract-code.png
-tests.png
-verify-credential.png
