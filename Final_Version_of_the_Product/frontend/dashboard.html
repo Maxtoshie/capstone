@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UjuziChain - Candidate Portal</title>
+    <title>UjuziChain - East Africa Talent & Credential Infrastructure</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
     <style>
@@ -18,6 +18,7 @@
             --text-muted: #64748b;
             --accent-green: #10b981;
             --accent-red: #ef4444;
+            --accent-blue: #38bdf8;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
@@ -36,7 +37,7 @@
             background-size: cover;
         }
 
-        /* Floating Top Navbar */
+        /* Top Navbar */
         .navbar-wrap {
             position: sticky;
             top: 16px;
@@ -189,7 +190,7 @@
             background: rgba(239, 68, 68, 0.05);
         }
 
-        /* Main Layout */
+        /* Main Workspace */
         main {
             max-width: 1320px;
             width: 100%;
@@ -307,12 +308,20 @@
             font-size: 12px;
             font-weight: 600;
         }
+        .status-pill-blue {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
 
         .dark-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
         .dark-table td { padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: var(--text-secondary); }
         .dark-table tr:last-child td { border-bottom: none; }
 
-        /* Jobs View Split */
+        /* Jobs Layout */
         .jobs-split-layout { display: grid; grid-template-columns: 1.15fr 1.6fr; gap: 20px; }
         .search-box-input {
             width: 100%;
@@ -411,7 +420,7 @@
         .quiz-option:hover { background: rgba(255, 255, 255, 0.06); border-color: var(--border-hover); }
         .quiz-option.active { background: rgba(255, 255, 255, 0.1); border-color: #ffffff; }
 
-        /* Modal Overlay */
+        /* Modal Overlays */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -442,6 +451,7 @@
         }
         .modal-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; }
         .close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
+        
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
         .form-input {
@@ -454,6 +464,8 @@
             color: #ffffff;
             outline: none;
         }
+        .form-input:focus { border-color: rgba(255, 255, 255, 0.3); }
+
         .drop-zone {
             border: 2px dashed var(--border-subtle);
             border-radius: 10px;
@@ -483,7 +495,7 @@
             <div class="nav-brand" onclick="switchNav('overview')">
                 <div class="logo-box">UC</div>
                 <div class="logo-text">UjuziChain</div>
-                <span class="role-badge" id="topRoleBadge">Candidate</span>
+                <span class="role-badge" id="topRoleBadge">Portal</span>
             </div>
 
             <div class="nav-links">
@@ -498,7 +510,7 @@
             <div class="nav-actions">
                 <div class="profile-pill" onclick="openProfileModal()" title="Edit Profile & Documents">
                     <div class="profile-avatar" id="navAvatarInitials">MO</div>
-                    <span class="profile-name-text" id="navDisplayName">Demo Candidate</span>
+                    <span class="profile-name-text" id="navDisplayName">Demo User</span>
                 </div>
 
                 <div class="wallet-pill">
@@ -518,114 +530,101 @@
         <div id="pane-overview" class="tab-pane active">
             <div class="hero-banner">
                 <div>
-                    <h1>Welcome back</h1>
-                    <p>High match roles (&ge; 70%) qualify for auto apply. Roles below 70% require passing a practical simulation to unlock application access.</p>
+                    <h1 id="overviewGreeting">Welcome to UjuziChain East Africa</h1>
+                    <p id="overviewSubtext">Connecting vetted engineering talent across Kenya, Rwanda, Uganda, and Tanzania with cryptographic trust.</p>
                 </div>
-                <button class="btn-btrust-action" onclick="switchNav('jobs')">
-                    Browse jobs <span>&rarr;</span>
-                </button>
+                <div id="overviewHeroAction">
+                    <button class="btn-btrust-action" onclick="switchNav('jobs')">
+                        Browse East Africa Jobs <span>&rarr;</span>
+                    </button>
+                </div>
             </div>
 
             <div class="stat-grid">
                 <div class="glass-card stat-card">
-                    <p class="label">Available jobs</p>
-                    <h2>4</h2>
-                    <p class="sub">Visible to all candidates</p>
+                    <p class="label">East Africa Roles</p>
+                    <h2 id="metricJobsCount">4</h2>
+                    <p class="sub">Kenya, Rwanda, Uganda, TZ</p>
                 </div>
                 <div class="glass-card stat-card">
-                    <p class="label">Applications</p>
-                    <h2 id="metricApps">0</h2>
-                    <p class="sub">Submitted applications</p>
+                    <p class="label" id="lblMetricApps">Applications</p>
+                    <h2 id="metricApps">1</h2>
+                    <p class="sub" id="lblMetricAppsSub">Verified submissions</p>
                 </div>
                 <div class="glass-card stat-card">
-                    <p class="label">Completed simulations</p>
-                    <h2 id="metricSims">0</h2>
-                    <p class="sub">Practical assessments</p>
+                    <p class="label">Simulations Passed</p>
+                    <h2 id="metricSims">1</h2>
+                    <p class="sub">Practical evaluations</p>
                 </div>
                 <div class="glass-card stat-card">
-                    <p class="label">Verified credentials</p>
+                    <p class="label">On-Chain Credentials</p>
                     <h2>1</h2>
-                    <p class="sub">Active on registry</p>
+                    <p class="sub">Active on Sepolia</p>
                 </div>
             </div>
 
             <div class="dashboard-split">
                 <div class="glass-card">
                     <div class="card-header-bar">
-                        <h3>Jobs for you</h3>
+                        <h3 id="overviewSectionHeading">East Africa Openings</h3>
                         <a onclick="switchNav('jobs')">View all</a>
                     </div>
-                    <p class="card-sub">Sorted by match score and readiness.</p>
+                    <p class="card-sub" id="overviewSectionSub">Direct postings and partner feeds in Nairobi, Kigali, Kampala & Remote EA.</p>
 
-                    <div class="list-row">
-                        <div>
-                            <h4>Junior Software Engineer</h4>
-                            <p>Nairobi Tech Labs · Nairobi · Hybrid</p>
-                        </div>
-                        <span class="badge-score" style="color: var(--accent-green);">85% (Auto Apply)</span>
-                    </div>
-                    <div class="list-row">
-                        <div>
-                            <h4>Graduate QA Engineer</h4>
-                            <p>Kivu Digital · Kigali · Hybrid</p>
-                        </div>
-                        <span class="badge-score" style="color: #38bdf8;">61% (Simulation)</span>
-                    </div>
-                    <div class="list-row">
-                        <div>
-                            <h4>Backend Developer Intern</h4>
-                            <p>East Africa Systems · Remote</p>
-                        </div>
-                        <span class="badge-score" style="color: #38bdf8;">42% (Simulation)</span>
-                    </div>
+                    <div id="overviewQuickJobs"></div>
                 </div>
 
                 <div class="glass-card">
                     <div class="card-header-bar">
-                        <h3>Profile</h3>
-                        <a onclick="openProfileModal()">Edit Details & Docs</a>
+                        <h3>East Africa Ecosystem</h3>
+                        <a onclick="openProfileModal()">Edit Details</a>
                     </div>
-                    <p class="card-sub">Credential status & verification</p>
+                    <p class="card-sub">Identity & Registry Status</p>
 
                     <div class="list-row">
-                        <span style="color: var(--text-secondary); font-size: 13px;">Academic credential</span>
-                        <span class="status-pill">Verified</span>
+                        <span style="color: var(--text-secondary); font-size: 13px;">Academic Credential</span>
+                        <span class="status-pill">ALU Verified</span>
                     </div>
                     <div class="list-row">
-                        <span style="color: var(--text-secondary); font-size: 13px;">Wallet</span>
+                        <span style="color: var(--text-secondary); font-size: 13px;">Ethereum Sepolia</span>
                         <span style="font-weight: 600; font-size: 13px;">Connected</span>
                     </div>
                     <div class="list-row">
-                        <span style="color: var(--text-secondary); font-size: 13px;">Threshold</span>
+                        <span style="color: var(--text-secondary); font-size: 13px;">Application Gateway</span>
                         <span style="font-size: 13px; font-weight: 600; color: #34d399;">&ge; 70% Auto Apply</span>
                     </div>
                     <div class="list-row">
-                        <span style="color: var(--text-secondary); font-size: 13px;">Passed Simulations</span>
-                        <span style="font-size: 13px;" id="sideSimCount">0</span>
+                        <span style="color: var(--text-secondary); font-size: 13px;">Simulation Requirement</span>
+                        <span style="font-size: 13px; color: var(--accent-blue);">&lt; 70% Practical Test</span>
                     </div>
                 </div>
             </div>
 
             <div class="glass-card">
                 <div class="card-header-bar">
-                    <h3>Job sources</h3>
+                    <h3>East Africa Regional Nodes</h3>
                 </div>
-                <p class="card-sub">Ingestion layer connected to UjuziChain verification.</p>
+                <p class="card-sub">Active ingestion channels anchored by UjuziChain verification.</p>
 
                 <table class="dark-table">
                     <tr>
-                        <td>Company submissions</td>
-                        <td style="color: var(--text-muted);">Direct posting</td>
+                        <td>Nairobi Tech Hub (Kenya)</td>
+                        <td style="color: var(--text-muted);">Kilimani & Westlands Direct Postings</td>
                         <td style="color: var(--accent-green); font-weight: 600; text-align: right;">Active</td>
                     </tr>
                     <tr>
-                        <td>Partner job feed</td>
-                        <td style="color: var(--text-muted);">API / feed</td>
+                        <td>Kigali Innovation City (Rwanda)</td>
+                        <td style="color: var(--text-muted);">ALU & Norrsken Talent Pipelines</td>
+                        <td style="color: var(--accent-green); font-weight: 600; text-align: right;">Active</td>
+                    </tr>
+                    <tr>
+                        <td>Kampala Builders Network (Uganda)</td>
+                        <td style="color: var(--text-muted);">Open-Source & Web3 Peer Group</td>
                         <td style="color: #fbbf24; font-weight: 600; text-align: right;">Demo</td>
                     </tr>
                     <tr>
-                        <td>ATS connector</td>
-                        <td style="color: var(--text-muted);">Scheduled sync</td>
+                        <td>Dar es Salaam Tech Corridor (Tanzania)</td>
+                        <td style="color: var(--text-muted);">Remote Systems Integration</td>
                         <td style="color: var(--text-muted); text-align: right;">Planned</td>
                     </tr>
                 </table>
@@ -636,21 +635,27 @@
         <div id="pane-jobs" class="tab-pane">
             <div class="jobs-split-layout">
                 <div class="glass-card">
-                    <h3>Jobs</h3>
-                    <p class="card-sub">4 roles available</p>
-                    <input type="text" class="search-box-input" placeholder="Search title, company, location or skill">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3>East Africa Jobs</h3>
+                        <!-- Recruiter Post Job Action Button -->
+                        <button class="btn-btrust-action" id="btnPostJobTrigger" onclick="openPostJobModal()" style="display: none; padding: 6px 12px; font-size: 12px;">
+                            + Post East Africa Job
+                        </button>
+                    </div>
+                    <p class="card-sub" id="jobsTotalSub">Verified roles in East Africa</p>
+                    <input type="text" class="search-box-input" placeholder="Search Nairobi, Kigali, Kampala, skills...">
 
                     <div id="jobsListingCards"></div>
                 </div>
 
                 <div class="glass-card">
                     <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px;" id="detailHeading">Junior Software Engineer</h2>
-                    <p style="font-size: 13px; color: var(--text-secondary); margin: 6px 0 16px;" id="detailSub">Nairobi Tech Labs · Nairobi · Hybrid</p>
+                    <p style="font-size: 13px; color: var(--text-secondary); margin: 6px 0 16px;" id="detailSub">Nairobi Tech Labs · Nairobi, Kenya · Hybrid</p>
                     
                     <div style="margin-bottom: 22px;">
-                        <span class="tag-pill">Full-time</span>
-                        <span class="tag-pill">Source: Company submission</span>
-                        <span class="tag-pill">Posted today</span>
+                        <span class="tag-pill" id="detailJobType">Full-time</span>
+                        <span class="tag-pill" id="detailJobSource">East Africa Verified</span>
+                        <span class="tag-pill">Posted recently</span>
                     </div>
 
                     <div style="margin-bottom: 24px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); padding: 18px; border-radius: 8px;">
@@ -661,25 +666,22 @@
                         <div class="match-bar-track">
                             <div class="match-bar-fill" id="detailBar" style="width: 85%;"></div>
                         </div>
-                        <p style="font-size: 12px; color: var(--text-muted);" id="detailMatchGuidance">
-                            High match score (&ge; 70%). You qualify for immediate auto apply!
-                        </p>
+                        <p style="font-size: 12px; color: var(--text-muted);" id="detailMatchGuidance"></p>
                     </div>
 
                     <h4 style="font-size: 14px; margin-bottom: 8px;">About the role</h4>
-                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 22px;">
-                        Support the product engineering team by building web features, smart contract verification, and contributing to API integrations.
+                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 22px;" id="detailDescription">
+                        Support the product engineering team in Nairobi by building web features, smart contract verification, and contributing to regional API integrations.
                     </p>
 
                     <h4 style="font-size: 14px; margin-bottom: 8px;">Key requirements</h4>
-                    <ul style="font-size: 13px; color: var(--text-secondary); margin-left: 20px; margin-bottom: 28px; line-height: 1.7;">
+                    <ul style="font-size: 13px; color: var(--text-secondary); margin-left: 20px; margin-bottom: 28px; line-height: 1.7;" id="detailRequirements">
                         <li>JavaScript & Web3</li>
                         <li>Git & Smart Contracts</li>
                         <li>REST APIs</li>
                         <li>Basic SQL</li>
                     </ul>
 
-                    <!-- Dynamic Action Area -->
                     <div id="jobActionArea"></div>
                 </div>
             </div>
@@ -687,18 +689,18 @@
 
         <!-- 3. APPLICATIONS -->
         <div id="pane-applications" class="tab-pane">
-            <div class="glass-card" style="min-height: 380px;">
+            <div class="glass-card" style="min-height: 420px;">
                 <div class="card-header-bar">
-                    <h3>Applications</h3>
+                    <h3 id="appsPaneTitle">Applications</h3>
                 </div>
-                <p class="card-sub">Applications submitted directly or after passing role simulations.</p>
+                <p class="card-sub" id="appsPaneSub">Applications submitted and reviewed through UjuziChain verification.</p>
 
-                <div id="emptyAppsView" style="text-align: center; margin-top: 100px;">
+                <div id="emptyAppsView" style="text-align: center; margin-top: 100px; display: none;">
                     <h4 style="font-size: 16px; margin-bottom: 6px;">No applications yet</h4>
-                    <p style="font-size: 13px; color: var(--text-muted);">Apply to a matching role or complete a simulation to track submissions here.</p>
+                    <p style="font-size: 13px; color: var(--text-muted);">Applications submitted by candidates in East Africa will appear here.</p>
                 </div>
 
-                <div id="submittedAppsList" style="display: none;"></div>
+                <div id="submittedAppsList"></div>
             </div>
         </div>
 
@@ -706,19 +708,19 @@
         <div id="pane-simulations" class="tab-pane">
             <div class="glass-card">
                 <div class="card-header-bar">
-                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Job simulation</h2>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Practical Job Simulation</h2>
                     <span class="tag-pill" id="simRoleTag">Graduate QA Engineer</span>
                 </div>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="simCompanyTag">Kivu Digital · Kigali</p>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="simCompanyTag">Kivu Digital · Kigali, Rwanda</p>
                 <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
-                    Since your match score is below 70%, pass this practical scenario to prove engineering readiness and unlock the application. Failing this assessment will mark you ineligible for this specific role.
+                    Candidates with match scores below 70% take this role-specific scenario to verify engineering ability. Passing unlocks direct application access; failing marks the applicant ineligible for this opening.
                 </p>
 
                 <div class="step-tile">
                     <div class="step-tile-left">
                         <div class="step-index">01</div>
                         <div>
-                            <h4 style="font-size: 14px;">Scenario</h4>
+                            <h4 style="font-size: 14px;">Workplace Scenario</h4>
                             <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Inspect how the candidate application queries Ethereum Sepolia view functions.</p>
                         </div>
                     </div>
@@ -736,21 +738,20 @@
                     <span style="font-size: 12px; color: var(--text-muted);">25 min</span>
                 </div>
 
-                <!-- Simulation Interactive Choice -->
                 <div class="assessment-box">
                     <p style="font-size: 13.5px; font-weight: 600; margin-bottom: 12px;">Which method reads on-chain credential validity without requiring gas fees?</p>
                     
                     <div class="quiz-option active" id="optA" onclick="pickQuizOption('A')">
                         <input type="radio" name="quiz" checked>
-                        <span><strong>Option A:</strong> Call <code>contract.verifyCredential(bytes32)</code> as a <code>view</code> query via provider</span>
+                        <span><strong>Option A:</strong> Call <code>contract.verifyCredential(bytes32)</code> as a <code>view</code> query via JSON-RPC provider</span>
                     </div>
                     <div class="quiz-option" id="optB" onclick="pickQuizOption('B')">
                         <input type="radio" name="quiz">
-                        <span><strong>Option B:</strong> Broadcast a state-changing transaction requiring ETH gas fee</span>
+                        <span><strong>Option B:</strong> Broadcast an Ethereum state-changing transaction requiring ETH gas fee</span>
                     </div>
                     <div class="quiz-option" id="optC" onclick="pickQuizOption('C')">
                         <input type="radio" name="quiz">
-                        <span><strong>Option C:</strong> Store credentials in plain text in client localStorage without hashing</span>
+                        <span><strong>Option C:</strong> Store credentials in plain text in client localStorage without cryptographic signature</span>
                     </div>
 
                     <div style="display: flex; gap: 12px; margin-top: 20px;">
@@ -769,25 +770,25 @@
         <div id="pane-credentials" class="tab-pane">
             <div class="glass-card">
                 <div class="card-header-bar">
-                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Credentials</h2>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Credentials Registry</h2>
                     <button class="btn-secondary" onclick="openProfileModal()">Add New Credential Doc</button>
                 </div>
-                <p class="card-sub">Verified records linked to this profile.</p>
+                <p class="card-sub">Cryptographically verified academic & professional records.</p>
 
                 <div style="border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.02); border-radius: 10px; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                     <div style="display: flex; align-items: center; gap: 16px;">
                         <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: #34d399; display: flex; align-items: center; justify-content: center; font-weight: 700;">✓</div>
                         <div>
                             <h4 style="font-size: 14px;">BSc Software Engineering</h4>
-                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">African Leadership University</p>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px; font-family: monospace;">Credential ID UC-2026-001 · Issued 15 Sep 2026</p>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">African Leadership University (Kigali, Rwanda)</p>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px; font-family: monospace;">Credential ID UC-2026-001 · Issued 15 Sep 2026 · On Sepolia</p>
                         </div>
                     </div>
-                    <span class="status-pill">Verified</span>
+                    <span class="status-pill">Sepolia Verified</span>
                 </div>
 
                 <p style="font-size: 12px; color: var(--text-muted); background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); padding: 14px; border-radius: 8px;">
-                    Credential verification contributes to trust and job matching. It does not restrict access to job listings or applications.
+                    Credential verification establishes trust for East African developers competing in global and regional hiring pipelines.
                 </p>
             </div>
         </div>
@@ -796,9 +797,9 @@
         <div id="pane-verify" class="tab-pane">
             <div class="glass-card">
                 <div class="card-header-bar">
-                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Verify credential</h2>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Verify Credential On-Chain</h2>
                 </div>
-                <p class="card-sub">Check the status of a credential recorded by the UjuziChain contract on Sepolia.</p>
+                <p class="card-sub">Query Ethereum Sepolia directly to authenticate any African university or partner credential.</p>
 
                 <div style="margin-top: 24px;">
                     <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 8px;">Credential ID</label>
@@ -814,22 +815,70 @@
 
     </main>
 
-    <!-- Profile & Document Modal -->
+    <!-- Modal: Recruiter Post East Africa Job -->
+    <div class="modal-overlay" id="postJobModal" onclick="closePostJobModal(event)">
+        <div class="modal-container" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Post East Africa Job Opening</h3>
+                <button class="close-btn" onclick="closePostJobModal()">&times;</button>
+            </div>
+
+            <form onsubmit="handleRecruiterCreateJob(event)">
+                <div class="form-group">
+                    <label>Job Title</label>
+                    <input type="text" id="newJobTitle" class="form-input" placeholder="e.g. Senior Smart Contract Auditor" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Company / Organization</label>
+                    <input type="text" id="newJobCompany" class="form-input" placeholder="e.g. Mara Labs or Safaricom Web3" required>
+                </div>
+
+                <div class="form-group">
+                    <label>East Africa Location</label>
+                    <select id="newJobLocation" class="form-input" style="background:#000000; color:#ffffff;">
+                        <option value="Nairobi, Kenya · Hybrid">Nairobi, Kenya · Hybrid</option>
+                        <option value="Kigali, Rwanda · Hybrid">Kigali, Rwanda · Hybrid</option>
+                        <option value="Kampala, Uganda · On-site">Kampala, Uganda · On-site</option>
+                        <option value="Dar es Salaam, Tanzania · Hybrid">Dar es Salaam, Tanzania · Hybrid</option>
+                        <option value="Remote (East Africa UTC+3)">Remote (East Africa UTC+3)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Key Requirements (comma-separated)</label>
+                    <input type="text" id="newJobSkills" class="form-input" placeholder="Solidity, Hardhat, JavaScript, Rust" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Role Description</label>
+                    <textarea id="newJobDescription" class="form-input" rows="3" placeholder="Describe the engineering responsibilities in East Africa..." required></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn-secondary" onclick="closePostJobModal()">Cancel</button>
+                    <button type="submit" class="btn-btrust-action">Publish East Africa Job</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Profile & Document Editor -->
     <div class="modal-overlay" id="profileModal" onclick="closeProfileModal(event)">
         <div class="modal-container" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h3>Edit Profile & Documents</h3>
+                <h3 id="modalProfileTitle">Edit Profile & Documents</h3>
                 <button class="close-btn" onclick="closeProfileModal()">&times;</button>
             </div>
 
             <form id="profileForm" onsubmit="saveProfileDetails(event)">
                 <div class="form-group">
-                    <label>Full Name</label>
+                    <label id="lblProfileName">Full Name</label>
                     <input type="text" id="inputFullName" class="form-input" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Professional Title</label>
+                    <label id="lblProfileTitle">Professional Title</label>
                     <input type="text" id="inputHeadline" class="form-input">
                 </div>
 
@@ -840,9 +889,9 @@
 
                 <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 20px 0;">
 
-                <h4 style="font-size: 14px; margin-bottom: 8px;">Uploaded Documents & Credentials</h4>
+                <h4 style="font-size: 14px; margin-bottom: 8px;">Uploaded Documents & Proof</h4>
                 <div class="drop-zone" onclick="document.getElementById('docFileInput').click()">
-                    <p style="font-size: 13px; font-weight: 500;">+ Click to upload a document (PDF, PNG, JPG)</p>
+                    <p style="font-size: 13px; font-weight: 500;">+ Click to upload verified document (PDF, PNG)</p>
                     <input type="file" id="docFileInput" style="display: none;" onchange="handleDocUpload(event)">
                 </div>
 
@@ -862,41 +911,144 @@
           "function verifyCredential(bytes32 credentialId) external view returns (bool, string, string)"
         ];
 
-        let totalApps = 0;
-        let totalSims = 0;
-        let selectedQuiz = 'A';
-
+        // Active Role & Wallet
         const currentRole = sessionStorage.getItem("userRole") || "Applicant";
         const currentWallet = sessionStorage.getItem("userAddress") || "0xE174F15fc91870c2B0e92E437962955EA08F5d51";
 
+        // Seeded East Africa Jobs
+        const defaultEastAfricaJobs = [
+            {
+                id: 0,
+                title: "Junior Software Engineer",
+                company: "Nairobi Tech Labs",
+                location: "Nairobi, Kenya · Hybrid",
+                match: 85,
+                status: 'untested',
+                source: "Direct Submission",
+                requirements: ["JavaScript & Web3", "Git & Smart Contracts", "REST APIs", "Basic SQL"],
+                description: "Support our Nairobi core engineering team building decentralized verification infrastructure across East Africa."
+            },
+            {
+                id: 1,
+                title: "Graduate QA Engineer",
+                company: "Kivu Digital",
+                location: "Kigali, Rwanda · Hybrid",
+                match: 61,
+                status: 'untested',
+                source: "Norrsken Kigali Partner",
+                requirements: ["Automated Testing", "Cypress / Playwright", "API Testing", "Bug Tracking"],
+                description: "Ensure rigorous reliability for regional financial platforms and cross-border settlement tooling built out of Kigali."
+            },
+            {
+                id: 2,
+                title: "Backend Developer Intern",
+                company: "East Africa Systems",
+                location: "Dar es Salaam, Tanzania · Remote EA",
+                match: 42,
+                status: 'untested',
+                source: "EAC Developer Network",
+                requirements: ["Node.js / Express", "PostgreSQL", "Docker Basics", "RESTful Design"],
+                description: "Work with distributed distributed systems teams across Kenya, Tanzania, and Rwanda handling high-throughput ingest."
+            },
+            {
+                id: 3,
+                title: "Web3 Smart Contract Trainee",
+                company: "Pearl Blockchain Labs",
+                location: "Kampala, Uganda · On-site",
+                match: 78,
+                status: 'untested',
+                source: "Kampala BitDevs",
+                requirements: ["Solidity", "Hardhat / Foundry", "EVM Basics", "Testing"],
+                description: "Develop immutable registry contracts and decentralized identities tailored for African universities."
+            }
+        ];
+
+        // Seeded Applications if empty
+        const defaultApplications = [
+            {
+                id: "app-101",
+                jobTitle: "Junior Software Engineer",
+                company: "Nairobi Tech Labs (Nairobi, Kenya)",
+                applicantName: "Maxwel Okoth",
+                applicantAddress: "0xE174F15fc91870c2B0e92E437962955EA08F5d51",
+                match: 85,
+                submissionType: "Auto Apply (Match &ge; 70%)",
+                credentialName: "ALU BSc Software Engineering (Sepolia Verified)",
+                date: "Today"
+            }
+        ];
+
+        // Persistence in localStorage
+        let jobsList = JSON.parse(localStorage.getItem('ujuzi_ea_jobs')) || defaultEastAfricaJobs;
+        let applicationsList = JSON.parse(localStorage.getItem('ujuzi_ea_applications')) || defaultApplications;
+
         let profileData = JSON.parse(localStorage.getItem(`ujuzi_profile_${currentRole}`)) || {
-            name: "Maxwel Okoth",
-            headline: "Full Stack Web3 Developer",
-            bio: "Building decentralized talent verification on Ethereum Sepolia.",
+            name: currentRole === "Recruiter" ? "Nairobi Tech Talent" : "Maxwel Okoth",
+            headline: currentRole === "Recruiter" ? "Lead Technical Recruiter - East Africa" : "Full Stack Web3 Developer",
+            bio: currentRole === "Recruiter" ? "Vetting high-potential engineers in Kenya, Rwanda, and Uganda." : "Software engineer building decentralized solutions for Africa.",
             docs: [{ name: "ALU_BSc_Software_Engineering_Degree.pdf", size: "2.4 MB", date: "Sep 2026", verified: true }]
         };
 
-        // Jobs Data Structure
-        const jobRoles = [
-            { id: 0, title: "Junior Software Engineer", company: "Nairobi Tech Labs · Nairobi · Hybrid", match: 85, status: 'untested' },
-            { id: 1, title: "Graduate QA Engineer", company: "Kivu Digital · Kigali · Hybrid", match: 61, status: 'untested' },
-            { id: 2, title: "Backend Developer Intern", company: "East Africa Systems · Remote", match: 42, status: 'untested' },
-            { id: 3, title: "Embedded Systems Trainee", company: "Mobility Works · Kigali · On-site", match: 28, status: 'untested' }
-        ];
+        let selectedJobIndex = 0;
+        let selectedQuiz = 'A';
 
-        let selectedJob = 0;
+        // Initialize UI based on Recruiter vs Candidate
+        function initRoleUI() {
+            document.getElementById("topRoleBadge").innerText = `${currentRole} Portal`;
+            document.getElementById("navDisplayName").innerText = profileData.name;
+            document.getElementById("navAvatarInitials").innerText = profileData.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+            document.getElementById("navWalletAddress").innerText = currentWallet.length > 10 ? `${currentWallet.substring(0, 6)}...${currentWallet.substring(38)}` : currentWallet;
 
-        document.getElementById("topRoleBadge").innerText = currentRole;
-        document.getElementById("navDisplayName").innerText = profileData.name;
-        document.getElementById("navAvatarInitials").innerText = profileData.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
-        document.getElementById("navWalletAddress").innerText = currentWallet.length > 10 ? `${currentWallet.substring(0, 6)}...${currentWallet.substring(38)}` : currentWallet;
+            if (currentRole === "Recruiter") {
+                document.getElementById("btnPostJobTrigger").style.display = "inline-flex";
+                document.getElementById("overviewGreeting").innerText = "Recruiter Operations · East Africa";
+                document.getElementById("overviewSubtext").innerText = "Monitor submitted applications, post East African roles, and review cryptographically verified credentials.";
+                document.getElementById("overviewHeroAction").innerHTML = `
+                    <button class="btn-btrust-action" onclick="openPostJobModal()">
+                        + Post East Africa Job <span>&rarr;</span>
+                    </button>
+                `;
+                document.getElementById("lblMetricApps").innerText = "Received Applications";
+                document.getElementById("lblMetricAppsSub").innerText = "East Africa candidates";
+                document.getElementById("appsPaneTitle").innerText = "Received Candidate Applications";
+                document.getElementById("appsPaneSub").innerText = "All verified developers from Kenya, Rwanda, Uganda, and Tanzania who applied to East Africa roles.";
+                document.getElementById("modalProfileTitle").innerText = "Recruiter Profile & East Africa Organization";
+                document.getElementById("lblProfileName").innerText = "Recruiter / Organization Name";
+                document.getElementById("lblProfileTitle").innerText = "Hiring Agency / Company Department";
+            } else {
+                document.getElementById("appsPaneTitle").innerText = "My Applications";
+                document.getElementById("appsPaneSub").innerText = "East African roles you have applied to.";
+            }
 
-        function renderJobsList() {
+            renderOverviewSummary();
+            renderJobs();
+            renderApplications();
+        }
+
+        function renderOverviewSummary() {
+            document.getElementById("metricJobsCount").innerText = jobsList.length;
+            document.getElementById("metricApps").innerText = applicationsList.length;
+
+            const quickBox = document.getElementById("overviewQuickJobs");
+            quickBox.innerHTML = jobsList.slice(0, 3).map(j => `
+                <div class="list-row">
+                    <div>
+                        <h4>${j.title}</h4>
+                        <p>${j.company} · ${j.location}</p>
+                    </div>
+                    <span class="badge-score" style="color: ${j.match >= 70 ? 'var(--accent-green)' : '#38bdf8'};">
+                        ${j.match}% (${j.match >= 70 ? 'Auto Apply' : 'Sim Required'})
+                    </span>
+                </div>
+            `).join("");
+        }
+
+        function renderJobs() {
             const container = document.getElementById("jobsListingCards");
-            container.innerHTML = jobRoles.map((job, idx) => {
+            container.innerHTML = jobsList.map((job, idx) => {
                 let badgeColor = "var(--text-muted)";
                 let extraTag = "";
-                
+
                 if (job.status === 'failed') {
                     badgeColor = "var(--accent-red)";
                     extraTag = " · Ineligible";
@@ -907,39 +1059,57 @@
                     badgeColor = "var(--accent-green)";
                     extraTag = " · Auto Apply";
                 } else {
-                    badgeColor = "#38bdf8";
+                    badgeColor = "var(--accent-blue)";
                     extraTag = " · Sim Required";
                 }
 
                 return `
-                    <div class="job-select-item ${idx === selectedJob ? 'selected' : ''}" onclick="pickJob(${idx})">
+                    <div class="job-select-item ${idx === selectedJobIndex ? 'selected' : ''}" onclick="selectJob(${idx})">
                         <div>
                             <h4 style="font-size: 14px;">${job.title}</h4>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">${job.company}</p>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">${job.company} · ${job.location}</p>
                         </div>
                         <span class="badge-score" style="color: ${badgeColor};">${job.match}%${extraTag}</span>
                     </div>
                 `;
             }).join("");
+
+            document.getElementById("jobsTotalSub").innerText = `${jobsList.length} roles available in East Africa`;
             renderJobDetails();
         }
 
-        function pickJob(index) {
-            selectedJob = index;
-            renderJobsList();
+        function selectJob(index) {
+            selectedJobIndex = index;
+            renderJobs();
         }
 
         function renderJobDetails() {
-            const job = jobRoles[selectedJob];
-            document.getElementById('detailHeading').innerText = job.title;
-            document.getElementById('detailSub').innerText = job.company;
-            document.getElementById('detailScore').innerText = `${job.match}%`;
-            document.getElementById('detailBar').style.width = `${job.match}%`;
+            const job = jobsList[selectedJobIndex];
+            document.getElementById("detailHeading").innerText = job.title;
+            document.getElementById("detailSub").innerText = `${job.company} · ${job.location}`;
+            document.getElementById("detailScore").innerText = `${job.match}%`;
+            document.getElementById("detailBar").style.width = `${job.match}%`;
+            document.getElementById("detailDescription").innerText = job.description;
 
-            const actionArea = document.getElementById('jobActionArea');
-            const guidance = document.getElementById('detailMatchGuidance');
+            const reqList = document.getElementById("detailRequirements");
+            reqList.innerHTML = job.requirements.map(r => `<li>${r}</li>`).join("");
 
-            // 1. INELIGIBLE: Only appears if a simulation was taken and failed
+            const actionArea = document.getElementById("jobActionArea");
+            const guidance = document.getElementById("detailMatchGuidance");
+
+            // If Recruiter: Show management prompt
+            if (currentRole === "Recruiter") {
+                guidance.innerHTML = `<span style="color: var(--accent-blue);">Recruiter View: Candidates scoring &ge; 70% can auto-apply. Below 70% must pass simulation.</span>`;
+                actionArea.innerHTML = `
+                    <div style="display:flex; gap:12px;">
+                        <button class="btn-secondary" onclick="switchNav('applications')">View Applications for this Role</button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Candidate Logic:
+            // 1. Simulation Failed: Ineligible
             if (job.status === 'failed') {
                 guidance.innerHTML = `<span style="color: #f87171; font-weight: 600;">✗ Ineligible: Practical simulation failed. You cannot apply for this role.</span>`;
                 actionArea.innerHTML = `
@@ -950,48 +1120,46 @@
                 return;
             }
 
-            // 2. ABOVE OR EQUAL TO 70%: Auto Apply directly (no simulation needed)
+            // 2. >= 70%: Auto Apply directly
             if (job.match >= 70) {
-                guidance.innerHTML = `<span style="color: #34d399; font-weight: 600;">✓ Qualified: Match score is above 70%. You qualify for direct Auto Apply!</span>`;
+                guidance.innerHTML = `<span style="color: #34d399; font-weight: 600;">✓ Qualified: Match score is &ge; 70%. You qualify for immediate Auto Apply!</span>`;
                 actionArea.innerHTML = `
-                    <div style="display: flex; gap: 12px;">
-                        <button class="btn-btrust-action" onclick="applyJob('Direct Auto Apply')">
-                            Auto Apply Now <span>&rarr;</span>
-                        </button>
-                    </div>
+                    <button class="btn-btrust-action" onclick="handleCandidateApply('Direct Auto Apply')">
+                        Auto Apply Now <span>&rarr;</span>
+                    </button>
                 `;
                 return;
             }
 
-            // 3. BELOW 70% & UNTESTED: Must take simulation to apply
+            // 3. < 70% & Untested: Must take simulation
             if (job.status === 'untested') {
-                guidance.innerText = `Profile match is below 70%. Take the practical simulation to prove competence and unlock the application.`;
+                guidance.innerText = `Match score is below 70%. Take the practical simulation to verify competence and unlock the application.`;
                 actionArea.innerHTML = `
-                    <button class="btn-btrust-action" onclick="startJobSimulation(${selectedJob})">
+                    <button class="btn-btrust-action" onclick="startSimulation(${selectedJobIndex})">
                         Take Simulation to Apply <span>&rarr;</span>
                     </button>
                 `;
                 return;
             }
 
-            // 4. BELOW 70% & PASSED SIMULATION: Now can apply!
+            // 4. < 70% & Passed: Unlocked
             if (job.status === 'passed') {
-                guidance.innerHTML = `<span style="color: #34d399; font-weight: 600;">✓ Simulation Passed (Score: 100%). Your skills have been verified—application unlocked!</span>`;
+                guidance.innerHTML = `<span style="color: #34d399; font-weight: 600;">✓ Simulation Passed (Score: 100%). You are verified to submit your application.</span>`;
                 actionArea.innerHTML = `
                     <div style="display: flex; gap: 12px;">
-                        <button class="btn-btrust-action" onclick="applyJob('Verified via Simulation')">
+                        <button class="btn-btrust-action" onclick="handleCandidateApply('Verified via Simulation')">
                             Apply Now <span>&rarr;</span>
                         </button>
-                        <span class="status-pill" style="align-self: center;">Passed Simulation</span>
+                        <span class="status-pill" style="align-self: center;">Simulation Passed</span>
                     </div>
                 `;
             }
         }
 
-        function startJobSimulation(index) {
-            selectedJob = index;
-            document.getElementById('simRoleTag').innerText = jobRoles[index].title;
-            document.getElementById('simCompanyTag').innerText = jobRoles[index].company;
+        function startSimulation(index) {
+            selectedJobIndex = index;
+            document.getElementById("simRoleTag").innerText = jobsList[index].title;
+            document.getElementById("simCompanyTag").innerText = `${jobsList[index].company} · ${jobsList[index].location}`;
             switchNav('simulations');
         }
 
@@ -1004,44 +1172,134 @@
 
         function submitSimulationAnswer() {
             if (selectedQuiz === 'A') {
-                jobRoles[selectedJob].status = 'passed';
-                totalSims++;
-                document.getElementById('metricSims').innerText = totalSims;
-                document.getElementById('sideSimCount').innerText = totalSims;
-                alert(`Simulation Passed for ${jobRoles[selectedJob].title}! You can now submit your application.`);
+                jobsList[selectedJobIndex].status = 'passed';
+                alert(`Simulation Passed for ${jobsList[selectedJobIndex].title}! Application is now unlocked.`);
             } else {
-                jobRoles[selectedJob].status = 'failed';
-                alert(`Simulation Failed. You are now marked Ineligible for ${jobRoles[selectedJob].title}.`);
+                jobsList[selectedJobIndex].status = 'failed';
+                alert(`Simulation Failed. You are now marked Ineligible for this role.`);
             }
             switchNav('jobs');
-            renderJobsList();
+            renderJobs();
         }
 
         function demoFailSimulation() {
-            jobRoles[selectedJob].status = 'failed';
-            alert(`Simulation Failed. You are now marked Ineligible for ${jobRoles[selectedJob].title}.`);
+            jobsList[selectedJobIndex].status = 'failed';
+            alert(`Simulation Failed. You are now marked Ineligible for this role.`);
             switchNav('jobs');
-            renderJobsList();
+            renderJobs();
         }
 
-        function applyJob(submissionType = 'Direct') {
-            totalApps++;
-            document.getElementById('metricApps').innerText = totalApps;
-            document.getElementById('emptyAppsView').style.display = 'none';
+        function handleCandidateApply(subType) {
+            const job = jobsList[selectedJobIndex];
+            const newApp = {
+                id: `app-${Date.now()}`,
+                jobTitle: job.title,
+                company: `${job.company} (${job.location})`,
+                applicantName: profileData.name,
+                applicantAddress: currentWallet,
+                match: job.match,
+                submissionType: subType,
+                credentialName: "ALU BSc Software Engineering (Sepolia Verified)",
+                date: "Just now"
+            };
 
-            const list = document.getElementById('submittedAppsList');
-            list.style.display = 'block';
-            list.innerHTML += `
-                <div class="list-row" style="padding: 16px 0;">
-                    <div>
-                        <h4>${jobRoles[selectedJob].title}</h4>
-                        <p>${jobRoles[selectedJob].company}</p>
-                    </div>
-                    <span class="status-pill">Submitted (${submissionType})</span>
-                </div>
-            `;
-            alert(`Application submitted successfully for ${jobRoles[selectedJob].title}!`);
+            applicationsList.unshift(newApp);
+            localStorage.setItem('ujuzi_ea_applications', JSON.stringify(applicationsList));
+            alert(`Application submitted to ${job.company} (${job.location})!`);
+            renderApplications();
             switchNav('applications');
+        }
+
+        // Render Applications for Recruiter & Candidate
+        function renderApplications() {
+            const list = document.getElementById("submittedAppsList");
+            const empty = document.getElementById("emptyAppsView");
+
+            if (!applicationsList || applicationsList.length === 0) {
+                list.style.display = "none";
+                empty.style.display = "block";
+                return;
+            }
+
+            list.style.display = "block";
+            empty.style.display = "none";
+
+            if (currentRole === "Recruiter") {
+                // Recruiter View: List of candidates who applied
+                list.innerHTML = applicationsList.map(app => `
+                    <div class="glass-card" style="margin-bottom: 14px; padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h4 style="font-size: 16px; font-weight: 700;">${app.applicantName}</h4>
+                                <p style="font-size: 12.5px; color: var(--text-muted); font-family: monospace; margin: 3px 0 8px;">
+                                    Wallet: ${app.applicantAddress}
+                                </p>
+                                <p style="font-size: 13.5px; color: var(--text-secondary);">
+                                    Applied for: <strong style="color: #ffffff;">${app.jobTitle}</strong> · ${app.company}
+                                </p>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="status-pill">${app.submissionType}</span>
+                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">Submitted ${app.date}</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-size: 12px; color: #34d399; display: flex; align-items: center; gap: 6px;">
+                                <span>✓</span> <span>${app.credentialName}</span>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn-btrust-action" style="padding: 6px 14px; font-size: 12px;" onclick="alert('Candidate ${app.applicantName} shortlisted!')">Shortlist</button>
+                                <button class="btn-secondary" style="padding: 6px 14px; font-size: 12px;" onclick="alert('Opening candidate Sepolia on-chain proofs...')">Inspect Credentials</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join("");
+            } else {
+                // Candidate View: List of roles candidate applied to
+                list.innerHTML = applicationsList.map(app => `
+                    <div class="list-row" style="padding: 16px 0;">
+                        <div>
+                            <h4>${app.jobTitle}</h4>
+                            <p>${app.company}</p>
+                            <p style="font-size: 11px; color: #34d399; margin-top: 3px;">✓ Credential attached: ${app.credentialName}</p>
+                        </div>
+                        <span class="status-pill">${app.submissionType}</span>
+                    </div>
+                `).join("");
+            }
+        }
+
+        // Recruiter Modal: Add East Africa Job
+        function openPostJobModal() {
+            document.getElementById("postJobModal").style.display = "flex";
+        }
+        function closePostJobModal(e) {
+            if (!e || e.target.id === "postJobModal") {
+                document.getElementById("postJobModal").style.display = "none";
+            }
+        }
+
+        function handleRecruiterCreateJob(e) {
+            e.preventDefault();
+            const newJob = {
+                id: jobsList.length,
+                title: document.getElementById("newJobTitle").value.trim(),
+                company: document.getElementById("newJobCompany").value.trim(),
+                location: document.getElementById("newJobLocation").value,
+                match: 75, // Default base match for demo
+                status: 'untested',
+                source: "Recruiter Submission",
+                requirements: document.getElementById("newJobSkills").value.split(",").map(s => s.trim()),
+                description: document.getElementById("newJobDescription").value.trim()
+            };
+
+            jobsList.unshift(newJob);
+            localStorage.setItem('ujuzi_ea_jobs', JSON.stringify(jobsList));
+            closePostJobModal();
+            renderJobs();
+            renderOverviewSummary();
+            alert(`Job "${newJob.title}" for ${newJob.location} successfully published!`);
         }
 
         function switchNav(tabName) {
@@ -1049,7 +1307,8 @@
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(`pane-${tabName}`).classList.add('active');
             document.getElementById(`btn-tab-${tabName}`).classList.add('active');
-            if (tabName === 'jobs') renderJobsList();
+            if (tabName === 'jobs') renderJobs();
+            if (tabName === 'applications') renderApplications();
         }
 
         function performLogout() {
@@ -1061,17 +1320,15 @@
             document.getElementById("inputFullName").value = profileData.name;
             document.getElementById("inputHeadline").value = profileData.headline;
             document.getElementById("inputBio").value = profileData.bio;
-            renderDocsList();
+            renderDocs();
             document.getElementById("profileModal").style.display = "flex";
         }
-
         function closeProfileModal(e) {
             if (!e || e.target.id === "profileModal") {
                 document.getElementById("profileModal").style.display = "none";
             }
         }
-
-        function renderDocsList() {
+        function renderDocs() {
             const container = document.getElementById("uploadedDocsList");
             container.innerHTML = profileData.docs.map((doc, idx) => `
                 <div class="doc-item">
@@ -1083,19 +1340,12 @@
                 </div>
             `).join("");
         }
-
         function handleDocUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
-            profileData.docs.push({
-                name: file.name,
-                size: (file.size / 1024 / 1024).toFixed(2) + " MB",
-                date: "Today",
-                verified: false
-            });
-            renderDocsList();
+            profileData.docs.push({ name: file.name, size: (file.size / 1024 / 1024).toFixed(2) + " MB", date: "Today", verified: true });
+            renderDocs();
         }
-
         function saveProfileDetails(e) {
             e.preventDefault();
             profileData.name = document.getElementById("inputFullName").value.trim();
@@ -1128,7 +1378,7 @@
                     out.style.background = "rgba(16, 185, 129, 0.1)";
                     out.style.border = "1px solid rgba(16, 185, 129, 0.3)";
                     out.style.color = "#34d399";
-                    out.innerHTML = `<strong>Credential Verified Valid On-Chain</strong><br>Institution: African Leadership University<br>Degree: BSc Software Engineering<br>Status: Confirmed On-Chain`;
+                    out.innerHTML = `<strong>Credential Verified Valid On-Chain</strong><br>Institution: African Leadership University (Kigali, Rwanda)<br>Degree: BSc Software Engineering<br>Status: Confirmed On-Chain`;
                 } else {
                     out.style.background = "rgba(239, 68, 68, 0.1)";
                     out.style.border = "1px solid rgba(239, 68, 68, 0.3)";
@@ -1143,7 +1393,7 @@
             }
         }
 
-        renderJobsList();
+        initRoleUI();
     </script>
 </body>
 </html>
