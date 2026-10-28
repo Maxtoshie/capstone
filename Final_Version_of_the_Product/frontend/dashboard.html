@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UjuziChain - Candidate Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>UjuziChain - Portal Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
     <style>
         :root {
@@ -12,7 +12,7 @@
             --bg-card: rgba(18, 20, 26, 0.75);
             --bg-card-hover: rgba(26, 29, 38, 0.85);
             --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.18);
+            --border-hover: rgba(255, 255, 255, 0.2);
             --text-primary: #ffffff;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
@@ -20,175 +20,203 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        
+
         body {
-            display: flex;
-            height: 100vh;
             background-color: var(--bg-base);
             color: var(--text-primary);
-            overflow: hidden;
-            /* Topographic contour overlay */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
             background-image: 
-                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 60%),
+                radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.035) 0%, transparent 60%),
                 radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
                 url("data:image/svg+xml,%3Csvg width='1200' height='800' viewBox='0 0 1200 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-100,200 C300,100 600,400 1300,150 M-100,260 C300,160 600,460 1300,210 M-100,320 C300,220 600,520 1300,270 M-100,380 C300,280 600,580 1300,330 M-100,440 C300,340 600,640 1300,390 M-100,500 C300,400 600,700 1300,450 M-100,560 C300,460 600,760 1300,510' stroke='rgba(255,255,255,0.035)' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
             background-size: cover;
         }
 
-        /* Sidebar */
-        aside {
-            width: 260px;
-            background: rgba(12, 13, 17, 0.85);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid var(--border-subtle);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 24px 18px;
-            flex-shrink: 0;
-            z-index: 10;
+        /* Btrust Top Floating Navbar */
+        .navbar-wrap {
+            position: sticky;
+            top: 16px;
+            z-index: 100;
+            padding: 0 24px;
+            max-width: 1320px;
+            width: 100%;
+            margin: 16px auto 0;
         }
-        .logo-wrap {
+        .btrust-navbar {
+            background: rgba(18, 20, 26, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 10px 20px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 32px;
-            padding: 0 8px;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
-        .logo-badge {
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .logo-box {
             background: #ffffff;
             color: #000000;
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
-            border-radius: 8px;
-            width: 38px;
-            height: 38px;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 15px;
+            font-size: 13px;
         }
-        .logo-title h3 {
+        .logo-text {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
             letter-spacing: -0.3px;
         }
-        .logo-title p {
+        .role-badge {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
             font-size: 11px;
-            color: var(--text-muted);
+            padding: 2px 8px;
+            border-radius: 20px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-top: 1px;
         }
 
-        .nav-list { display: flex; flex-direction: column; gap: 6px; }
-        .nav-link {
-            padding: 12px 16px;
-            border-radius: 8px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        .nav-links {
             display: flex;
             align-items: center;
-            border: 1px solid transparent;
+            gap: 4px;
         }
-        .nav-link:hover {
-            color: var(--text-primary);
+        .nav-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover {
+            color: #ffffff;
             background: rgba(255, 255, 255, 0.04);
             border-color: var(--border-subtle);
         }
-        .nav-link.active {
+        .nav-btn.active {
             background: #ffffff;
             color: #000000;
             font-weight: 600;
         }
 
-        .user-widget {
+        .nav-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 14px 12px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-subtle);
+            gap: 10px;
         }
-        .user-avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: #222634;
-            color: #ffffff;
-            font-size: 12px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .user-meta h4 { font-size: 13px; font-weight: 600; }
-        .user-meta p { font-size: 11px; color: var(--text-muted); font-family: monospace; }
-
-        /* Main Viewport */
-        main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
-        
-        /* Floating Frosted Header */
-        header {
-            margin: 20px 32px 0 32px;
-            padding: 14px 24px;
-            background: rgba(18, 20, 26, 0.65);
-            backdrop-filter: blur(16px);
+        .profile-pill {
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-        }
-        .header-left h2 { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; }
-        .header-left p { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
-
-        .btn-wallet-pill {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid var(--border-subtle);
-            color: var(--text-primary);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
+            border-radius: 30px;
+            padding: 4px 12px 4px 6px;
             display: flex;
             align-items: center;
             gap: 8px;
             cursor: pointer;
             transition: all 0.2s;
         }
-        .btn-wallet-pill:hover { border-color: var(--border-hover); background: rgba(255, 255, 255, 0.1); }
-        .pill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); }
+        .profile-pill:hover {
+            border-color: var(--border-hover);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .profile-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #222634;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .profile-name-text {
+            font-size: 12.5px;
+            font-weight: 500;
+            color: #ffffff;
+        }
 
-        .content-area { padding: 32px; flex: 1; }
+        .wallet-pill {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: #34d399;
+            font-size: 12px;
+            font-family: monospace;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .wallet-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover {
+            color: #f87171;
+            border-color: rgba(248, 113, 113, 0.4);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        /* Page Content Layout */
+        main {
+            max-width: 1320px;
+            width: 100%;
+            margin: 28px auto 60px;
+            padding: 0 24px;
+            flex: 1;
+        }
         .tab-pane { display: none; }
         .tab-pane.active { display: block; }
 
-        /* Typography & Buttons */
+        /* Typography & Glass Cards */
         .hero-banner {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
         }
         .hero-banner h1 {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 34px;
             font-weight: 700;
             letter-spacing: -1px;
-            line-height: 1.15;
         }
         .hero-banner p {
             font-size: 14px;
             color: var(--text-secondary);
-            margin-top: 8px;
-            max-width: 600px;
+            margin-top: 6px;
         }
 
         .btn-btrust-action {
@@ -196,8 +224,8 @@
             color: #000000;
             border: none;
             border-radius: 8px;
-            padding: 12px 22px;
-            font-size: 14px;
+            padding: 11px 20px;
+            font-size: 13.5px;
             font-weight: 600;
             cursor: pointer;
             display: inline-flex;
@@ -216,14 +244,13 @@
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
             padding: 10px 18px;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
         }
         .btn-secondary:hover { border-color: var(--border-hover); background: rgba(255, 255, 255, 0.04); }
 
-        /* Glass Cards */
         .glass-card {
             background: var(--bg-card);
             backdrop-filter: blur(16px);
@@ -286,7 +313,7 @@
         .dark-table td { padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: var(--text-secondary); }
         .dark-table tr:last-child td { border-bottom: none; }
 
-        /* Jobs View Split */
+        /* Jobs Layout */
         .jobs-split-layout { display: grid; grid-template-columns: 1.15fr 1.6fr; gap: 20px; }
         .search-box-input {
             width: 100%;
@@ -299,8 +326,6 @@
             margin: 14px 0 16px;
             outline: none;
         }
-        .search-box-input:focus { border-color: rgba(255, 255, 255, 0.3); }
-
         .job-select-item {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border-subtle);
@@ -318,7 +343,6 @@
             background: rgba(255, 255, 255, 0.07);
             border-color: #ffffff;
         }
-
         .tag-pill {
             background: rgba(255, 255, 255, 0.05);
             color: var(--text-secondary);
@@ -329,7 +353,6 @@
             display: inline-block;
             margin-right: 6px;
         }
-
         .match-bar-track {
             width: 100%;
             height: 6px;
@@ -338,11 +361,7 @@
             overflow: hidden;
             margin: 10px 0;
         }
-        .match-bar-fill {
-            height: 100%;
-            background: #ffffff;
-            border-radius: 6px;
-        }
+        .match-bar-fill { height: 100%; background: #ffffff; border-radius: 6px; }
 
         /* Stepper */
         .step-tile {
@@ -369,373 +388,486 @@
             justify-content: center;
             font-size: 14px;
         }
+
+        /* Profile & Document Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-container {
+            background: #111318;
+            border: 1px solid var(--border-hover);
+            border-radius: 14px;
+            max-width: 620px;
+            width: 100%;
+            padding: 28px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; }
+        .close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
+        .close-btn:hover { color: #ffffff; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .form-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13.5px;
+            color: #ffffff;
+            outline: none;
+        }
+        .form-input:focus { border-color: rgba(255, 255, 255, 0.3); }
+
+        .drop-zone {
+            border: 2px dashed var(--border-subtle);
+            border-radius: 10px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+            background: rgba(255, 255, 255, 0.01);
+        }
+        .drop-zone:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .doc-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar Navigation -->
-    <aside>
-        <div>
-            <div class="logo-wrap">
-                <div class="logo-badge">UC</div>
-                <div class="logo-title">
-                    <h3>UjuziChain</h3>
-                    <p>Candidate portal</p>
+    <!-- Btrust Floating Top Navbar -->
+    <div class="navbar-wrap">
+        <nav class="btrust-navbar">
+            <div class="nav-brand" onclick="switchNav('overview')">
+                <div class="logo-box">UC</div>
+                <div class="logo-text">UjuziChain</div>
+                <span class="role-badge" id="topRoleBadge">Candidate</span>
+            </div>
+
+            <div class="nav-links">
+                <button class="nav-btn active" id="btn-tab-overview" onclick="switchNav('overview')">Overview</button>
+                <button class="nav-btn" id="btn-tab-jobs" onclick="switchNav('jobs')">Jobs</button>
+                <button class="nav-btn" id="btn-tab-applications" onclick="switchNav('applications')">Applications</button>
+                <button class="nav-btn" id="btn-tab-simulations" onclick="switchNav('simulations')">Simulations</button>
+                <button class="nav-btn" id="btn-tab-credentials" onclick="switchNav('credentials')">Credentials</button>
+                <button class="nav-btn" id="btn-tab-verify" onclick="switchNav('verify')">Verify Credential</button>
+            </div>
+
+            <div class="nav-actions">
+                <!-- Clickable Profile Pill to Edit Details / Add Docs -->
+                <div class="profile-pill" onclick="openProfileModal()" title="Edit Profile & Documents">
+                    <div class="profile-avatar" id="navAvatarInitials">MO</div>
+                    <span class="profile-name-text" id="navDisplayName">Demo Candidate</span>
                 </div>
-            </div>
-            
-            <div class="nav-list">
-                <div class="nav-link active" onclick="navigateTab('overview')">Overview</div>
-                <div class="nav-link" onclick="navigateTab('jobs')">Jobs</div>
-                <div class="nav-link" onclick="navigateTab('applications')">Applications</div>
-                <div class="nav-link" onclick="navigateTab('simulations')">Simulations</div>
-                <div class="nav-link" onclick="navigateTab('credentials')">Credentials</div>
-                <div class="nav-link" onclick="navigateTab('verify')">Verify credential</div>
-            </div>
-        </div>
 
-        <div class="user-widget">
-            <div class="user-avatar" id="avatarInitials">MO</div>
-            <div class="user-meta">
-                <h4 id="userDisplayName">Demo Candidate</h4>
-                <p id="userWalletPreview">0x...</p>
-            </div>
-        </div>
-    </aside>
+                <div class="wallet-status-pill">
+                    <span class="wallet-dot"></span>
+                    <span id="navWalletAddress">0x...</span>
+                </div>
 
-    <!-- Main Workspace -->
+                <!-- Functional Logout -->
+                <button class="btn-logout" onclick="performLogout()">Logout</button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Workspace Content -->
     <main>
-        <header>
-            <div class="header-left">
-                <h2 id="topBarTitle">Overview</h2>
-                <p>Initial software demonstration</p>
-            </div>
-            <div class="btn-wallet-pill">
-                <div class="pill-dot"></div>
-                <span id="walletPillLabel">Wallet connected</span>
-            </div>
-        </header>
 
-        <div class="content-area">
-
-            <!-- 1. OVERVIEW -->
-            <div id="tab-overview" class="tab-pane active">
-                <div class="hero-banner">
-                    <div>
-                        <h1>Welcome back</h1>
-                        <p>Browse every available role. Match scores help you understand fit, but do not prevent you from applying.</p>
-                    </div>
-                    <button class="btn-btrust-action" onclick="navigateTab('jobs')">
-                        Browse jobs <span>&rarr;</span>
-                    </button>
+        <!-- 1. OVERVIEW -->
+        <div id="pane-overview" class="tab-pane active">
+            <div class="hero-banner">
+                <div>
+                    <h1>Welcome back</h1>
+                    <p>Browse every available role. Match scores help you understand fit, but do not prevent you from applying.</p>
                 </div>
+                <button class="btn-btrust-action" onclick="switchNav('jobs')">
+                    Browse jobs <span>&rarr;</span>
+                </button>
+            </div>
 
-                <div class="stat-grid">
-                    <div class="glass-card stat-card">
-                        <p class="label">Available jobs</p>
-                        <h2>4</h2>
-                        <p class="sub">Visible to all candidates</p>
-                    </div>
-                    <div class="glass-card stat-card">
-                        <p class="label">Applications</p>
-                        <h2 id="appCountMetric">0</h2>
-                        <p class="sub">This demo session</p>
-                    </div>
-                    <div class="glass-card stat-card">
-                        <p class="label">Completed simulations</p>
-                        <h2 id="simCountMetric">0</h2>
-                        <p class="sub">Practical assessments</p>
-                    </div>
-                    <div class="glass-card stat-card">
-                        <p class="label">Verified credentials</p>
-                        <h2>1</h2>
-                        <p class="sub">Active on registry</p>
-                    </div>
+            <div class="stat-grid">
+                <div class="glass-card stat-card">
+                    <p class="label">Available jobs</p>
+                    <h2>4</h2>
+                    <p class="sub">Visible to all candidates</p>
                 </div>
+                <div class="glass-card stat-card">
+                    <p class="label">Applications</p>
+                    <h2 id="metricApps">0</h2>
+                    <p class="sub">This demo session</p>
+                </div>
+                <div class="glass-card stat-card">
+                    <p class="label">Completed simulations</p>
+                    <h2 id="metricSims">0</h2>
+                    <p class="sub">Practical assessments</p>
+                </div>
+                <div class="glass-card stat-card">
+                    <p class="label">Verified credentials</p>
+                    <h2>1</h2>
+                    <p class="sub">Active on registry</p>
+                </div>
+            </div>
 
-                <div class="dashboard-split">
-                    <div class="glass-card">
-                        <div class="card-header-bar">
-                            <h3>Jobs for you</h3>
-                            <a onclick="navigateTab('jobs')">View all</a>
-                        </div>
-                        <p class="card-sub">Sorted by profile match. Lower-match jobs remain available.</p>
-
-                        <div class="list-row">
-                            <div>
-                                <h4>Junior Software Engineer</h4>
-                                <p>Nairobi Tech Labs · Nairobi · Hybrid</p>
-                            </div>
-                            <span class="badge-score">85%</span>
-                        </div>
-                        <div class="list-row">
-                            <div>
-                                <h4>Graduate QA Engineer</h4>
-                                <p>Kivu Digital · Kigali · Hybrid</p>
-                            </div>
-                            <span class="badge-score">61%</span>
-                        </div>
-                        <div class="list-row">
-                            <div>
-                                <h4>Backend Developer Intern</h4>
-                                <p>East Africa Systems · Remote</p>
-                            </div>
-                            <span class="badge-score" style="color: var(--text-secondary);">42%</span>
-                        </div>
+            <div class="dashboard-split">
+                <div class="glass-card">
+                    <div class="card-header-bar">
+                        <h3>Jobs for you</h3>
+                        <a onclick="switchNav('jobs')">View all</a>
                     </div>
+                    <p class="card-sub">Sorted by profile match. Lower-match jobs remain available.</p>
 
-                    <div class="glass-card">
-                        <div class="card-header-bar">
-                            <h3>Profile</h3>
+                    <div class="list-row">
+                        <div>
+                            <h4>Junior Software Engineer</h4>
+                            <p>Nairobi Tech Labs · Nairobi · Hybrid</p>
                         </div>
-                        <p class="card-sub">Credential status</p>
-
-                        <div class="list-row">
-                            <span style="color: var(--text-secondary); font-size: 13px;">Academic credential</span>
-                            <span class="status-pill">Verified</span>
+                        <span class="badge-score">85%</span>
+                    </div>
+                    <div class="list-row">
+                        <div>
+                            <h4>Graduate QA Engineer</h4>
+                            <p>Kivu Digital · Kigali · Hybrid</p>
                         </div>
-                        <div class="list-row">
-                            <span style="color: var(--text-secondary); font-size: 13px;">Wallet</span>
-                            <span style="font-weight: 600; font-size: 13px;">Connected</span>
+                        <span class="badge-score">61%</span>
+                    </div>
+                    <div class="list-row">
+                        <div>
+                            <h4>Backend Developer Intern</h4>
+                            <p>East Africa Systems · Remote</p>
                         </div>
-                        <div class="list-row">
-                            <span style="color: var(--text-secondary); font-size: 13px;">Job access</span>
-                            <span style="font-size: 13px;">All listings</span>
-                        </div>
-                        <div class="list-row">
-                            <span style="color: var(--text-secondary); font-size: 13px;">Simulation results</span>
-                            <span style="font-size: 13px;" id="sideSimResult">0</span>
-                        </div>
+                        <span class="badge-score" style="color: var(--text-secondary);">42%</span>
                     </div>
                 </div>
 
                 <div class="glass-card">
                     <div class="card-header-bar">
-                        <h3>Job sources</h3>
+                        <h3>Profile</h3>
+                        <a onclick="openProfileModal()">Edit Details & Docs</a>
                     </div>
-                    <p class="card-sub">Prototype of the ingestion layer. External connections are represented with demo data in this phase.</p>
+                    <p class="card-sub">Credential status & verification</p>
 
-                    <table class="dark-table">
-                        <tr>
-                            <td>Company submissions</td>
-                            <td style="color: var(--text-muted);">Direct posting</td>
-                            <td style="color: var(--accent-green); font-weight: 600; text-align: right;">Active</td>
-                        </tr>
-                        <tr>
-                            <td>Partner job feed</td>
-                            <td style="color: var(--text-muted);">API / feed</td>
-                            <td style="color: #fbbf24; font-weight: 600; text-align: right;">Demo</td>
-                        </tr>
-                        <tr>
-                            <td>ATS connector</td>
-                            <td style="color: var(--text-muted);">Scheduled sync</td>
-                            <td style="color: var(--text-muted); text-align: right;">Planned</td>
-                        </tr>
-                        <tr>
-                            <td>Approved career pages</td>
-                            <td style="color: var(--text-muted);">Permitted integration</td>
-                            <td style="color: var(--text-muted); text-align: right;">Planned</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 2. JOBS -->
-            <div id="tab-jobs" class="tab-pane">
-                <div class="jobs-split-layout">
-                    <div class="glass-card">
-                        <h3>Jobs</h3>
-                        <p class="card-sub">4 roles available</p>
-                        <input type="text" class="search-box-input" placeholder="Search title, company, location or skill">
-
-                        <div class="job-select-item selected" onclick="pickJob(0)">
-                            <div>
-                                <h4 style="font-size: 14px;">Junior Software Engineer</h4>
-                                <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Nairobi Tech Labs · Nairobi · Hybrid · Full-time</p>
-                            </div>
-                            <span class="badge-score">85%</span>
-                        </div>
-                        <div class="job-select-item" onclick="pickJob(1)">
-                            <div>
-                                <h4 style="font-size: 14px;">Backend Developer Intern</h4>
-                                <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">East Africa Systems · Remote · Internship</p>
-                            </div>
-                            <span class="badge-score" style="color: var(--text-secondary);">42%</span>
-                        </div>
-                        <div class="job-select-item" onclick="pickJob(2)">
-                            <div>
-                                <h4 style="font-size: 14px;">Embedded Systems Trainee</h4>
-                                <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Mobility Works · Kigali · On-site · Traineeship</p>
-                            </div>
-                            <span class="badge-score" style="color: var(--text-secondary);">28%</span>
-                        </div>
-                        <div class="job-select-item" onclick="pickJob(3)">
-                            <div>
-                                <h4 style="font-size: 14px;">Graduate QA Engineer</h4>
-                                <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Kivu Digital · Kigali · Hybrid · Full-time</p>
-                            </div>
-                            <span class="badge-score">61%</span>
-                        </div>
-                    </div>
-
-                    <div class="glass-card">
-                        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px;" id="detailJobHeading">Junior Software Engineer</h2>
-                        <p style="font-size: 13px; color: var(--text-secondary); margin: 6px 0 16px;" id="detailJobSubtitle">Nairobi Tech Labs · Nairobi · Hybrid</p>
-                        
-                        <div style="margin-bottom: 22px;">
-                            <span class="tag-pill">Full-time</span>
-                            <span class="tag-pill">Source: Company submission</span>
-                            <span class="tag-pill">Posted today</span>
-                        </div>
-
-                        <div style="margin-bottom: 24px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); padding: 18px; border-radius: 8px;">
-                            <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600;">
-                                <span>Profile match</span>
-                                <span id="detailJobMatchVal" style="font-family: 'Space Grotesk', sans-serif; font-size: 15px;">85%</span>
-                            </div>
-                            <div class="match-bar-track">
-                                <div class="match-bar-fill" id="detailJobProgressBar" style="width: 85%;"></div>
-                            </div>
-                            <p style="font-size: 12px; color: var(--text-muted);">You can apply even if your match score is low. A simulation can provide additional evidence.</p>
-                        </div>
-
-                        <h4 style="font-size: 14px; margin-bottom: 8px;">About the role</h4>
-                        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 22px;">
-                            Support the product engineering team by building and maintaining web features, fixing defects and contributing to API integrations.
-                        </p>
-
-                        <h4 style="font-size: 14px; margin-bottom: 8px;">Key requirements</h4>
-                        <ul style="font-size: 13px; color: var(--text-secondary); margin-left: 20px; margin-bottom: 28px; line-height: 1.7;">
-                            <li>JavaScript</li>
-                            <li>Git</li>
-                            <li>REST APIs</li>
-                            <li>Basic SQL</li>
-                        </ul>
-
-                        <div style="display: flex; gap: 12px;">
-                            <button class="btn-btrust-action" onclick="submitApplication()">Apply Now</button>
-                            <button class="btn-secondary" onclick="navigateTab('simulations')">Take simulation</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. APPLICATIONS -->
-            <div id="tab-applications" class="tab-pane">
-                <div class="glass-card" style="min-height: 380px;">
-                    <div class="card-header-bar">
-                        <h3>Applications</h3>
-                    </div>
-                    <p class="card-sub">Applications submitted during this demo session.</p>
-
-                    <div id="noAppsState" style="text-align: center; margin-top: 110px;">
-                        <h4 style="font-size: 16px; margin-bottom: 6px;">No applications yet</h4>
-                        <p style="font-size: 13px; color: var(--text-muted);">Open Jobs and submit an application to see it here.</p>
-                    </div>
-
-                    <div id="appsListing" style="display: none;"></div>
-                </div>
-            </div>
-
-            <!-- 4. SIMULATIONS -->
-            <div id="tab-simulations" class="tab-pane">
-                <div class="glass-card">
-                    <div class="card-header-bar">
-                        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Job simulation</h2>
-                        <span class="tag-pill">Demo assessment</span>
-                    </div>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Junior Software Engineer · Nairobi Tech Labs</p>
-                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 26px;">
-                        This role-specific exercise is an additional way to demonstrate practical ability. It does not replace verified credentials; employers can review both forms of evidence.
-                    </p>
-
-                    <div class="step-tile">
-                        <div class="step-tile-left">
-                            <div class="step-index">01</div>
-                            <div>
-                                <h4 style="font-size: 14px;">Review the scenario</h4>
-                                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Read a short workplace problem related to the role.</p>
-                            </div>
-                        </div>
-                        <span style="font-size: 12px; color: var(--text-muted);">10 min</span>
-                    </div>
-
-                    <div class="step-tile">
-                        <div class="step-tile-left">
-                            <div class="step-index">02</div>
-                            <div>
-                                <h4 style="font-size: 14px;">Complete the practical task</h4>
-                                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Submit a solution or response based on the job requirements.</p>
-                            </div>
-                        </div>
-                        <span style="font-size: 12px; color: var(--text-muted);">25 min</span>
-                    </div>
-
-                    <div class="step-tile">
-                        <div class="step-tile-left">
-                            <div class="step-index">03</div>
-                            <div>
-                                <h4 style="font-size: 14px;">Explain your approach</h4>
-                                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Describe trade-offs, assumptions and the steps you took.</p>
-                            </div>
-                        </div>
-                        <span style="font-size: 12px; color: var(--text-muted);">10 min</span>
-                    </div>
-
-                    <button class="btn-btrust-action" style="margin-top: 16px;" onclick="runSimulationFlow()">
-                        Complete demo simulation <span>&rarr;</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- 5. CREDENTIALS -->
-            <div id="tab-credentials" class="tab-pane">
-                <div class="glass-card">
-                    <div class="card-header-bar">
-                        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Credentials</h2>
-                    </div>
-                    <p class="card-sub">Verified records linked to this profile.</p>
-
-                    <div style="border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.02); border-radius: 10px; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                        <div style="display: flex; align-items: center; gap: 16px;">
-                            <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: #34d399; display: flex; align-items: center; justify-content: center; font-weight: 700;">✓</div>
-                            <div>
-                                <h4 style="font-size: 14px;">BSc Software Engineering</h4>
-                                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">African Leadership University</p>
-                                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px; font-family: monospace;">Credential ID UC-2026-001 · Issued 15 Sep 2026</p>
-                            </div>
-                        </div>
+                    <div class="list-row">
+                        <span style="color: var(--text-secondary); font-size: 13px;">Academic credential</span>
                         <span class="status-pill">Verified</span>
                     </div>
-
-                    <p style="font-size: 12px; color: var(--text-muted); background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); padding: 14px; border-radius: 8px;">
-                        Credential verification contributes to trust and job matching. It does not restrict access to job listings or applications.
-                    </p>
+                    <div class="list-row">
+                        <span style="color: var(--text-secondary); font-size: 13px;">Wallet</span>
+                        <span style="font-weight: 600; font-size: 13px;">Connected</span>
+                    </div>
+                    <div class="list-row">
+                        <span style="color: var(--text-secondary); font-size: 13px;">Job access</span>
+                        <span style="font-size: 13px;">All listings</span>
+                    </div>
+                    <div class="list-row">
+                        <span style="color: var(--text-secondary); font-size: 13px;">Simulation results</span>
+                        <span style="font-size: 13px;" id="sideSimCount">0</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- 6. VERIFY CREDENTIAL -->
-            <div id="tab-verify" class="tab-pane">
-                <div class="glass-card">
-                    <div class="card-header-bar">
-                        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Verify credential</h2>
-                    </div>
-                    <p class="card-sub">Check the status of a credential recorded by the UjuziChain contract on Sepolia.</p>
+            <div class="glass-card">
+                <div class="card-header-bar">
+                    <h3>Job sources</h3>
+                </div>
+                <p class="card-sub">Prototype of the ingestion layer. External connections are represented with demo data in this phase.</p>
 
-                    <div style="margin-top: 24px;">
-                        <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 8px;">Credential ID</label>
-                        <div style="display: flex; gap: 12px; max-width: 600px;">
-                            <input type="text" id="credentialVerifyInput" value="UC-2026-001" style="flex: 1; padding: 12px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); border-radius: 8px; color: #ffffff; font-size: 13px; outline: none;">
-                            <button class="btn-btrust-action" onclick="verifySepoliaRecord()">Verify</button>
+                <table class="dark-table">
+                    <tr>
+                        <td>Company submissions</td>
+                        <td style="color: var(--text-muted);">Direct posting</td>
+                        <td style="color: var(--accent-green); font-weight: 600; text-align: right;">Active</td>
+                    </tr>
+                    <tr>
+                        <td>Partner job feed</td>
+                        <td style="color: var(--text-muted);">API / feed</td>
+                        <td style="color: #fbbf24; font-weight: 600; text-align: right;">Demo</td>
+                    </tr>
+                    <tr>
+                        <td>ATS connector</td>
+                        <td style="color: var(--text-muted);">Scheduled sync</td>
+                        <td style="color: var(--text-muted); text-align: right;">Planned</td>
+                    </tr>
+                    <tr>
+                        <td>Approved career pages</td>
+                        <td style="color: var(--text-muted);">Permitted integration</td>
+                        <td style="color: var(--text-muted); text-align: right;">Planned</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- 2. JOBS -->
+        <div id="pane-jobs" class="tab-pane">
+            <div class="jobs-split-layout">
+                <div class="glass-card">
+                    <h3>Jobs</h3>
+                    <p class="card-sub">4 roles available</p>
+                    <input type="text" class="search-box-input" placeholder="Search title, company, location or skill">
+
+                    <div class="job-select-item selected" onclick="pickJob(0)">
+                        <div>
+                            <h4 style="font-size: 14px;">Junior Software Engineer</h4>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Nairobi Tech Labs · Nairobi · Hybrid · Full-time</p>
+                        </div>
+                        <span class="badge-score">85%</span>
+                    </div>
+                    <div class="job-select-item" onclick="pickJob(1)">
+                        <div>
+                            <h4 style="font-size: 14px;">Backend Developer Intern</h4>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">East Africa Systems · Remote · Internship</p>
+                        </div>
+                        <span class="badge-score" style="color: var(--text-secondary);">42%</span>
+                    </div>
+                    <div class="job-select-item" onclick="pickJob(2)">
+                        <div>
+                            <h4 style="font-size: 14px;">Embedded Systems Trainee</h4>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Mobility Works · Kigali · On-site · Traineeship</p>
+                        </div>
+                        <span class="badge-score" style="color: var(--text-secondary);">28%</span>
+                    </div>
+                    <div class="job-select-item" onclick="pickJob(3)">
+                        <div>
+                            <h4 style="font-size: 14px;">Graduate QA Engineer</h4>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Kivu Digital · Kigali · Hybrid · Full-time</p>
+                        </div>
+                        <span class="badge-score">61%</span>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px;" id="detailHeading">Junior Software Engineer</h2>
+                    <p style="font-size: 13px; color: var(--text-secondary); margin: 6px 0 16px;" id="detailSub">Nairobi Tech Labs · Nairobi · Hybrid</p>
+                    
+                    <div style="margin-bottom: 22px;">
+                        <span class="tag-pill">Full-time</span>
+                        <span class="tag-pill">Source: Company submission</span>
+                        <span class="tag-pill">Posted today</span>
+                    </div>
+
+                    <div style="margin-bottom: 24px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); padding: 18px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600;">
+                            <span>Profile match</span>
+                            <span id="detailScore" style="font-family: 'Space Grotesk', sans-serif; font-size: 15px;">85%</span>
+                        </div>
+                        <div class="match-bar-track">
+                            <div class="match-bar-fill" id="detailBar" style="width: 85%;"></div>
+                        </div>
+                        <p style="font-size: 12px; color: var(--text-muted);">You can apply even if your match score is low. A simulation can provide additional evidence.</p>
+                    </div>
+
+                    <h4 style="font-size: 14px; margin-bottom: 8px;">About the role</h4>
+                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 22px;">
+                        Support the product engineering team by building and maintaining web features, fixing defects and contributing to API integrations.
+                    </p>
+
+                    <h4 style="font-size: 14px; margin-bottom: 8px;">Key requirements</h4>
+                    <ul style="font-size: 13px; color: var(--text-secondary); margin-left: 20px; margin-bottom: 28px; line-height: 1.7;">
+                        <li>JavaScript</li>
+                        <li>Git</li>
+                        <li>REST APIs</li>
+                        <li>Basic SQL</li>
+                    </ul>
+
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn-btrust-action" onclick="applyJob()">Apply Now</button>
+                        <button class="btn-secondary" onclick="switchNav('simulations')">Take simulation</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. APPLICATIONS -->
+        <div id="pane-applications" class="tab-pane">
+            <div class="glass-card" style="min-height: 380px;">
+                <div class="card-header-bar">
+                    <h3>Applications</h3>
+                </div>
+                <p class="card-sub">Applications submitted during this demo session.</p>
+
+                <div id="emptyAppsView" style="text-align: center; margin-top: 100px;">
+                    <h4 style="font-size: 16px; margin-bottom: 6px;">No applications yet</h4>
+                    <p style="font-size: 13px; color: var(--text-muted);">Open Jobs and submit an application to see it here.</p>
+                </div>
+
+                <div id="submittedAppsList" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- 4. SIMULATIONS -->
+        <div id="pane-simulations" class="tab-pane">
+            <div class="glass-card">
+                <div class="card-header-bar">
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Job simulation</h2>
+                    <span class="tag-pill">Demo assessment</span>
+                </div>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Junior Software Engineer · Nairobi Tech Labs</p>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 26px;">
+                    This role-specific exercise is an additional way to demonstrate practical ability. It does not replace verified credentials; employers can review both forms of evidence.
+                </p>
+
+                <div class="step-tile">
+                    <div class="step-tile-left">
+                        <div class="step-index">01</div>
+                        <div>
+                            <h4 style="font-size: 14px;">Review the scenario</h4>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Read a short workplace problem related to the role.</p>
                         </div>
                     </div>
-
-                    <div id="verifyFeedback" style="margin-top: 20px; display: none; padding: 16px; border-radius: 8px; font-size: 13px; max-width: 600px;"></div>
+                    <span style="font-size: 12px; color: var(--text-muted);">10 min</span>
                 </div>
+
+                <div class="step-tile">
+                    <div class="step-tile-left">
+                        <div class="step-index">02</div>
+                        <div>
+                            <h4 style="font-size: 14px;">Complete the practical task</h4>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Submit a solution or response based on the job requirements.</p>
+                        </div>
+                    </div>
+                    <span style="font-size: 12px; color: var(--text-muted);">25 min</span>
+                </div>
+
+                <div class="step-tile">
+                    <div class="step-tile-left">
+                        <div class="step-index">03</div>
+                        <div>
+                            <h4 style="font-size: 14px;">Explain your approach</h4>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Describe trade-offs, assumptions and the steps you took.</p>
+                        </div>
+                    </div>
+                    <span style="font-size: 12px; color: var(--text-muted);">10 min</span>
+                </div>
+
+                <button class="btn-btrust-action" style="margin-top: 16px;" onclick="doSimulation()">
+                    Complete demo simulation <span>&rarr;</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 5. CREDENTIALS -->
+        <div id="pane-credentials" class="tab-pane">
+            <div class="glass-card">
+                <div class="card-header-bar">
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Credentials</h2>
+                    <button class="btn-secondary" onclick="openProfileModal()">Add New Credential Doc</button>
+                </div>
+                <p class="card-sub">Verified records linked to this profile.</p>
+
+                <div style="border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.02); border-radius: 10px; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: #34d399; display: flex; align-items: center; justify-content: center; font-weight: 700;">✓</div>
+                        <div>
+                            <h4 style="font-size: 14px;">BSc Software Engineering</h4>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">African Leadership University</p>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px; font-family: monospace;">Credential ID UC-2026-001 · Issued 15 Sep 2026</p>
+                        </div>
+                    </div>
+                    <span class="status-pill">Verified</span>
+                </div>
+
+                <p style="font-size: 12px; color: var(--text-muted); background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); padding: 14px; border-radius: 8px;">
+                    Credential verification contributes to trust and job matching. It does not restrict access to job listings or applications.
+                </p>
+            </div>
+        </div>
+
+        <!-- 6. VERIFY CREDENTIAL -->
+        <div id="pane-verify" class="tab-pane">
+            <div class="glass-card">
+                <div class="card-header-bar">
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Verify credential</h2>
+                </div>
+                <p class="card-sub">Check the status of a credential recorded by the UjuziChain contract on Sepolia.</p>
+
+                <div style="margin-top: 24px;">
+                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 8px;">Credential ID</label>
+                    <div style="display: flex; gap: 12px; max-width: 600px;">
+                        <input type="text" id="verifyIdField" value="UC-2026-001" style="flex: 1; padding: 12px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); border-radius: 8px; color: #ffffff; font-size: 13px; outline: none;">
+                        <button class="btn-btrust-action" onclick="verifyOnSepolia()">Verify</button>
+                    </div>
+                </div>
+
+                <div id="verifyOut" style="margin-top: 20px; display: none; padding: 16px; border-radius: 8px; font-size: 13px; max-width: 600px;"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Interactive Profile & Document Modal (Applicants & Recruiters) -->
+    <div class="modal-overlay" id="profileModal" onclick="closeProfileModal(event)">
+        <div class="modal-container" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modalRoleTitle">Edit Profile & Documents</h3>
+                <button class="close-btn" onclick="closeProfileModal()">&times;</button>
             </div>
 
+            <form id="profileForm" onsubmit="saveProfileDetails(event)">
+                <div class="form-group">
+                    <label id="lblFullName">Full Name / Organization</label>
+                    <input type="text" id="inputFullName" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label id="lblHeadline">Professional Title / Company Industry</label>
+                    <input type="text" id="inputHeadline" class="form-input" placeholder="e.g. Full Stack Developer or Tech Recruiting">
+                </div>
+
+                <div class="form-group">
+                    <label>Bio / Overview</label>
+                    <textarea id="inputBio" class="form-input" rows="3" placeholder="Brief summary of experience or company mission..."></textarea>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 20px 0;">
+
+                <h4 style="font-size: 14px; margin-bottom: 8px;" id="lblDocsSection">Uploaded Documents & Credentials</h4>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;" id="lblDocsSub">Upload your degrees, certificates, or company registration credentials.</p>
+
+                <div class="drop-zone" onclick="document.getElementById('docFileInput').click()">
+                    <p style="font-size: 13px; font-weight: 500;">+ Click to upload a document (PDF, PNG, JPG)</p>
+                    <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Files will be attached to your session profile</p>
+                    <input type="file" id="docFileInput" style="display: none;" onchange="handleDocUpload(event)">
+                </div>
+
+                <div id="uploadedDocsList"></div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+                    <button type="button" class="btn-secondary" onclick="closeProfileModal()">Cancel</button>
+                    <button type="submit" class="btn-btrust-action">Save Changes</button>
+                </div>
+            </form>
         </div>
-    </main>
+    </div>
 
     <script>
         const contractAddress = "0xA40d77d6e31F5044C7151dAd78C8bA6C3313132F";
@@ -746,122 +878,213 @@
         let totalApps = 0;
         let totalSims = 0;
 
-        const sessionWallet = sessionStorage.getItem("userAddress") || "0x5FbD...0aa3";
-        document.getElementById("userWalletPreview").innerText = sessionWallet.length > 10 ? `${sessionWallet.substring(0, 6)}...${sessionWallet.substring(38)}` : sessionWallet;
+        // User session & profile persistence
+        const currentRole = sessionStorage.getItem("userRole") || "Applicant";
+        const currentWallet = sessionStorage.getItem("userAddress") || "0xE174F15fc91870c2B0e92E437962955EA08F5d51";
 
-        function navigateTab(tabName) {
-            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+        // Load saved profile data or defaults
+        let profileData = JSON.parse(localStorage.getItem(`ujuzi_profile_${currentRole}`)) || {
+            name: currentRole === "Recruiter" ? "Nairobi Tech Talent" : "Maxwel Okoth",
+            headline: currentRole === "Recruiter" ? "Engineering Hiring Partner" : "Full Stack Web3 Developer",
+            bio: currentRole === "Recruiter" ? "Connecting top African builders with global opportunities." : "Passionate software engineer building decentralized applications.",
+            docs: [
+                { name: "ALU_BSc_Software_Engineering_Degree.pdf", size: "2.4 MB", date: "Sep 2026", verified: true }
+            ]
+        };
 
-            document.getElementById(`tab-${tabName}`).classList.add('active');
+        // Initialize UI with session info
+        document.getElementById("topRoleBadge").innerText = currentRole;
+        document.getElementById("navDisplayName").innerText = profileData.name;
+        document.getElementById("navAvatarInitials").innerText = profileData.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+        document.getElementById("navWalletAddress").innerText = currentWallet.length > 10 ? `${currentWallet.substring(0, 6)}...${currentWallet.substring(38)}` : currentWallet;
 
-            const headerTitles = {
-                'overview': 'Overview',
-                'jobs': 'Jobs',
-                'applications': 'Applications',
-                'simulations': 'Simulations',
-                'credentials': 'Credentials',
-                'verify': 'Verify credential'
-            };
-            document.getElementById('topBarTitle').innerText = headerTitles[tabName];
-
-            const navLinks = document.querySelectorAll('.nav-link');
-            const indexMap = { 'overview': 0, 'jobs': 1, 'applications': 2, 'simulations': 3, 'credentials': 4, 'verify': 5 };
-            navLinks[indexMap[tabName]].classList.add('active');
+        // Customise profile labels for Recruiter vs Applicant
+        if (currentRole === "Recruiter") {
+            document.getElementById("modalRoleTitle").innerText = "Recruiter Profile & Verification Docs";
+            document.getElementById("lblFullName").innerText = "Company / Recruiter Name";
+            document.getElementById("lblHeadline").innerText = "Industry / Hiring Department";
+            document.getElementById("lblDocsSection").innerText = "Company Verification Documents";
+            document.getElementById("lblDocsSub").innerText = "Attach certificate of incorporation or tax registration.";
         }
 
-        const rolesList = [
+        // Top Navigation Tab Switching
+        function switchNav(tabName) {
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(`pane-${tabName}`).classList.add('active');
+            document.getElementById(`btn-tab-${tabName}`).classList.add('active');
+        }
+
+        // Logout logic
+        function performLogout() {
+            sessionStorage.clear();
+            window.location.href = "login.html";
+        }
+
+        // Jobs selection & submission
+        const jobRoles = [
             { title: "Junior Software Engineer", company: "Nairobi Tech Labs · Nairobi · Hybrid", match: "85%" },
             { title: "Backend Developer Intern", company: "East Africa Systems · Remote", match: "42%" },
             { title: "Embedded Systems Trainee", company: "Mobility Works · Kigali · On-site", match: "28%" },
             { title: "Graduate QA Engineer", company: "Kivu Digital · Kigali · Hybrid", match: "61%" }
         ];
 
-        let currentActiveJob = 0;
+        let selectedJob = 0;
         function pickJob(index) {
-            currentActiveJob = index;
+            selectedJob = index;
             document.querySelectorAll('.job-select-item').forEach((item, idx) => {
                 item.classList.toggle('selected', idx === index);
             });
-            document.getElementById('detailJobHeading').innerText = rolesList[index].title;
-            document.getElementById('detailJobSubtitle').innerText = rolesList[index].company;
-            document.getElementById('detailJobMatchVal').innerText = rolesList[index].match;
-            document.getElementById('detailJobProgressBar').style.width = rolesList[index].match;
+            document.getElementById('detailHeading').innerText = jobRoles[index].title;
+            document.getElementById('detailSub').innerText = jobRoles[index].company;
+            document.getElementById('detailScore').innerText = jobRoles[index].match;
+            document.getElementById('detailBar').style.width = jobRoles[index].match;
         }
 
-        function submitApplication() {
+        function applyJob() {
             totalApps++;
-            document.getElementById('appCountMetric').innerText = totalApps;
-            document.getElementById('noAppsState').style.display = 'none';
+            document.getElementById('metricApps').innerText = totalApps;
+            document.getElementById('emptyAppsView').style.display = 'none';
 
-            const listContainer = document.getElementById('appsListing');
-            listContainer.style.display = 'block';
-            listContainer.innerHTML += `
+            const list = document.getElementById('submittedAppsList');
+            list.style.display = 'block';
+            list.innerHTML += `
                 <div class="list-row" style="padding: 16px 0;">
                     <div>
-                        <h4>${rolesList[currentActiveJob].title}</h4>
-                        <p>${rolesList[currentActiveJob].company}</p>
+                        <h4>${jobRoles[selectedJob].title}</h4>
+                        <p>${jobRoles[selectedJob].company}</p>
                     </div>
                     <span class="status-pill">Submitted</span>
                 </div>
             `;
-            alert(`Application submitted for ${rolesList[currentActiveJob].title}!`);
-            navigateTab('applications');
+            alert(`Application submitted for ${jobRoles[selectedJob].title}!`);
+            switchNav('applications');
         }
 
-        function runSimulationFlow() {
+        function doSimulation() {
             totalSims++;
-            document.getElementById('simCountMetric').innerText = totalSims;
-            document.getElementById('sideSimResult').innerText = totalSims;
+            document.getElementById('metricSims').innerText = totalSims;
+            document.getElementById('sideSimCount').innerText = totalSims;
             alert("Simulation completed successfully! Your profile accuracy has been updated.");
-            navigateTab('overview');
+            switchNav('overview');
         }
 
-        async function verifySepoliaRecord() {
-            const raw = document.getElementById("credentialVerifyInput").value.trim();
-            const box = document.getElementById("verifyFeedback");
-            box.style.display = "block";
-            box.style.background = "rgba(255, 255, 255, 0.05)";
-            box.style.border = "1px solid var(--border-subtle)";
-            box.style.color = "#ffffff";
-            box.innerText = "Querying live Ethereum Sepolia contract...";
+        // Modal Controls & Document Management
+        function openProfileModal() {
+            document.getElementById("inputFullName").value = profileData.name;
+            document.getElementById("inputHeadline").value = profileData.headline;
+            document.getElementById("inputBio").value = profileData.bio;
+            renderDocsList();
+            document.getElementById("profileModal").style.display = "flex";
+        }
+
+        function closeProfileModal(e) {
+            if (!e || e.target.id === "profileModal") {
+                document.getElementById("profileModal").style.display = "none";
+            }
+        }
+
+        function renderDocsList() {
+            const container = document.getElementById("uploadedDocsList");
+            if (!profileData.docs || profileData.docs.length === 0) {
+                container.innerHTML = `<p style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;">No documents attached yet.</p>`;
+                return;
+            }
+            container.innerHTML = profileData.docs.map((doc, idx) => `
+                <div class="doc-item">
+                    <div>
+                        <strong>${doc.name}</strong>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${doc.size} · Uploaded ${doc.date}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        ${doc.verified ? '<span class="status-pill" style="font-size: 11px;">Verified</span>' : '<span style="font-size: 11px; color: var(--text-muted);">Attached</span>'}
+                        <button type="button" onclick="deleteDoc(${idx})" style="background: transparent; border: none; color: #f87171; cursor: pointer; font-size: 14px;">&times;</button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function handleDocUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const newDoc = {
+                name: file.name,
+                size: (file.size / 1024 / 1024).toFixed(2) + " MB",
+                date: "Today",
+                verified: false
+            };
+            profileData.docs.push(newDoc);
+            renderDocsList();
+        }
+
+        function deleteDoc(index) {
+            profileData.docs.splice(index, 1);
+            renderDocsList();
+        }
+
+        function saveProfileDetails(e) {
+            e.preventDefault();
+            profileData.name = document.getElementById("inputFullName").value.trim();
+            profileData.headline = document.getElementById("inputHeadline").value.trim();
+            profileData.bio = document.getElementById("inputBio").value.trim();
+
+            localStorage.setItem(`ujuzi_profile_${currentRole}`, JSON.stringify(profileData));
+
+            document.getElementById("navDisplayName").innerText = profileData.name;
+            document.getElementById("navAvatarInitials").innerText = profileData.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+
+            document.getElementById("profileModal").style.display = "none";
+            alert("Profile details and documents saved!");
+        }
+
+        // Live Sepolia verification
+        async function verifyOnSepolia() {
+            const rawId = document.getElementById("verifyIdField").value.trim();
+            const out = document.getElementById("verifyOut");
+            out.style.display = "block";
+            out.style.background = "rgba(255, 255, 255, 0.05)";
+            out.style.border = "1px solid var(--border-subtle)";
+            out.style.color = "#ffffff";
+            out.innerText = "Querying live Ethereum Sepolia contract...";
 
             try {
                 const provider = window.ethereum ? new ethers.BrowserProvider(window.ethereum) : ethers.getDefaultProvider("sepolia");
                 const contract = new ethers.Contract(contractAddress, contractABI, provider);
 
-                let bytes32Id = raw.startsWith("0x") && raw.length === 66 ? raw : ethers.encodeBytes32String(raw.substring(0, 31));
+                let bytes32Id = rawId.startsWith("0x") && rawId.length === 66 ? rawId : ethers.encodeBytes32String(rawId.substring(0, 31));
                 const [isValid, studentId, degree] = await contract.verifyCredential(bytes32Id);
 
                 if (isValid) {
-                    box.style.background = "rgba(16, 185, 129, 0.1)";
-                    box.style.border = "1px solid rgba(16, 185, 129, 0.3)";
-                    box.style.color = "#34d399";
-                    box.innerHTML = `<strong>Credential Verified Valid On-Chain</strong><br>Student: ${studentId}<br>Degree: ${degree}`;
+                    out.style.background = "rgba(16, 185, 129, 0.1)";
+                    out.style.border = "1px solid rgba(16, 185, 129, 0.3)";
+                    out.style.color = "#34d399";
+                    out.innerHTML = `<strong>Credential Verified Valid On-Chain</strong><br>Student: ${studentId}<br>Degree: ${degree}`;
                 } else {
-                    if (raw === "UC-2026-001") {
-                        box.style.background = "rgba(16, 185, 129, 0.1)";
-                        box.style.border = "1px solid rgba(16, 185, 129, 0.3)";
-                        box.style.color = "#34d399";
-                        box.innerHTML = `<strong>Credential Verified Valid (Registry Demo)</strong><br>Institution: African Leadership University<br>Degree: BSc Software Engineering<br>Status: Confirmed On-Chain`;
+                    if (rawId === "UC-2026-001") {
+                        out.style.background = "rgba(16, 185, 129, 0.1)";
+                        out.style.border = "1px solid rgba(16, 185, 129, 0.3)";
+                        out.style.color = "#34d399";
+                        out.innerHTML = `<strong>Credential Verified Valid (Registry Demo)</strong><br>Institution: African Leadership University<br>Degree: BSc Software Engineering<br>Status: Confirmed On-Chain`;
                     } else {
-                        box.style.background = "rgba(239, 68, 68, 0.1)";
-                        box.style.border = "1px solid rgba(239, 68, 68, 0.3)";
-                        box.style.color = "#f87171";
-                        box.innerText = "Credential ID not found on Sepolia.";
+                        out.style.background = "rgba(239, 68, 68, 0.1)";
+                        out.style.border = "1px solid rgba(239, 68, 68, 0.3)";
+                        out.style.color = "#f87171";
+                        out.innerText = "Credential ID not found on Sepolia.";
                     }
                 }
             } catch (err) {
-                if (raw === "UC-2026-001") {
-                    box.style.background = "rgba(16, 185, 129, 0.1)";
-                    box.style.border = "1px solid rgba(16, 185, 129, 0.3)";
-                    box.style.color = "#34d399";
-                    box.innerHTML = `<strong>Credential Verified Valid (Registry Demo)</strong><br>Institution: African Leadership University<br>Degree: BSc Software Engineering`;
+                if (rawId === "UC-2026-001") {
+                    out.style.background = "rgba(16, 185, 129, 0.1)";
+                    out.style.border = "1px solid rgba(16, 185, 129, 0.3)";
+                    out.style.color = "#34d399";
+                    out.innerHTML = `<strong>Credential Verified Valid (Registry Demo)</strong><br>Institution: African Leadership University<br>Degree: BSc Software Engineering`;
                 } else {
-                    box.style.background = "rgba(239, 68, 68, 0.1)";
-                    box.style.border = "1px solid rgba(239, 68, 68, 0.3)";
-                    box.style.color = "#f87171";
-                    box.innerText = "Record lookup completed: Not found.";
+                    out.style.background = "rgba(239, 68, 68, 0.1)";
+                    out.style.border = "1px solid rgba(239, 68, 68, 0.3)";
+                    out.style.color = "#f87171";
+                    out.innerText = "Record lookup completed: Not found.";
                 }
             }
         }
