@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - UjuziChain</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="index.html" style="color:white; text-decoration:none;"><strong>Ujuzi</strong>Chain</a></div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2>Welcome to UjuziChain</h2>
+            <p>Select your account type to continue</p>
+            
+            <div class="role-selector">
+                <button class="role-btn active" id="btn-applicant" onclick="setRole('Applicant')">Applicant</button>
+                <button class="role-btn" id="btn-recruiter" onclick="setRole('Recruiter')">Recruiter</button>
+            </div>
+
+            <form id="auth-form" onsubmit="handleAuth(event)">
+                <h3 id="form-title">Applicant Login</h3>
+                
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="email" required placeholder="Enter your email">
+                </div>
+                
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" required placeholder="Enter password">
+                </div>
+
+                <button type="submit" class="btn-primary full-width">Sign In</button>
+                
+                <p class="toggle-auth">Don't have an account? <a href="#" onclick="toggleMode()">Create one</a></p>
+            </form>
+        </div>
+    </div>
+    
+    <script src="js/auth.js"></script>
+</body>
+</html>
