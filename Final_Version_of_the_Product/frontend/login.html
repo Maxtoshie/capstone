@@ -27,8 +27,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 24px;
             background-image: 
                 radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.035) 0%, transparent 60%),
                 radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
@@ -36,26 +34,35 @@
             background-size: cover;
         }
 
-        .auth-card {
-            background: var(--bg-card);
+        /* Floating Btrust Navbar */
+        .navbar-wrap {
+            position: sticky;
+            top: 16px;
+            z-index: 100;
+            padding: 0 24px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 16px auto 0;
+        }
+        .btrust-navbar {
+            background: rgba(18, 20, 26, 0.7);
             backdrop-filter: blur(20px);
             border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 440px;
-            padding: 36px 32px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
-        }
-
-        .brand-header {
+            border-radius: 14px;
+            padding: 10px 20px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            justify-content: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             text-decoration: none;
             color: #ffffff;
+            cursor: pointer;
         }
         .logo-box {
             background: #ffffff;
@@ -72,9 +79,79 @@
         }
         .logo-text {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             letter-spacing: -0.3px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .nav-item {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .nav-item:hover { color: #ffffff; }
+
+        .btn-nav-back {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: #ffffff;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-nav-back:hover {
+            border-color: var(--border-hover);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Center Content Container */
+        .auth-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            width: 100%;
+        }
+
+        .auth-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 440px;
+            padding: 36px 32px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .brand-header {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            text-decoration: none;
+            color: #ffffff;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .brand-header:hover {
+            opacity: 0.85;
         }
 
         .role-switch {
@@ -109,12 +186,14 @@
             font-size: 22px;
             font-weight: 700;
             margin-bottom: 6px;
+            text-align: left;
         }
         .form-sub {
             font-size: 13px;
             color: var(--text-muted);
             margin-bottom: 20px;
             line-height: 1.5;
+            text-align: left;
         }
 
         .input-group {
@@ -178,6 +257,18 @@
             font-weight: 500;
         }
 
+        .back-home-link {
+            display: inline-block;
+            margin-top: 14px;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-home-link:hover {
+            color: #ffffff;
+        }
+
         #statusText {
             margin-top: 14px;
             font-size: 12.5px;
@@ -188,56 +279,84 @@
 </head>
 <body>
 
-    <div class="auth-card">
-        <a href="index.html" class="brand-header">
-            <div class="logo-box">UC</div>
-            <div class="logo-text">UjuziChain</div>
-        </a>
+    <!-- Top Navigation Bar -->
+    <div class="navbar-wrap">
+        <nav class="btrust-navbar">
+            <a href="index.html" class="nav-brand" title="Go to UjuziChain Homepage">
+                <div class="logo-box">UC</div>
+                <div class="logo-text">UjuziChain</div>
+            </a>
 
-        <!-- Role Selector -->
-        <div class="role-switch">
-            <button class="role-tab active" id="tabApplicant" onclick="setRole('Applicant')">Applicant</button>
-            <button class="role-tab" id="tabRecruiter" onclick="setRole('Recruiter')">Recruiter</button>
+            <div class="nav-links">
+                <a href="index.html" class="nav-item">Home</a>
+                <a href="index.html#about" class="nav-item">About Us</a>
+            </div>
+
+            <a href="index.html" class="btn-nav-back">
+                &larr; Back to Home
+            </a>
+        </nav>
+    </div>
+
+    <!-- Centered Login Box -->
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <!-- Clickable Logo Header -->
+            <a href="index.html" class="brand-header" title="Go to UjuziChain Homepage">
+                <div class="logo-box">UC</div>
+                <div class="logo-text">UjuziChain</div>
+            </a>
+
+            <!-- Role Selector -->
+            <div class="role-switch">
+                <button class="role-tab active" id="tabApplicant" onclick="setRole('Applicant')">Applicant</button>
+                <button class="role-tab" id="tabRecruiter" onclick="setRole('Recruiter')">Recruiter</button>
+            </div>
+
+            <h2 class="form-title" id="formHeader">Applicant Sign In</h2>
+            <p class="form-sub" id="formSub">Connect your MetaMask wallet to verify your identity on Ethereum Sepolia.</p>
+
+            <!-- Registration Fields (Hidden in Sign In mode) -->
+            <div id="signUpFields" style="display: none;">
+                <div class="input-group">
+                    <label id="lblName">Full Name</label>
+                    <input type="text" id="regFullName" class="form-input" placeholder="e.g. Maxwel Okoth">
+                </div>
+
+                <div class="input-group">
+                    <label id="lblTitle">Professional Title</label>
+                    <input type="text" id="regTitle" class="form-input" placeholder="e.g. Full Stack Web3 Developer">
+                </div>
+
+                <div class="input-group">
+                    <label>East Africa Regional Hub</label>
+                    <select id="regLocation" class="form-input" style="background: #111318;">
+                        <option value="Nairobi, Kenya">Nairobi, Kenya</option>
+                        <option value="Kigali, Rwanda">Kigali, Rwanda</option>
+                        <option value="Kampala, Uganda">Kampala, Uganda</option>
+                        <option value="Dar es Salaam, Tanzania">Dar es Salaam, Tanzania</option>
+                        <option value="Remote (East Africa)">Remote (East Africa)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <button class="btn-action" id="authSubmitBtn" onclick="executeAuth()">
+                Sign In with MetaMask <span>&rarr;</span>
+            </button>
+
+            <p id="statusText"></p>
+
+            <!-- Mode Toggle -->
+            <p class="toggle-mode" id="toggleModeContainer">
+                Don't have an account? <a onclick="toggleAuthMode()">Create one</a>
+            </p>
+
+            <!-- Direct Home Fallback -->
+            <a href="index.html" class="back-home-link">
+                &larr; Return to Home
+            </a>
         </div>
-
-        <h2 class="form-title" id="formHeader">Applicant Sign In</h2>
-        <p class="form-sub" id="formSub">Connect your MetaMask wallet to verify your identity on Ethereum Sepolia.</p>
-
-        <!-- Registration Fields (Hidden in Sign In mode) -->
-        <div id="signUpFields" style="display: none;">
-            <div class="input-group">
-                <label id="lblName">Full Name</label>
-                <input type="text" id="regFullName" class="form-input" placeholder="e.g. Maxwel Okoth">
-            </div>
-
-            <div class="input-group">
-                <label id="lblTitle">Professional Title</label>
-                <input type="text" id="regTitle" class="form-input" placeholder="e.g. Full Stack Web3 Developer">
-            </div>
-
-            <div class="input-group">
-                <label>East Africa Regional Hub</label>
-                <select id="regLocation" class="form-input" style="background: #111318;">
-                    <option value="Nairobi, Kenya">Nairobi, Kenya</option>
-                    <option value="Kigali, Rwanda">Kigali, Rwanda</option>
-                    <option value="Kampala, Uganda">Kampala, Uganda</option>
-                    <option value="Dar es Salaam, Tanzania">Dar es Salaam, Tanzania</option>
-                    <option value="Remote (East Africa)">Remote (East Africa)</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Action Button -->
-        <button class="btn-action" id="authSubmitBtn" onclick="executeAuth()">
-            Sign In with MetaMask <span>&rarr;</span>
-        </button>
-
-        <p id="statusText"></p>
-
-        <!-- Mode Toggle -->
-        <p class="toggle-mode" id="toggleModeContainer">
-            Don't have an account? <a onclick="toggleAuthMode()">Create one</a>
-        </p>
     </div>
 
     <script src="js/auth.js"></script>
