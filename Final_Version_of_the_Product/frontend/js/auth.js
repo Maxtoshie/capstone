@@ -1,7 +1,41 @@
+const contractAddress = "0xA40d77d6e31F5044C7151dAd78C8bA6C3313132F";
+const contractABI = [
+  "function registerInstitution(address institution) external",
+  "function issueCredential(bytes32 credentialId, string studentId, string degree) external",
+  "function verifyCredential(bytes32 credentialId) external view returns (bool, string, string)"
+];
+
+let provider, signer, ujuziContract;
 let currentRole = 'Applicant';
 let isLogin = true;
 
-// Check URL params for role
+// Web3 Wallet Connection
+document.addEventListener('DOMContentLoaded', () => {
+    const connectBtn = document.getElementById('connectWalletBtn');
+    if(connectBtn) {
+        connectBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            if (window.ethereum) {
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    provider = new ethers.BrowserProvider(window.ethereum);
+                    signer = await provider.getSigner();
+                    ujuziContract = new ethers.Contract(contractAddress, contractABI, signer);
+                    
+                    const address = await signer.getAddress();
+                    connectBtn.innerText = `${address.substring(0, 6)}...${address.substring(38)}`;
+                    connectBtn.style.background = "rgba(255,255,255,0.1)";
+                } catch (error) {
+                    console.error("Connection failed", error);
+                }
+            } else {
+                alert("Please install MetaMask!");
+            }
+        });
+    }
+});
+
+// UI Auth Logic
 window.onload = () => {
     const params = new URLSearchParams(window.location.search);
     if(params.get('role') === 'recruiter') setRole('Recruiter');
@@ -35,7 +69,6 @@ function updateTitle() {
 function handleAuth(e) {
     e.preventDefault();
     const email = document.getElementById('email').value;
-    // In a real app, you would connect to Firebase Auth or a custom Node.js backend here.
-    alert(`Mock Backend: ${isLogin ? 'Logged in' : 'Signed up'} as ${currentRole} with email ${email}`);
-    // window.location.href = 'dashboard.html';
+    const walletStatus = signer ? "Wallet is connected!" : "Wallet is NOT connected.";
+    alert(`Mock Backend: ${isLogin ? 'Logged in' : 'Signed up'} as ${currentRole} with email ${email}.\n${walletStatus}`);
 }
