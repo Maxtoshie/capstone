@@ -37,7 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     connectBtn.style.background = "#28a745"; 
                     connectBtn.style.borderColor = "#28a745";
                     
-                    statusText.innerText = `Logged in as ${currentRole}\nAddress: ${address.substring(0, 6)}...${address.substring(38)}`;
+                    statusText.innerText = `Redirecting to ${currentRole} dashboard...`;
+                    
+                    sessionStorage.setItem("userRole", currentRole);
+                    sessionStorage.setItem("userAddress", address);
+
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
                 } catch (error) {
                     console.error("Connection failed", error);
                     connectBtn.innerText = "Connect MetaMask";
