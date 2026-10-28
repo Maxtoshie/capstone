@@ -3,36 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - UjuziChain</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>UjuziChain - Access Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-base: #0a0b0d;
+            --bg-card: rgba(18, 20, 26, 0.75);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-green: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background-image: 
+                radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.035) 0%, transparent 60%),
+                radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
+                url("data:image/svg+xml,%3Csvg width='1200' height='800' viewBox='0 0 1200 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-100,200 C300,100 600,400 1300,150 M-100,260 C300,160 600,460 1300,210 M-100,320 C300,220 600,520 1300,270 M-100,380 C300,280 600,580 1300,330 M-100,440 C300,340 600,640 1300,390 M-100,500 C300,400 600,700 1300,450 M-100,560 C300,460 600,760 1300,510' stroke='rgba(255,255,255,0.035)' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+            background-size: cover;
+        }
+
+        .auth-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 440px;
+            padding: 36px 32px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            justify-content: center;
+            text-decoration: none;
+            color: #ffffff;
+        }
+        .logo-box {
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+        .logo-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .role-switch {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 24px;
+            gap: 4px;
+        }
+        .role-tab {
+            flex: 1;
+            padding: 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .role-tab.active {
+            background: #ffffff;
+            color: #000000;
+            font-weight: 600;
+        }
+
+        .form-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .form-sub {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            margin-bottom: 14px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        .form-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 11px 14px;
+            font-size: 13px;
+            color: #ffffff;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-action {
+            width: 100%;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            padding: 13px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            transition: all 0.2s ease;
+        }
+        .btn-action:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+        }
+
+        .toggle-mode {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .toggle-mode a {
+            color: #ffffff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        #statusText {
+            margin-top: 14px;
+            font-size: 12.5px;
+            text-align: center;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo"><a href="index.html" style="color:white; text-decoration:none;"><strong>Ujuzi</strong>Chain</a></div>
-    </nav>
 
-    <div class="auth-container">
-        <div class="auth-box">
-            <h2>Welcome to UjuziChain</h2>
-            <p>Select your account type to continue</p>
-            
-            <div class="role-selector">
-                <button class="role-btn active" id="btn-applicant" onclick="setRole('Applicant')">Applicant</button>
-                <button class="role-btn" id="btn-recruiter" onclick="setRole('Recruiter')">Recruiter</button>
+    <div class="auth-card">
+        <a href="index.html" class="brand-header">
+            <div class="logo-box">UC</div>
+            <div class="logo-text">UjuziChain</div>
+        </a>
+
+        <!-- Role Selector -->
+        <div class="role-switch">
+            <button class="role-tab active" id="tabApplicant" onclick="setRole('Applicant')">Applicant</button>
+            <button class="role-tab" id="tabRecruiter" onclick="setRole('Recruiter')">Recruiter</button>
+        </div>
+
+        <h2 class="form-title" id="formHeader">Applicant Sign In</h2>
+        <p class="form-sub" id="formSub">Connect your MetaMask wallet to verify your identity on Ethereum Sepolia.</p>
+
+        <!-- Registration Fields (Hidden in Sign In mode) -->
+        <div id="signUpFields" style="display: none;">
+            <div class="input-group">
+                <label id="lblName">Full Name</label>
+                <input type="text" id="regFullName" class="form-input" placeholder="e.g. Maxwel Okoth">
             </div>
 
-            <h3 id="form-title" style="margin-bottom: 20px;">Applicant Login</h3>
-            
-            <button id="connectWalletBtn" class="btn-primary full-width" style="margin-top: 10px;">
-                Connect MetaMask
-            </button>
-            
-            <p id="wallet-status" style="text-align: center; margin-top: 15px; font-size: 0.9em; color: #aaa;"></p>
+            <div class="input-group">
+                <label id="lblTitle">Professional Title</label>
+                <input type="text" id="regTitle" class="form-input" placeholder="e.g. Full Stack Web3 Developer">
+            </div>
+
+            <div class="input-group">
+                <label>East Africa Regional Hub</label>
+                <select id="regLocation" class="form-input" style="background: #111318;">
+                    <option value="Nairobi, Kenya">Nairobi, Kenya</option>
+                    <option value="Kigali, Rwanda">Kigali, Rwanda</option>
+                    <option value="Kampala, Uganda">Kampala, Uganda</option>
+                    <option value="Dar es Salaam, Tanzania">Dar es Salaam, Tanzania</option>
+                    <option value="Remote (East Africa)">Remote (East Africa)</option>
+                </select>
+            </div>
         </div>
+
+        <!-- Action Button -->
+        <button class="btn-action" id="authSubmitBtn" onclick="executeAuth()">
+            Sign In with MetaMask <span>&rarr;</span>
+        </button>
+
+        <p id="statusText"></p>
+
+        <!-- Mode Toggle -->
+        <p class="toggle-mode" id="toggleModeContainer">
+            Don't have an account? <a onclick="toggleAuthMode()">Create one</a>
+        </p>
     </div>
-    
+
     <script src="js/auth.js"></script>
 </body>
 </html>
