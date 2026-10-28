@@ -189,7 +189,7 @@
             background: rgba(239, 68, 68, 0.05);
         }
 
-        /* Layout */
+        /* Main Layout */
         main {
             max-width: 1320px;
             width: 100%;
@@ -302,14 +302,6 @@
         .status-pill {
             background: rgba(16, 185, 129, 0.15);
             color: #34d399;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .status-pill-fail {
-            background: rgba(239, 68, 68, 0.15);
-            color: #f87171;
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 12px;
@@ -519,7 +511,7 @@
         </nav>
     </div>
 
-    <!-- Workspace -->
+    <!-- Main Workspace -->
     <main>
 
         <!-- 1. OVERVIEW -->
@@ -527,7 +519,7 @@
             <div class="hero-banner">
                 <div>
                     <h1>Welcome back</h1>
-                    <p>Browse every available role. A 70% match score is required to unlock practical simulations and job applications.</p>
+                    <p>High match roles (&ge; 70%) qualify for auto apply. Roles below 70% require passing a practical simulation to unlock application access.</p>
                 </div>
                 <button class="btn-btrust-action" onclick="switchNav('jobs')">
                     Browse jobs <span>&rarr;</span>
@@ -548,7 +540,7 @@
                 <div class="glass-card stat-card">
                     <p class="label">Completed simulations</p>
                     <h2 id="metricSims">0</h2>
-                    <p class="sub">Passed assessments</p>
+                    <p class="sub">Practical assessments</p>
                 </div>
                 <div class="glass-card stat-card">
                     <p class="label">Verified credentials</p>
@@ -563,28 +555,28 @@
                         <h3>Jobs for you</h3>
                         <a onclick="switchNav('jobs')">View all</a>
                     </div>
-                    <p class="card-sub">Roles requiring &ge; 70% match to take the screening assessment.</p>
+                    <p class="card-sub">Sorted by match score and readiness.</p>
 
                     <div class="list-row">
                         <div>
                             <h4>Junior Software Engineer</h4>
                             <p>Nairobi Tech Labs · Nairobi · Hybrid</p>
                         </div>
-                        <span class="badge-score" style="color: var(--accent-green);">85% (Eligible)</span>
+                        <span class="badge-score" style="color: var(--accent-green);">85% (Auto Apply)</span>
                     </div>
                     <div class="list-row">
                         <div>
                             <h4>Graduate QA Engineer</h4>
                             <p>Kivu Digital · Kigali · Hybrid</p>
                         </div>
-                        <span class="badge-score" style="color: var(--text-muted);">61% (&lt; 70%)</span>
+                        <span class="badge-score" style="color: #38bdf8;">61% (Simulation)</span>
                     </div>
                     <div class="list-row">
                         <div>
                             <h4>Backend Developer Intern</h4>
                             <p>East Africa Systems · Remote</p>
                         </div>
-                        <span class="badge-score" style="color: var(--text-muted);">42% (&lt; 70%)</span>
+                        <span class="badge-score" style="color: #38bdf8;">42% (Simulation)</span>
                     </div>
                 </div>
 
@@ -604,8 +596,8 @@
                         <span style="font-weight: 600; font-size: 13px;">Connected</span>
                     </div>
                     <div class="list-row">
-                        <span style="color: var(--text-secondary); font-size: 13px;">Simulation Gate</span>
-                        <span style="font-size: 13px; font-weight: 600; color: #38bdf8;">70% Required</span>
+                        <span style="color: var(--text-secondary); font-size: 13px;">Threshold</span>
+                        <span style="font-size: 13px; font-weight: 600; color: #34d399;">&ge; 70% Auto Apply</span>
                     </div>
                     <div class="list-row">
                         <span style="color: var(--text-secondary); font-size: 13px;">Passed Simulations</span>
@@ -670,7 +662,7 @@
                             <div class="match-bar-fill" id="detailBar" style="width: 85%;"></div>
                         </div>
                         <p style="font-size: 12px; color: var(--text-muted);" id="detailMatchGuidance">
-                            Minimum 70% profile match required to unlock simulation.
+                            High match score (&ge; 70%). You qualify for immediate auto apply!
                         </p>
                     </div>
 
@@ -687,7 +679,7 @@
                         <li>Basic SQL</li>
                     </ul>
 
-                    <!-- Dynamic Action Area based on Match & Simulation Status -->
+                    <!-- Dynamic Action Area -->
                     <div id="jobActionArea"></div>
                 </div>
             </div>
@@ -699,11 +691,11 @@
                 <div class="card-header-bar">
                     <h3>Applications</h3>
                 </div>
-                <p class="card-sub">Applications submitted after passing role simulations.</p>
+                <p class="card-sub">Applications submitted directly or after passing role simulations.</p>
 
                 <div id="emptyAppsView" style="text-align: center; margin-top: 100px;">
                     <h4 style="font-size: 16px; margin-bottom: 6px;">No applications yet</h4>
-                    <p style="font-size: 13px; color: var(--text-muted);">Pass a job simulation and apply to track it here.</p>
+                    <p style="font-size: 13px; color: var(--text-muted);">Apply to a matching role or complete a simulation to track submissions here.</p>
                 </div>
 
                 <div id="submittedAppsList" style="display: none;"></div>
@@ -715,11 +707,11 @@
             <div class="glass-card">
                 <div class="card-header-bar">
                     <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Job simulation</h2>
-                    <span class="tag-pill" id="simRoleTag">Junior Software Engineer</span>
+                    <span class="tag-pill" id="simRoleTag">Graduate QA Engineer</span>
                 </div>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="simCompanyTag">Nairobi Tech Labs · Nairobi</p>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="simCompanyTag">Kivu Digital · Kigali</p>
                 <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
-                    This practical assessment proves engineering aptitude. Scoring &ge; 75% unlocks direct job application access.
+                    Since your match score is below 70%, pass this practical scenario to prove engineering readiness and unlock the application. Failing this assessment will mark you ineligible for this specific role.
                 </p>
 
                 <div class="step-tile">
@@ -738,7 +730,7 @@
                         <div class="step-index">02</div>
                         <div>
                             <h4 style="font-size: 14px;">Technical Assessment Question</h4>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Select the optimal method for non-paying smart contract verification:</p>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Select the correct approach for gas-free smart contract verification:</p>
                         </div>
                     </div>
                     <span style="font-size: 12px; color: var(--text-muted);">25 min</span>
@@ -754,7 +746,7 @@
                     </div>
                     <div class="quiz-option" id="optB" onclick="pickQuizOption('B')">
                         <input type="radio" name="quiz">
-                        <span><strong>Option B:</strong> Broadcast a signed state transaction requiring ETH gas fee</span>
+                        <span><strong>Option B:</strong> Broadcast a state-changing transaction requiring ETH gas fee</span>
                     </div>
                     <div class="quiz-option" id="optC" onclick="pickQuizOption('C')">
                         <input type="radio" name="quiz">
@@ -766,7 +758,7 @@
                             Submit Assessment <span>&rarr;</span>
                         </button>
                         <button class="btn-secondary" onclick="demoFailSimulation()" style="color: #f87171; border-color: rgba(239, 68, 68, 0.4);">
-                            Test Fail Flow
+                            Test Fail Simulation
                         </button>
                     </div>
                 </div>
@@ -870,9 +862,6 @@
           "function verifyCredential(bytes32 credentialId) external view returns (bool, string, string)"
         ];
 
-        // 70% threshold required to take simulation
-        const SIMULATION_THRESHOLD = 70;
-
         let totalApps = 0;
         let totalSims = 0;
         let selectedQuiz = 'A';
@@ -904,15 +893,34 @@
 
         function renderJobsList() {
             const container = document.getElementById("jobsListingCards");
-            container.innerHTML = jobRoles.map((job, idx) => `
-                <div class="job-select-item ${idx === selectedJob ? 'selected' : ''}" onclick="pickJob(${idx})">
-                    <div>
-                        <h4 style="font-size: 14px;">${job.title}</h4>
-                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">${job.company}</p>
+            container.innerHTML = jobRoles.map((job, idx) => {
+                let badgeColor = "var(--text-muted)";
+                let extraTag = "";
+                
+                if (job.status === 'failed') {
+                    badgeColor = "var(--accent-red)";
+                    extraTag = " · Ineligible";
+                } else if (job.status === 'passed') {
+                    badgeColor = "var(--accent-green)";
+                    extraTag = " · Passed";
+                } else if (job.match >= 70) {
+                    badgeColor = "var(--accent-green)";
+                    extraTag = " · Auto Apply";
+                } else {
+                    badgeColor = "#38bdf8";
+                    extraTag = " · Sim Required";
+                }
+
+                return `
+                    <div class="job-select-item ${idx === selectedJob ? 'selected' : ''}" onclick="pickJob(${idx})">
+                        <div>
+                            <h4 style="font-size: 14px;">${job.title}</h4>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">${job.company}</p>
+                        </div>
+                        <span class="badge-score" style="color: ${badgeColor};">${job.match}%${extraTag}</span>
                     </div>
-                    <span class="badge-score" style="color: ${job.match >= SIMULATION_THRESHOLD ? 'var(--accent-green)' : 'var(--text-muted)'};">${job.match}%</span>
-                </div>
-            `).join("");
+                `;
+            }).join("");
             renderJobDetails();
         }
 
@@ -931,39 +939,51 @@
             const actionArea = document.getElementById('jobActionArea');
             const guidance = document.getElementById('detailMatchGuidance');
 
-            // Below Threshold (< 70%)
-            if (job.match < SIMULATION_THRESHOLD) {
-                guidance.innerText = `Your profile match (${job.match}%) is below the required 70% threshold. You cannot take the simulation or apply for this role.`;
+            // 1. INELIGIBLE: Only appears if a simulation was taken and failed
+            if (job.status === 'failed') {
+                guidance.innerHTML = `<span style="color: #f87171; font-weight: 600;">✗ Ineligible: Practical simulation failed. You cannot apply for this role.</span>`;
                 actionArea.innerHTML = `
-                    <button class="btn-secondary" disabled style="opacity: 0.5; cursor: not-allowed;">
-                        Ineligible to Apply (Match &lt; 70%)
+                    <button class="btn-secondary" disabled style="opacity: 0.5; cursor: not-allowed; border-color: #ef4444; color: #f87171;">
+                        Ineligible (Simulation Failed)
                     </button>
                 `;
                 return;
             }
 
-            // Above Threshold (>= 70%)
+            // 2. ABOVE OR EQUAL TO 70%: Auto Apply directly (no simulation needed)
+            if (job.match >= 70) {
+                guidance.innerHTML = `<span style="color: #34d399; font-weight: 600;">✓ Qualified: Match score is above 70%. You qualify for direct Auto Apply!</span>`;
+                actionArea.innerHTML = `
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn-btrust-action" onclick="applyJob('Direct Auto Apply')">
+                            Auto Apply Now <span>&rarr;</span>
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            // 3. BELOW 70% & UNTESTED: Must take simulation to apply
             if (job.status === 'untested') {
-                guidance.innerText = `Eligible! Complete the role simulation to unlock the application.`;
+                guidance.innerText = `Profile match is below 70%. Take the practical simulation to prove competence and unlock the application.`;
                 actionArea.innerHTML = `
                     <button class="btn-btrust-action" onclick="startJobSimulation(${selectedJob})">
                         Take Simulation to Apply <span>&rarr;</span>
                     </button>
                 `;
-            } else if (job.status === 'passed') {
-                guidance.innerHTML = `<span style="color: #34d399; font-weight: 600;">✓ Simulation Passed (Score: 100%). You are verified to submit your application.</span>`;
+                return;
+            }
+
+            // 4. BELOW 70% & PASSED SIMULATION: Now can apply!
+            if (job.status === 'passed') {
+                guidance.innerHTML = `<span style="color: #34d399; font-weight: 600;">✓ Simulation Passed (Score: 100%). Your skills have been verified—application unlocked!</span>`;
                 actionArea.innerHTML = `
                     <div style="display: flex; gap: 12px;">
-                        <button class="btn-btrust-action" onclick="applyJob()">Apply Now <span>&rarr;</span></button>
-                        <span class="status-pill" style="align-self: center;">Simulation Passed</span>
+                        <button class="btn-btrust-action" onclick="applyJob('Verified via Simulation')">
+                            Apply Now <span>&rarr;</span>
+                        </button>
+                        <span class="status-pill" style="align-self: center;">Passed Simulation</span>
                     </div>
-                `;
-            } else if (job.status === 'failed') {
-                guidance.innerHTML = `<span style="color: #f87171; font-weight: 600;">✗ Simulation Failed. You did not meet the screening threshold for this role.</span>`;
-                actionArea.innerHTML = `
-                    <button class="btn-secondary" disabled style="opacity: 0.5; cursor: not-allowed; border-color: #ef4444; color: #f87171;">
-                        Cannot Apply (Simulation Failed)
-                    </button>
                 `;
             }
         }
@@ -988,10 +1008,10 @@
                 totalSims++;
                 document.getElementById('metricSims').innerText = totalSims;
                 document.getElementById('sideSimCount').innerText = totalSims;
-                alert("Simulation Passed! Score: 100%. The application button has now been unlocked.");
+                alert(`Simulation Passed for ${jobRoles[selectedJob].title}! You can now submit your application.`);
             } else {
                 jobRoles[selectedJob].status = 'failed';
-                alert("Simulation Failed. The application is now locked for this position.");
+                alert(`Simulation Failed. You are now marked Ineligible for ${jobRoles[selectedJob].title}.`);
             }
             switchNav('jobs');
             renderJobsList();
@@ -999,12 +1019,12 @@
 
         function demoFailSimulation() {
             jobRoles[selectedJob].status = 'failed';
-            alert("Simulation Failed. The application has been locked.");
+            alert(`Simulation Failed. You are now marked Ineligible for ${jobRoles[selectedJob].title}.`);
             switchNav('jobs');
             renderJobsList();
         }
 
-        function applyJob() {
+        function applyJob(submissionType = 'Direct') {
             totalApps++;
             document.getElementById('metricApps').innerText = totalApps;
             document.getElementById('emptyAppsView').style.display = 'none';
@@ -1017,7 +1037,7 @@
                         <h4>${jobRoles[selectedJob].title}</h4>
                         <p>${jobRoles[selectedJob].company}</p>
                     </div>
-                    <span class="status-pill">Submitted (Verified via Simulation)</span>
+                    <span class="status-pill">Submitted (${submissionType})</span>
                 </div>
             `;
             alert(`Application submitted successfully for ${jobRoles[selectedJob].title}!`);
