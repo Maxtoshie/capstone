@@ -34,7 +34,6 @@
             background-size: cover;
         }
 
-        /* Floating Btrust Navbar */
         .navbar-wrap {
             position: sticky;
             top: 16px;
@@ -117,14 +116,13 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Center Content Container */
         .auth-wrapper {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px 24px;
+            padding: 30px 24px 60px;
             width: 100%;
         }
 
@@ -134,8 +132,8 @@
             border: 1px solid var(--border-subtle);
             border-radius: 16px;
             width: 100%;
-            max-width: 440px;
-            padding: 36px 32px;
+            max-width: 460px;
+            padding: 34px 30px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
             text-align: center;
         }
@@ -144,14 +142,10 @@
             display: inline-flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 22px;
             text-decoration: none;
             color: #ffffff;
             cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .brand-header:hover {
-            opacity: 0.85;
         }
 
         .role-switch {
@@ -160,7 +154,7 @@
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
             padding: 4px;
-            margin-bottom: 24px;
+            margin-bottom: 22px;
             gap: 4px;
         }
         .role-tab {
@@ -191,13 +185,13 @@
         .form-sub {
             font-size: 13px;
             color: var(--text-muted);
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             line-height: 1.5;
             text-align: left;
         }
 
         .input-group {
-            margin-bottom: 14px;
+            margin-bottom: 13px;
             text-align: left;
         }
         .input-group label {
@@ -205,22 +199,20 @@
             font-size: 12px;
             font-weight: 600;
             color: var(--text-secondary);
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
         .form-input {
             width: 100%;
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
-            padding: 11px 14px;
+            padding: 10px 13px;
             font-size: 13px;
             color: #ffffff;
             outline: none;
             transition: border-color 0.2s;
         }
-        .form-input:focus {
-            border-color: rgba(255, 255, 255, 0.3);
-        }
+        .form-input:focus { border-color: rgba(255, 255, 255, 0.3); }
 
         .btn-action {
             width: 100%;
@@ -246,7 +238,7 @@
 
         .toggle-mode {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 18px;
             font-size: 13px;
             color: var(--text-muted);
         }
@@ -259,18 +251,16 @@
 
         .back-home-link {
             display: inline-block;
-            margin-top: 14px;
+            margin-top: 12px;
             font-size: 12.5px;
             color: var(--text-muted);
             text-decoration: none;
             transition: color 0.2s;
         }
-        .back-home-link:hover {
-            color: #ffffff;
-        }
+        .back-home-link:hover { color: #ffffff; }
 
         #statusText {
-            margin-top: 14px;
+            margin-top: 12px;
             font-size: 12.5px;
             text-align: center;
             display: none;
@@ -279,7 +269,6 @@
 </head>
 <body>
 
-    <!-- Top Navigation Bar -->
     <div class="navbar-wrap">
         <nav class="btrust-navbar">
             <a href="index.html" class="nav-brand" title="Go to UjuziChain Homepage">
@@ -298,16 +287,13 @@
         </nav>
     </div>
 
-    <!-- Centered Login Box -->
     <div class="auth-wrapper">
         <div class="auth-card">
-            <!-- Clickable Logo Header -->
             <a href="index.html" class="brand-header" title="Go to UjuziChain Homepage">
                 <div class="logo-box">UC</div>
                 <div class="logo-text">UjuziChain</div>
             </a>
 
-            <!-- Role Selector -->
             <div class="role-switch">
                 <button class="role-tab active" id="tabApplicant" onclick="setRole('Applicant')">Applicant</button>
                 <button class="role-tab" id="tabRecruiter" onclick="setRole('Recruiter')">Recruiter</button>
@@ -316,7 +302,6 @@
             <h2 class="form-title" id="formHeader">Applicant Sign In</h2>
             <p class="form-sub" id="formSub">Connect your MetaMask wallet to verify your identity on Ethereum Sepolia.</p>
 
-            <!-- Registration Fields (Hidden in Sign In mode) -->
             <div id="signUpFields" style="display: none;">
                 <div class="input-group">
                     <label id="lblName">Full Name</label>
@@ -326,6 +311,12 @@
                 <div class="input-group">
                     <label id="lblTitle">Professional Title</label>
                     <input type="text" id="regTitle" class="form-input" placeholder="e.g. Full Stack Web3 Developer">
+                </div>
+
+                <!-- Skills Field -->
+                <div class="input-group" id="groupSkills">
+                    <label id="lblSkills">Technical Skills (comma-separated)</label>
+                    <input type="text" id="regSkills" class="form-input" placeholder="e.g. JavaScript, Git, REST APIs, Solidity, SQL">
                 </div>
 
                 <div class="input-group">
@@ -338,21 +329,24 @@
                         <option value="Remote (East Africa)">Remote (East Africa)</option>
                     </select>
                 </div>
+
+                <!-- Document Upload Field -->
+                <div class="input-group" id="groupDoc">
+                    <label id="lblDoc">Upload Initial Document (CV, Certificate, PDF)</label>
+                    <input type="file" id="regDocFile" class="form-input" style="padding: 7px 10px; cursor: pointer;">
+                </div>
             </div>
 
-            <!-- Action Button -->
             <button class="btn-action" id="authSubmitBtn" onclick="executeAuth()">
                 Sign In with MetaMask <span>&rarr;</span>
             </button>
 
             <p id="statusText"></p>
 
-            <!-- Mode Toggle -->
             <p class="toggle-mode" id="toggleModeContainer">
                 Don't have an account? <a onclick="toggleAuthMode()">Create one</a>
             </p>
 
-            <!-- Direct Home Fallback -->
             <a href="index.html" class="back-home-link">
                 &larr; Return to Home
             </a>
