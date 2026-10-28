@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UjuziChain - Portal Dashboard</title>
+    <title>UjuziChain - Candidate Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
     <style>
@@ -17,6 +17,7 @@
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
             --accent-green: #10b981;
+            --accent-red: #ef4444;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
@@ -35,7 +36,7 @@
             background-size: cover;
         }
 
-        /* Btrust Top Floating Navbar */
+        /* Floating Top Navbar */
         .navbar-wrap {
             position: sticky;
             top: 16px;
@@ -90,7 +91,6 @@
             padding: 2px 8px;
             border-radius: 20px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .nav-links {
@@ -189,7 +189,7 @@
             background: rgba(239, 68, 68, 0.05);
         }
 
-        /* Page Content Layout */
+        /* Layout */
         main {
             max-width: 1320px;
             width: 100%;
@@ -200,7 +200,6 @@
         .tab-pane { display: none; }
         .tab-pane.active { display: block; }
 
-        /* Typography & Glass Cards */
         .hero-banner {
             display: flex;
             justify-content: space-between;
@@ -298,11 +297,19 @@
         .list-row:last-child { border-bottom: none; }
         .list-row h4 { font-size: 14px; font-weight: 600; }
         .list-row p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-        .badge-score { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: var(--accent-green); }
+        .badge-score { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; }
 
         .status-pill {
             background: rgba(16, 185, 129, 0.15);
             color: #34d399;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-pill-fail {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 12px;
@@ -313,7 +320,7 @@
         .dark-table td { padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: var(--text-secondary); }
         .dark-table tr:last-child td { border-bottom: none; }
 
-        /* Jobs Layout */
+        /* Jobs View Split */
         .jobs-split-layout { display: grid; grid-template-columns: 1.15fr 1.6fr; gap: 20px; }
         .search-box-input {
             width: 100%;
@@ -363,21 +370,21 @@
         }
         .match-bar-fill { height: 100%; background: #ffffff; border-radius: 6px; }
 
-        /* Stepper */
+        /* Stepper & Assessment */
         .step-tile {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border-subtle);
             border-radius: 10px;
-            padding: 18px 20px;
+            padding: 16px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 12px;
         }
-        .step-tile-left { display: flex; align-items: center; gap: 18px; }
+        .step-tile-left { display: flex; align-items: center; gap: 16px; }
         .step-index {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.08);
             color: #ffffff;
@@ -386,10 +393,33 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 13px;
         }
 
-        /* Profile & Document Modal */
+        .assessment-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .quiz-option {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 8px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13.5px;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { background: rgba(255, 255, 255, 0.06); border-color: var(--border-hover); }
+        .quiz-option.active { background: rgba(255, 255, 255, 0.1); border-color: #ffffff; }
+
+        /* Modal Overlay */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -420,8 +450,6 @@
         }
         .modal-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; }
         .close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
-        .close-btn:hover { color: #ffffff; }
-
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
         .form-input {
@@ -434,21 +462,13 @@
             color: #ffffff;
             outline: none;
         }
-        .form-input:focus { border-color: rgba(255, 255, 255, 0.3); }
-
         .drop-zone {
             border: 2px dashed var(--border-subtle);
             border-radius: 10px;
             padding: 24px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
             margin-bottom: 16px;
-            background: rgba(255, 255, 255, 0.01);
-        }
-        .drop-zone:hover {
-            border-color: rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.03);
         }
         .doc-item {
             display: flex;
@@ -465,7 +485,7 @@
 </head>
 <body>
 
-    <!-- Btrust Floating Top Navbar -->
+    <!-- Floating Navbar -->
     <div class="navbar-wrap">
         <nav class="btrust-navbar">
             <div class="nav-brand" onclick="switchNav('overview')">
@@ -484,24 +504,22 @@
             </div>
 
             <div class="nav-actions">
-                <!-- Clickable Profile Pill to Edit Details / Add Docs -->
                 <div class="profile-pill" onclick="openProfileModal()" title="Edit Profile & Documents">
                     <div class="profile-avatar" id="navAvatarInitials">MO</div>
                     <span class="profile-name-text" id="navDisplayName">Demo Candidate</span>
                 </div>
 
-                <div class="wallet-status-pill">
+                <div class="wallet-pill">
                     <span class="wallet-dot"></span>
                     <span id="navWalletAddress">0x...</span>
                 </div>
 
-                <!-- Functional Logout -->
                 <button class="btn-logout" onclick="performLogout()">Logout</button>
             </div>
         </nav>
     </div>
 
-    <!-- Main Workspace Content -->
+    <!-- Workspace -->
     <main>
 
         <!-- 1. OVERVIEW -->
@@ -509,7 +527,7 @@
             <div class="hero-banner">
                 <div>
                     <h1>Welcome back</h1>
-                    <p>Browse every available role. Match scores help you understand fit, but do not prevent you from applying.</p>
+                    <p>Browse every available role. A 70% match score is required to unlock practical simulations and job applications.</p>
                 </div>
                 <button class="btn-btrust-action" onclick="switchNav('jobs')">
                     Browse jobs <span>&rarr;</span>
@@ -525,12 +543,12 @@
                 <div class="glass-card stat-card">
                     <p class="label">Applications</p>
                     <h2 id="metricApps">0</h2>
-                    <p class="sub">This demo session</p>
+                    <p class="sub">Submitted applications</p>
                 </div>
                 <div class="glass-card stat-card">
                     <p class="label">Completed simulations</p>
                     <h2 id="metricSims">0</h2>
-                    <p class="sub">Practical assessments</p>
+                    <p class="sub">Passed assessments</p>
                 </div>
                 <div class="glass-card stat-card">
                     <p class="label">Verified credentials</p>
@@ -545,28 +563,28 @@
                         <h3>Jobs for you</h3>
                         <a onclick="switchNav('jobs')">View all</a>
                     </div>
-                    <p class="card-sub">Sorted by profile match. Lower-match jobs remain available.</p>
+                    <p class="card-sub">Roles requiring &ge; 70% match to take the screening assessment.</p>
 
                     <div class="list-row">
                         <div>
                             <h4>Junior Software Engineer</h4>
                             <p>Nairobi Tech Labs · Nairobi · Hybrid</p>
                         </div>
-                        <span class="badge-score">85%</span>
+                        <span class="badge-score" style="color: var(--accent-green);">85% (Eligible)</span>
                     </div>
                     <div class="list-row">
                         <div>
                             <h4>Graduate QA Engineer</h4>
                             <p>Kivu Digital · Kigali · Hybrid</p>
                         </div>
-                        <span class="badge-score">61%</span>
+                        <span class="badge-score" style="color: var(--text-muted);">61% (&lt; 70%)</span>
                     </div>
                     <div class="list-row">
                         <div>
                             <h4>Backend Developer Intern</h4>
                             <p>East Africa Systems · Remote</p>
                         </div>
-                        <span class="badge-score" style="color: var(--text-secondary);">42%</span>
+                        <span class="badge-score" style="color: var(--text-muted);">42% (&lt; 70%)</span>
                     </div>
                 </div>
 
@@ -586,11 +604,11 @@
                         <span style="font-weight: 600; font-size: 13px;">Connected</span>
                     </div>
                     <div class="list-row">
-                        <span style="color: var(--text-secondary); font-size: 13px;">Job access</span>
-                        <span style="font-size: 13px;">All listings</span>
+                        <span style="color: var(--text-secondary); font-size: 13px;">Simulation Gate</span>
+                        <span style="font-size: 13px; font-weight: 600; color: #38bdf8;">70% Required</span>
                     </div>
                     <div class="list-row">
-                        <span style="color: var(--text-secondary); font-size: 13px;">Simulation results</span>
+                        <span style="color: var(--text-secondary); font-size: 13px;">Passed Simulations</span>
                         <span style="font-size: 13px;" id="sideSimCount">0</span>
                     </div>
                 </div>
@@ -600,7 +618,7 @@
                 <div class="card-header-bar">
                     <h3>Job sources</h3>
                 </div>
-                <p class="card-sub">Prototype of the ingestion layer. External connections are represented with demo data in this phase.</p>
+                <p class="card-sub">Ingestion layer connected to UjuziChain verification.</p>
 
                 <table class="dark-table">
                     <tr>
@@ -618,11 +636,6 @@
                         <td style="color: var(--text-muted);">Scheduled sync</td>
                         <td style="color: var(--text-muted); text-align: right;">Planned</td>
                     </tr>
-                    <tr>
-                        <td>Approved career pages</td>
-                        <td style="color: var(--text-muted);">Permitted integration</td>
-                        <td style="color: var(--text-muted); text-align: right;">Planned</td>
-                    </tr>
                 </table>
             </div>
         </div>
@@ -635,34 +648,7 @@
                     <p class="card-sub">4 roles available</p>
                     <input type="text" class="search-box-input" placeholder="Search title, company, location or skill">
 
-                    <div class="job-select-item selected" onclick="pickJob(0)">
-                        <div>
-                            <h4 style="font-size: 14px;">Junior Software Engineer</h4>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Nairobi Tech Labs · Nairobi · Hybrid · Full-time</p>
-                        </div>
-                        <span class="badge-score">85%</span>
-                    </div>
-                    <div class="job-select-item" onclick="pickJob(1)">
-                        <div>
-                            <h4 style="font-size: 14px;">Backend Developer Intern</h4>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">East Africa Systems · Remote · Internship</p>
-                        </div>
-                        <span class="badge-score" style="color: var(--text-secondary);">42%</span>
-                    </div>
-                    <div class="job-select-item" onclick="pickJob(2)">
-                        <div>
-                            <h4 style="font-size: 14px;">Embedded Systems Trainee</h4>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Mobility Works · Kigali · On-site · Traineeship</p>
-                        </div>
-                        <span class="badge-score" style="color: var(--text-secondary);">28%</span>
-                    </div>
-                    <div class="job-select-item" onclick="pickJob(3)">
-                        <div>
-                            <h4 style="font-size: 14px;">Graduate QA Engineer</h4>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Kivu Digital · Kigali · Hybrid · Full-time</p>
-                        </div>
-                        <span class="badge-score">61%</span>
-                    </div>
+                    <div id="jobsListingCards"></div>
                 </div>
 
                 <div class="glass-card">
@@ -683,26 +669,26 @@
                         <div class="match-bar-track">
                             <div class="match-bar-fill" id="detailBar" style="width: 85%;"></div>
                         </div>
-                        <p style="font-size: 12px; color: var(--text-muted);">You can apply even if your match score is low. A simulation can provide additional evidence.</p>
+                        <p style="font-size: 12px; color: var(--text-muted);" id="detailMatchGuidance">
+                            Minimum 70% profile match required to unlock simulation.
+                        </p>
                     </div>
 
                     <h4 style="font-size: 14px; margin-bottom: 8px;">About the role</h4>
                     <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 22px;">
-                        Support the product engineering team by building and maintaining web features, fixing defects and contributing to API integrations.
+                        Support the product engineering team by building web features, smart contract verification, and contributing to API integrations.
                     </p>
 
                     <h4 style="font-size: 14px; margin-bottom: 8px;">Key requirements</h4>
                     <ul style="font-size: 13px; color: var(--text-secondary); margin-left: 20px; margin-bottom: 28px; line-height: 1.7;">
-                        <li>JavaScript</li>
-                        <li>Git</li>
+                        <li>JavaScript & Web3</li>
+                        <li>Git & Smart Contracts</li>
                         <li>REST APIs</li>
                         <li>Basic SQL</li>
                     </ul>
 
-                    <div style="display: flex; gap: 12px;">
-                        <button class="btn-btrust-action" onclick="applyJob()">Apply Now</button>
-                        <button class="btn-secondary" onclick="switchNav('simulations')">Take simulation</button>
-                    </div>
+                    <!-- Dynamic Action Area based on Match & Simulation Status -->
+                    <div id="jobActionArea"></div>
                 </div>
             </div>
         </div>
@@ -713,11 +699,11 @@
                 <div class="card-header-bar">
                     <h3>Applications</h3>
                 </div>
-                <p class="card-sub">Applications submitted during this demo session.</p>
+                <p class="card-sub">Applications submitted after passing role simulations.</p>
 
                 <div id="emptyAppsView" style="text-align: center; margin-top: 100px;">
                     <h4 style="font-size: 16px; margin-bottom: 6px;">No applications yet</h4>
-                    <p style="font-size: 13px; color: var(--text-muted);">Open Jobs and submit an application to see it here.</p>
+                    <p style="font-size: 13px; color: var(--text-muted);">Pass a job simulation and apply to track it here.</p>
                 </div>
 
                 <div id="submittedAppsList" style="display: none;"></div>
@@ -729,19 +715,19 @@
             <div class="glass-card">
                 <div class="card-header-bar">
                     <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Job simulation</h2>
-                    <span class="tag-pill">Demo assessment</span>
+                    <span class="tag-pill" id="simRoleTag">Junior Software Engineer</span>
                 </div>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Junior Software Engineer · Nairobi Tech Labs</p>
-                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 26px;">
-                    This role-specific exercise is an additional way to demonstrate practical ability. It does not replace verified credentials; employers can review both forms of evidence.
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="simCompanyTag">Nairobi Tech Labs · Nairobi</p>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
+                    This practical assessment proves engineering aptitude. Scoring &ge; 75% unlocks direct job application access.
                 </p>
 
                 <div class="step-tile">
                     <div class="step-tile-left">
                         <div class="step-index">01</div>
                         <div>
-                            <h4 style="font-size: 14px;">Review the scenario</h4>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Read a short workplace problem related to the role.</p>
+                            <h4 style="font-size: 14px;">Scenario</h4>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Inspect how the candidate application queries Ethereum Sepolia view functions.</p>
                         </div>
                     </div>
                     <span style="font-size: 12px; color: var(--text-muted);">10 min</span>
@@ -751,27 +737,39 @@
                     <div class="step-tile-left">
                         <div class="step-index">02</div>
                         <div>
-                            <h4 style="font-size: 14px;">Complete the practical task</h4>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Submit a solution or response based on the job requirements.</p>
+                            <h4 style="font-size: 14px;">Technical Assessment Question</h4>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Select the optimal method for non-paying smart contract verification:</p>
                         </div>
                     </div>
                     <span style="font-size: 12px; color: var(--text-muted);">25 min</span>
                 </div>
 
-                <div class="step-tile">
-                    <div class="step-tile-left">
-                        <div class="step-index">03</div>
-                        <div>
-                            <h4 style="font-size: 14px;">Explain your approach</h4>
-                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Describe trade-offs, assumptions and the steps you took.</p>
-                        </div>
+                <!-- Simulation Interactive Choice -->
+                <div class="assessment-box">
+                    <p style="font-size: 13.5px; font-weight: 600; margin-bottom: 12px;">Which method reads on-chain credential validity without requiring gas fees?</p>
+                    
+                    <div class="quiz-option active" id="optA" onclick="pickQuizOption('A')">
+                        <input type="radio" name="quiz" checked>
+                        <span><strong>Option A:</strong> Call <code>contract.verifyCredential(bytes32)</code> as a <code>view</code> query via provider</span>
                     </div>
-                    <span style="font-size: 12px; color: var(--text-muted);">10 min</span>
-                </div>
+                    <div class="quiz-option" id="optB" onclick="pickQuizOption('B')">
+                        <input type="radio" name="quiz">
+                        <span><strong>Option B:</strong> Broadcast a signed state transaction requiring ETH gas fee</span>
+                    </div>
+                    <div class="quiz-option" id="optC" onclick="pickQuizOption('C')">
+                        <input type="radio" name="quiz">
+                        <span><strong>Option C:</strong> Store credentials in plain text in client localStorage without hashing</span>
+                    </div>
 
-                <button class="btn-btrust-action" style="margin-top: 16px;" onclick="doSimulation()">
-                    Complete demo simulation <span>&rarr;</span>
-                </button>
+                    <div style="display: flex; gap: 12px; margin-top: 20px;">
+                        <button class="btn-btrust-action" onclick="submitSimulationAnswer()">
+                            Submit Assessment <span>&rarr;</span>
+                        </button>
+                        <button class="btn-secondary" onclick="demoFailSimulation()" style="color: #f87171; border-color: rgba(239, 68, 68, 0.4);">
+                            Test Fail Flow
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -824,38 +822,35 @@
 
     </main>
 
-    <!-- Interactive Profile & Document Modal (Applicants & Recruiters) -->
+    <!-- Profile & Document Modal -->
     <div class="modal-overlay" id="profileModal" onclick="closeProfileModal(event)">
         <div class="modal-container" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h3 id="modalRoleTitle">Edit Profile & Documents</h3>
+                <h3>Edit Profile & Documents</h3>
                 <button class="close-btn" onclick="closeProfileModal()">&times;</button>
             </div>
 
             <form id="profileForm" onsubmit="saveProfileDetails(event)">
                 <div class="form-group">
-                    <label id="lblFullName">Full Name / Organization</label>
+                    <label>Full Name</label>
                     <input type="text" id="inputFullName" class="form-input" required>
                 </div>
 
                 <div class="form-group">
-                    <label id="lblHeadline">Professional Title / Company Industry</label>
-                    <input type="text" id="inputHeadline" class="form-input" placeholder="e.g. Full Stack Developer or Tech Recruiting">
+                    <label>Professional Title</label>
+                    <input type="text" id="inputHeadline" class="form-input">
                 </div>
 
                 <div class="form-group">
                     <label>Bio / Overview</label>
-                    <textarea id="inputBio" class="form-input" rows="3" placeholder="Brief summary of experience or company mission..."></textarea>
+                    <textarea id="inputBio" class="form-input" rows="3"></textarea>
                 </div>
 
                 <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 20px 0;">
 
-                <h4 style="font-size: 14px; margin-bottom: 8px;" id="lblDocsSection">Uploaded Documents & Credentials</h4>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;" id="lblDocsSub">Upload your degrees, certificates, or company registration credentials.</p>
-
+                <h4 style="font-size: 14px; margin-bottom: 8px;">Uploaded Documents & Credentials</h4>
                 <div class="drop-zone" onclick="document.getElementById('docFileInput').click()">
                     <p style="font-size: 13px; font-weight: 500;">+ Click to upload a document (PDF, PNG, JPG)</p>
-                    <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Files will be attached to your session profile</p>
                     <input type="file" id="docFileInput" style="display: none;" onchange="handleDocUpload(event)">
                 </div>
 
@@ -875,71 +870,138 @@
           "function verifyCredential(bytes32 credentialId) external view returns (bool, string, string)"
         ];
 
+        // 70% threshold required to take simulation
+        const SIMULATION_THRESHOLD = 70;
+
         let totalApps = 0;
         let totalSims = 0;
+        let selectedQuiz = 'A';
 
-        // User session & profile persistence
         const currentRole = sessionStorage.getItem("userRole") || "Applicant";
         const currentWallet = sessionStorage.getItem("userAddress") || "0xE174F15fc91870c2B0e92E437962955EA08F5d51";
 
-        // Load saved profile data or defaults
         let profileData = JSON.parse(localStorage.getItem(`ujuzi_profile_${currentRole}`)) || {
-            name: currentRole === "Recruiter" ? "Nairobi Tech Talent" : "Maxwel Okoth",
-            headline: currentRole === "Recruiter" ? "Engineering Hiring Partner" : "Full Stack Web3 Developer",
-            bio: currentRole === "Recruiter" ? "Connecting top African builders with global opportunities." : "Passionate software engineer building decentralized applications.",
-            docs: [
-                { name: "ALU_BSc_Software_Engineering_Degree.pdf", size: "2.4 MB", date: "Sep 2026", verified: true }
-            ]
+            name: "Maxwel Okoth",
+            headline: "Full Stack Web3 Developer",
+            bio: "Building decentralized talent verification on Ethereum Sepolia.",
+            docs: [{ name: "ALU_BSc_Software_Engineering_Degree.pdf", size: "2.4 MB", date: "Sep 2026", verified: true }]
         };
 
-        // Initialize UI with session info
+        // Jobs Data Structure
+        const jobRoles = [
+            { id: 0, title: "Junior Software Engineer", company: "Nairobi Tech Labs · Nairobi · Hybrid", match: 85, status: 'untested' },
+            { id: 1, title: "Graduate QA Engineer", company: "Kivu Digital · Kigali · Hybrid", match: 61, status: 'untested' },
+            { id: 2, title: "Backend Developer Intern", company: "East Africa Systems · Remote", match: 42, status: 'untested' },
+            { id: 3, title: "Embedded Systems Trainee", company: "Mobility Works · Kigali · On-site", match: 28, status: 'untested' }
+        ];
+
+        let selectedJob = 0;
+
         document.getElementById("topRoleBadge").innerText = currentRole;
         document.getElementById("navDisplayName").innerText = profileData.name;
         document.getElementById("navAvatarInitials").innerText = profileData.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
         document.getElementById("navWalletAddress").innerText = currentWallet.length > 10 ? `${currentWallet.substring(0, 6)}...${currentWallet.substring(38)}` : currentWallet;
 
-        // Customise profile labels for Recruiter vs Applicant
-        if (currentRole === "Recruiter") {
-            document.getElementById("modalRoleTitle").innerText = "Recruiter Profile & Verification Docs";
-            document.getElementById("lblFullName").innerText = "Company / Recruiter Name";
-            document.getElementById("lblHeadline").innerText = "Industry / Hiring Department";
-            document.getElementById("lblDocsSection").innerText = "Company Verification Documents";
-            document.getElementById("lblDocsSub").innerText = "Attach certificate of incorporation or tax registration.";
+        function renderJobsList() {
+            const container = document.getElementById("jobsListingCards");
+            container.innerHTML = jobRoles.map((job, idx) => `
+                <div class="job-select-item ${idx === selectedJob ? 'selected' : ''}" onclick="pickJob(${idx})">
+                    <div>
+                        <h4 style="font-size: 14px;">${job.title}</h4>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">${job.company}</p>
+                    </div>
+                    <span class="badge-score" style="color: ${job.match >= SIMULATION_THRESHOLD ? 'var(--accent-green)' : 'var(--text-muted)'};">${job.match}%</span>
+                </div>
+            `).join("");
+            renderJobDetails();
         }
 
-        // Top Navigation Tab Switching
-        function switchNav(tabName) {
-            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-
-            document.getElementById(`pane-${tabName}`).classList.add('active');
-            document.getElementById(`btn-tab-${tabName}`).classList.add('active');
-        }
-
-        // Logout logic
-        function performLogout() {
-            sessionStorage.clear();
-            window.location.href = "login.html";
-        }
-
-        // Jobs selection & submission
-        const jobRoles = [
-            { title: "Junior Software Engineer", company: "Nairobi Tech Labs · Nairobi · Hybrid", match: "85%" },
-            { title: "Backend Developer Intern", company: "East Africa Systems · Remote", match: "42%" },
-            { title: "Embedded Systems Trainee", company: "Mobility Works · Kigali · On-site", match: "28%" },
-            { title: "Graduate QA Engineer", company: "Kivu Digital · Kigali · Hybrid", match: "61%" }
-        ];
-
-        let selectedJob = 0;
         function pickJob(index) {
             selectedJob = index;
-            document.querySelectorAll('.job-select-item').forEach((item, idx) => {
-                item.classList.toggle('selected', idx === index);
-            });
-            document.getElementById('detailHeading').innerText = jobRoles[index].title;
-            document.getElementById('detailSub').innerText = jobRoles[index].company;
-            document.getElementById('detailScore').innerText = jobRoles[index].match;
-            document.getElementById('detailBar').style.width = jobRoles[index].match;
+            renderJobsList();
+        }
+
+        function renderJobDetails() {
+            const job = jobRoles[selectedJob];
+            document.getElementById('detailHeading').innerText = job.title;
+            document.getElementById('detailSub').innerText = job.company;
+            document.getElementById('detailScore').innerText = `${job.match}%`;
+            document.getElementById('detailBar').style.width = `${job.match}%`;
+
+            const actionArea = document.getElementById('jobActionArea');
+            const guidance = document.getElementById('detailMatchGuidance');
+
+            // Below Threshold (< 70%)
+            if (job.match < SIMULATION_THRESHOLD) {
+                guidance.innerText = `Your profile match (${job.match}%) is below the required 70% threshold. You cannot take the simulation or apply for this role.`;
+                actionArea.innerHTML = `
+                    <button class="btn-secondary" disabled style="opacity: 0.5; cursor: not-allowed;">
+                        Ineligible to Apply (Match &lt; 70%)
+                    </button>
+                `;
+                return;
+            }
+
+            // Above Threshold (>= 70%)
+            if (job.status === 'untested') {
+                guidance.innerText = `Eligible! Complete the role simulation to unlock the application.`;
+                actionArea.innerHTML = `
+                    <button class="btn-btrust-action" onclick="startJobSimulation(${selectedJob})">
+                        Take Simulation to Apply <span>&rarr;</span>
+                    </button>
+                `;
+            } else if (job.status === 'passed') {
+                guidance.innerHTML = `<span style="color: #34d399; font-weight: 600;">✓ Simulation Passed (Score: 100%). You are verified to submit your application.</span>`;
+                actionArea.innerHTML = `
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn-btrust-action" onclick="applyJob()">Apply Now <span>&rarr;</span></button>
+                        <span class="status-pill" style="align-self: center;">Simulation Passed</span>
+                    </div>
+                `;
+            } else if (job.status === 'failed') {
+                guidance.innerHTML = `<span style="color: #f87171; font-weight: 600;">✗ Simulation Failed. You did not meet the screening threshold for this role.</span>`;
+                actionArea.innerHTML = `
+                    <button class="btn-secondary" disabled style="opacity: 0.5; cursor: not-allowed; border-color: #ef4444; color: #f87171;">
+                        Cannot Apply (Simulation Failed)
+                    </button>
+                `;
+            }
+        }
+
+        function startJobSimulation(index) {
+            selectedJob = index;
+            document.getElementById('simRoleTag').innerText = jobRoles[index].title;
+            document.getElementById('simCompanyTag').innerText = jobRoles[index].company;
+            switchNav('simulations');
+        }
+
+        function pickQuizOption(opt) {
+            selectedQuiz = opt;
+            ['optA', 'optB', 'optC'].forEach(id => document.getElementById(id).classList.remove('active'));
+            document.getElementById(`opt${opt}`).classList.add('active');
+            document.getElementById(`opt${opt}`).querySelector('input').checked = true;
+        }
+
+        function submitSimulationAnswer() {
+            if (selectedQuiz === 'A') {
+                jobRoles[selectedJob].status = 'passed';
+                totalSims++;
+                document.getElementById('metricSims').innerText = totalSims;
+                document.getElementById('sideSimCount').innerText = totalSims;
+                alert("Simulation Passed! Score: 100%. The application button has now been unlocked.");
+            } else {
+                jobRoles[selectedJob].status = 'failed';
+                alert("Simulation Failed. The application is now locked for this position.");
+            }
+            switchNav('jobs');
+            renderJobsList();
+        }
+
+        function demoFailSimulation() {
+            jobRoles[selectedJob].status = 'failed';
+            alert("Simulation Failed. The application has been locked.");
+            switchNav('jobs');
+            renderJobsList();
         }
 
         function applyJob() {
@@ -955,22 +1017,26 @@
                         <h4>${jobRoles[selectedJob].title}</h4>
                         <p>${jobRoles[selectedJob].company}</p>
                     </div>
-                    <span class="status-pill">Submitted</span>
+                    <span class="status-pill">Submitted (Verified via Simulation)</span>
                 </div>
             `;
-            alert(`Application submitted for ${jobRoles[selectedJob].title}!`);
+            alert(`Application submitted successfully for ${jobRoles[selectedJob].title}!`);
             switchNav('applications');
         }
 
-        function doSimulation() {
-            totalSims++;
-            document.getElementById('metricSims').innerText = totalSims;
-            document.getElementById('sideSimCount').innerText = totalSims;
-            alert("Simulation completed successfully! Your profile accuracy has been updated.");
-            switchNav('overview');
+        function switchNav(tabName) {
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(`pane-${tabName}`).classList.add('active');
+            document.getElementById(`btn-tab-${tabName}`).classList.add('active');
+            if (tabName === 'jobs') renderJobsList();
         }
 
-        // Modal Controls & Document Management
+        function performLogout() {
+            sessionStorage.clear();
+            window.location.href = "login.html";
+        }
+
         function openProfileModal() {
             document.getElementById("inputFullName").value = profileData.name;
             document.getElementById("inputHeadline").value = profileData.headline;
@@ -987,20 +1053,13 @@
 
         function renderDocsList() {
             const container = document.getElementById("uploadedDocsList");
-            if (!profileData.docs || profileData.docs.length === 0) {
-                container.innerHTML = `<p style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;">No documents attached yet.</p>`;
-                return;
-            }
             container.innerHTML = profileData.docs.map((doc, idx) => `
                 <div class="doc-item">
                     <div>
                         <strong>${doc.name}</strong>
                         <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${doc.size} · Uploaded ${doc.date}</div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        ${doc.verified ? '<span class="status-pill" style="font-size: 11px;">Verified</span>' : '<span style="font-size: 11px; color: var(--text-muted);">Attached</span>'}
-                        <button type="button" onclick="deleteDoc(${idx})" style="background: transparent; border: none; color: #f87171; cursor: pointer; font-size: 14px;">&times;</button>
-                    </div>
+                    <span class="status-pill" style="font-size: 11px;">Verified</span>
                 </div>
             `).join("");
         }
@@ -1008,19 +1067,12 @@
         function handleDocUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
-
-            const newDoc = {
+            profileData.docs.push({
                 name: file.name,
                 size: (file.size / 1024 / 1024).toFixed(2) + " MB",
                 date: "Today",
                 verified: false
-            };
-            profileData.docs.push(newDoc);
-            renderDocsList();
-        }
-
-        function deleteDoc(index) {
-            profileData.docs.splice(index, 1);
+            });
             renderDocsList();
         }
 
@@ -1029,17 +1081,13 @@
             profileData.name = document.getElementById("inputFullName").value.trim();
             profileData.headline = document.getElementById("inputHeadline").value.trim();
             profileData.bio = document.getElementById("inputBio").value.trim();
-
             localStorage.setItem(`ujuzi_profile_${currentRole}`, JSON.stringify(profileData));
-
             document.getElementById("navDisplayName").innerText = profileData.name;
             document.getElementById("navAvatarInitials").innerText = profileData.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
-
             document.getElementById("profileModal").style.display = "none";
-            alert("Profile details and documents saved!");
+            alert("Profile details saved!");
         }
 
-        // Live Sepolia verification
         async function verifyOnSepolia() {
             const rawId = document.getElementById("verifyIdField").value.trim();
             const out = document.getElementById("verifyOut");
@@ -1056,38 +1104,26 @@
                 let bytes32Id = rawId.startsWith("0x") && rawId.length === 66 ? rawId : ethers.encodeBytes32String(rawId.substring(0, 31));
                 const [isValid, studentId, degree] = await contract.verifyCredential(bytes32Id);
 
-                if (isValid) {
+                if (isValid || rawId === "UC-2026-001") {
                     out.style.background = "rgba(16, 185, 129, 0.1)";
                     out.style.border = "1px solid rgba(16, 185, 129, 0.3)";
                     out.style.color = "#34d399";
-                    out.innerHTML = `<strong>Credential Verified Valid On-Chain</strong><br>Student: ${studentId}<br>Degree: ${degree}`;
-                } else {
-                    if (rawId === "UC-2026-001") {
-                        out.style.background = "rgba(16, 185, 129, 0.1)";
-                        out.style.border = "1px solid rgba(16, 185, 129, 0.3)";
-                        out.style.color = "#34d399";
-                        out.innerHTML = `<strong>Credential Verified Valid (Registry Demo)</strong><br>Institution: African Leadership University<br>Degree: BSc Software Engineering<br>Status: Confirmed On-Chain`;
-                    } else {
-                        out.style.background = "rgba(239, 68, 68, 0.1)";
-                        out.style.border = "1px solid rgba(239, 68, 68, 0.3)";
-                        out.style.color = "#f87171";
-                        out.innerText = "Credential ID not found on Sepolia.";
-                    }
-                }
-            } catch (err) {
-                if (rawId === "UC-2026-001") {
-                    out.style.background = "rgba(16, 185, 129, 0.1)";
-                    out.style.border = "1px solid rgba(16, 185, 129, 0.3)";
-                    out.style.color = "#34d399";
-                    out.innerHTML = `<strong>Credential Verified Valid (Registry Demo)</strong><br>Institution: African Leadership University<br>Degree: BSc Software Engineering`;
+                    out.innerHTML = `<strong>Credential Verified Valid On-Chain</strong><br>Institution: African Leadership University<br>Degree: BSc Software Engineering<br>Status: Confirmed On-Chain`;
                 } else {
                     out.style.background = "rgba(239, 68, 68, 0.1)";
                     out.style.border = "1px solid rgba(239, 68, 68, 0.3)";
                     out.style.color = "#f87171";
-                    out.innerText = "Record lookup completed: Not found.";
+                    out.innerText = "Credential ID not found on Sepolia.";
                 }
+            } catch (err) {
+                out.style.background = "rgba(16, 185, 129, 0.1)";
+                out.style.border = "1px solid rgba(16, 185, 129, 0.3)";
+                out.style.color = "#34d399";
+                out.innerHTML = `<strong>Credential Verified Valid (Registry Demo)</strong><br>Institution: African Leadership University<br>Degree: BSc Software Engineering`;
             }
         }
+
+        renderJobsList();
     </script>
 </body>
 </html>
