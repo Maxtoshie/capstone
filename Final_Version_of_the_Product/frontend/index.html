@@ -3,29 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UjuziChain - Decentralized Credentials</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-</head>
-<body>
-    <nav class="navbar">
-        <div class="logo"><strong>Ujuzi</strong>Chain</div>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="#">Applicants</a>
-            <a href="#">Recruiters</a>
-            <a href="#">About Us</a>
-        </div>
-        <a href="login.html" class="btn-outline">Login / Sign Up</a>
-    </nav>
+    <title>UjuziChain - Verifiable Credential Infrastructure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0a0b0d;
+            --bg-card: rgba(18, 20, 26, 0.75);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-green: #10b981;
+        }
 
-    <main class="hero">
-        <h1 class="hero-title">Verifiable Open-Source Credentials for the Global Workforce</h1>
-        <p class="hero-subtitle">Secure, blockchain-backed job applicant verification for modern recruiters and talented individuals.</p>
-        <div class="hero-actions">
-            <a href="login.html?role=applicant" class="btn-primary">I'm an Applicant ></a>
-            <a href="login.html?role=recruiter" class="btn-secondary">I'm a Recruiter</a>
-        </div>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.035) 0%, transparent 60%),
+                radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
+                url("data:image/svg+xml,%3Csvg width='1200' height='800' viewBox='0 0 1200 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-100,200 C300,100 600,400 1300,150 M-100,260 C300,160 600,460 1300,210 M-100,320 C300,220 600,520 1300,270 M-100,380 C300,280 600,580 1300,330 M-100,440 C300,340 600,640 1300,390 M-100,500 C300,400 600,700 1300,450 M-100,560 C300,460 600,760 1300,510' stroke='rgba(255,255,255,0.035)' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+            background-size: cover;
+        }
+
+        /* Floating Btrust Navbar */
+        .navbar-wrap {
+            position: sticky;
+            top: 16px;
+            z-index: 100;
+            padding: 0 24px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 16px auto 0;
+        }
+        .btrust-navbar {
+            background: rgba(18, 20, 26, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #ffffff;
+        }
+        .logo-box {
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+        .logo-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+        .nav-item {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .nav-item:hover { color: #ffffff; }
+
+        .btn-launch {
+            background: #ffffff;
+            color: #000000;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-launch:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+        }
+
+        /* Hero Section */
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .hero {
+            padding: 120px 0 90px;
+            max-width: 900px;
+        }
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 58px;
+            font-weight: 700;
+            letter-spacing: -2px;
+            line-height: 1.08;
+            margin-bottom: 24px;
+        }
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 650px;
+            margin-bottom: 36px;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+        .btn-btrust-hero {
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 26px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .btn-btrust-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.18);
+        }
+        .btn-outline {
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 13px 22px;
+            font-size: 15px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-outline:hover {
+            border-color: var(--border-hover);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        /* About Us Section */
+        .section-about {
+            padding: 90px 0;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .section-label {
+            font-family: 'Space Grotesk', sans-serif;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            color: var(--accent-green);
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+        .about-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 24px;
+        }
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 36px;
+        }
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 28px;
+            transition: border-color 0.2s;
+        }
+        .glass-card:hover { border-color: var(--border-hover); }
+        .glass-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 19px;
+            margin-bottom: 12px;
+        }
+        .glass-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            border-top: 1px solid var(--border-subtle);
+            padding: 30px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body id="home">
+
+    <!-- Btrust-style Header -->
+    <div class="navbar-wrap">
+        <nav class="btrust-navbar">
+            <a href="#home" class="nav-brand">
+                <div class="logo-box">UC</div>
+                <div class="logo-text">UjuziChain</div>
+            </a>
+
+            <!-- Functional Home & About Us Navigation -->
+            <div class="nav-links">
+                <a href="#home" class="nav-item">Home</a>
+                <a href="#about" class="nav-item">About Us</a>
+            </div>
+
+            <a href="login.html" class="btn-launch">
+                Launch App <span>&rarr;</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Hero Content -->
+    <main class="container">
+        <section class="hero">
+            <h1>We Verify Open-Source & Engineering Talent in the Global South</h1>
+            <p>
+                UjuziChain bridges developers and recruiters through cryptographic academic records and practical skill simulations anchored on Ethereum Sepolia.
+            </p>
+            <div class="hero-buttons">
+                <a href="login.html" class="btn-btrust-hero">
+                    Connect Portal <span>&rarr;</span>
+                </a>
+                <a href="#about" class="btn-outline">Read Documentation</a>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about" class="section-about">
+            <span class="section-label">About UjuziChain</span>
+            <h2 class="about-title">Decentralized Trust for the Future of African Tech</h2>
+            <p style="font-size: 15px; color: var(--text-secondary); max-width: 700px; line-height: 1.6;">
+                Traditional hiring is bogged down by unverified resumes and manual credential checks. UjuziChain removes intermediaries by combining on-chain smart contract verification with real-world skill simulations.
+            </p>
+
+            <div class="about-grid">
+                <div class="glass-card">
+                    <h3>On-Chain Registry</h3>
+                    <p>Credentials issued by certified institutions (like ALU) are immutably signed to our Sepolia smart contract, making academic fraud mathematically impossible.</p>
+                </div>
+                <div class="glass-card">
+                    <h3>Simulated Job Match</h3>
+                    <p>Candidates prove readiness through role-specific scenario tasks, giving hiring teams verified proof of engineering ability before scheduling an interview.</p>
+                </div>
+                <div class="glass-card">
+                    <h3>Zero Gatekeeping</h3>
+                    <p>Non-custodial MetaMask authentication lets talent from Nairobi, Kigali, and across Africa maintain sovereign ownership of their career identity.</p>
+                </div>
+            </div>
+        </section>
     </main>
+
+    <footer>
+        <p>&copy; 2026 UjuziChain. Powered by Ethereum Sepolia & Netlify.</p>
+    </footer>
+
 </body>
 </html>
