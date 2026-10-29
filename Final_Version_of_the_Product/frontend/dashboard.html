@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>UjuziChain - East Africa Talent & Credential Infrastructure</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
@@ -20,44 +20,58 @@
             --accent-blue: #38bdf8;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
 
-        body {
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
             background-color: var(--bg-base);
             color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
+            touch-action: pan-y;
             background-image: 
                 radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.035) 0%, transparent 60%),
                 radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
                 url("data:image/svg+xml,%3Csvg width='1200' height='800' viewBox='0 0 1200 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-100,200 C300,100 600,400 1300,150 M-100,260 C300,160 600,460 1300,210 M-100,320 C300,220 600,520 1300,270 M-100,380 C300,280 600,580 1300,330 M-100,440 C300,340 600,640 1300,390 M-100,500 C300,400 600,700 1300,450 M-100,560 C300,460 600,760 1300,510' stroke='rgba(255,255,255,0.035)' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
             background-size: cover;
+            background-position: center;
         }
 
         .navbar-wrap {
             position: sticky;
-            top: 16px;
+            top: 14px;
             z-index: 100;
-            padding: 0 24px;
+            padding: 0 20px;
             max-width: 1320px;
             width: 100%;
-            margin: 16px auto 0;
+            margin: 14px auto 0;
         }
+
         .btrust-navbar {
-            background: rgba(18, 20, 26, 0.7);
+            background: rgba(18, 20, 26, 0.85);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-subtle);
             border-radius: 14px;
-            padding: 10px 20px;
+            padding: 10px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            gap: 12px;
         }
 
-        .nav-brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .nav-brand { display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0; }
         .logo-box {
             background: #ffffff;
             color: #000000;
@@ -89,15 +103,16 @@
             color: var(--text-secondary);
             font-size: 13.5px;
             font-weight: 500;
-            padding: 8px 14px;
+            padding: 8px 12px;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            white-space: nowrap;
         }
         .nav-btn:hover { color: #ffffff; background: rgba(255, 255, 255, 0.04); border-color: var(--border-subtle); }
         .nav-btn.active { background: #ffffff; color: #000000; font-weight: 600; }
 
-        .nav-actions { display: flex; align-items: center; gap: 10px; }
+        .nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
         .profile-pill {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-subtle);
@@ -121,7 +136,7 @@
             align-items: center;
             justify-content: center;
         }
-        .profile-name-text { font-size: 12.5px; font-weight: 500; color: #ffffff; }
+        .profile-name-text { font-size: 12.5px; font-weight: 500; color: #ffffff; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .wallet-pill {
             background: rgba(16, 185, 129, 0.1);
@@ -150,12 +165,12 @@
         }
         .btn-logout:hover { color: #f87171; border-color: rgba(248, 113, 113, 0.4); background: rgba(239, 68, 68, 0.05); }
 
-        main { max-width: 1320px; width: 100%; margin: 28px auto 60px; padding: 0 24px; flex: 1; }
+        main { max-width: 1320px; width: 100%; margin: 24px auto 60px; padding: 0 20px; flex: 1; }
         .tab-pane { display: none; }
         .tab-pane.active { display: block; }
 
-        .hero-banner { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; }
-        .hero-banner h1 { font-family: 'Space Grotesk', sans-serif; font-size: 34px; font-weight: 700; letter-spacing: -1px; }
+        .hero-banner { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; gap: 14px; }
+        .hero-banner h1 { font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -1px; }
         .hero-banner p { font-size: 14px; color: var(--text-secondary); margin-top: 6px; }
 
         .btn-btrust-action {
@@ -163,14 +178,16 @@
             color: #000000;
             border: none;
             border-radius: 8px;
-            padding: 11px 20px;
+            padding: 11px 18px;
             font-size: 13.5px;
             font-weight: 600;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
         .btn-btrust-action:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15); }
 
@@ -179,45 +196,52 @@
             color: var(--text-primary);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
-            padding: 10px 18px;
+            padding: 10px 16px;
             font-size: 13.5px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
         }
         .btn-secondary:hover { border-color: var(--border-hover); background: rgba(255, 255, 255, 0.04); }
 
         .glass-card {
             background: var(--bg-card);
             backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
-            padding: 24px;
+            padding: 22px;
             transition: border-color 0.2s;
         }
         .glass-card:hover { border-color: var(--border-hover); }
 
         .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
         .stat-card p.label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
-        .stat-card h2 { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; margin: 10px 0; }
+        .stat-card h2 { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; margin: 8px 0; }
         .stat-card p.sub { font-size: 12px; color: var(--text-muted); }
 
         .dashboard-split { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; margin-bottom: 24px; }
-        .card-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .card-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 8px; }
         .card-header-bar h3 { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; }
-        .card-header-bar a { color: var(--text-secondary); font-size: 13px; text-decoration: none; cursor: pointer; }
+        .card-header-bar a { color: var(--text-secondary); font-size: 13px; text-decoration: none; cursor: pointer; white-space: nowrap; }
         .card-header-bar a:hover { color: #ffffff; }
-        .card-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; }
+        .card-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
 
-        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 13px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.04); gap: 10px; }
         .list-row:last-child { border-bottom: none; }
         .list-row h4 { font-size: 14px; font-weight: 600; }
         .list-row p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-        .badge-score { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; }
+        .badge-score { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; white-space: nowrap; }
 
-        .status-pill { background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-pill { background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+        .skill-tag { background: rgba(255, 255, 255, 0.06); color: #e2e8f0; border: 1px solid var(--border-subtle); padding: 3px 8px; border-radius: 6px; font-size: 11.5px; display: inline-block; margin: 2px 4px 2px 0; }
+
         .dark-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
-        .dark-table td { padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: var(--text-secondary); }
+        .dark-table td { padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: var(--text-secondary); }
         .dark-table tr:last-child td { border-bottom: none; }
 
         .jobs-split-layout { display: grid; grid-template-columns: 1.15fr 1.6fr; gap: 20px; }
@@ -226,22 +250,23 @@
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
-            padding: 12px 14px;
+            padding: 11px 14px;
             font-size: 13px;
             color: #ffffff;
-            margin: 14px 0 16px;
+            margin: 12px 0 16px;
             outline: none;
         }
         .job-select-item {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
-            padding: 14px 16px;
+            padding: 13px 15px;
             margin-bottom: 10px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 8px;
             transition: all 0.2s;
         }
         .job-select-item:hover { background: rgba(255, 255, 255, 0.05); }
@@ -263,16 +288,17 @@
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border-subtle);
             border-radius: 10px;
-            padding: 16px 20px;
+            padding: 14px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+            gap: 12px;
         }
-        .step-tile-left { display: flex; align-items: center; gap: 16px; }
+        .step-tile-left { display: flex; align-items: center; gap: 14px; }
         .step-index {
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.08);
             color: #ffffff;
@@ -282,19 +308,20 @@
             align-items: center;
             justify-content: center;
             font-size: 13px;
+            flex-shrink: 0;
         }
-        .assessment-box { background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 20px; margin: 20px 0; }
+        .assessment-box { background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 18px; margin: 18px 0; }
         .quiz-option {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
-            padding: 12px 16px;
+            padding: 12px 14px;
             margin: 8px 0;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 13.5px;
+            font-size: 13px;
             transition: all 0.2s;
         }
         .quiz-option.active { background: rgba(255, 255, 255, 0.1); border-color: #ffffff; }
@@ -304,40 +331,74 @@
             inset: 0;
             background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            padding: 20px;
+            padding: 16px;
         }
         .modal-container {
             background: #111318;
             border: 1px solid var(--border-hover);
             border-radius: 14px;
-            max-width: 620px;
+            max-width: 600px;
             width: 100%;
-            padding: 28px;
+            padding: 24px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
             max-height: 90vh;
             overflow-y: auto;
         }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .modal-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 19px; }
         .close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 5px; }
         .form-input {
             width: 100%;
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
-            padding: 10px 14px;
-            font-size: 13.5px;
+            padding: 10px 13px;
+            font-size: 13px;
             color: #ffffff;
             outline: none;
         }
-        .drop-zone { border: 2px dashed var(--border-subtle); border-radius: 10px; padding: 24px; text-align: center; cursor: pointer; margin-bottom: 16px; }
-        .doc-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: 6px; margin-bottom: 8px; font-size: 13px; }
+        .drop-zone { border: 2px dashed var(--border-subtle); border-radius: 10px; padding: 18px; text-align: center; cursor: pointer; margin-bottom: 14px; }
+        .doc-item { display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: 6px; margin-bottom: 8px; font-size: 12.5px; }
+
+        /* Media Queries for Tablet & Mobile */
+        @media (max-width: 1024px) {
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+            .dashboard-split { grid-template-columns: 1fr; }
+            .jobs-split-layout { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-wrap { padding: 0 12px; top: 10px; margin-top: 10px; }
+            .btrust-navbar { flex-wrap: wrap; padding: 10px 14px; gap: 10px; }
+            .nav-brand { order: 1; }
+            .nav-actions { order: 2; margin-left: auto; gap: 8px; }
+            .nav-links {
+                order: 3;
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 4px;
+                justify-content: flex-start;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                border-top: 1px solid rgba(255,255,255,0.05);
+                padding-top: 8px;
+            }
+            .nav-links::-webkit-scrollbar { display: none; }
+            .profile-name-text { display: none; }
+            .wallet-pill { font-size: 11px; padding: 4px 8px; }
+            
+            main { padding: 0 14px; margin-top: 18px; }
+            .hero-banner { flex-direction: column; align-items: flex-start; }
+            .hero-banner h1 { font-size: 24px; }
+            .stat-grid { grid-template-columns: 1fr; gap: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -405,9 +466,9 @@
                     <p class="sub">Practical evaluations</p>
                 </div>
                 <div class="glass-card stat-card">
-                    <p class="label">On-Chain Credentials</p>
-                    <h2>1</h2>
-                    <p class="sub">Active on Sepolia</p>
+                    <p class="label">Verified Documents</p>
+                    <h2 id="metricDocsCount">1</h2>
+                    <p class="sub">Attached to profile</p>
                 </div>
             </div>
 
@@ -417,32 +478,33 @@
                         <h3>East Africa Openings</h3>
                         <a onclick="switchNav('jobs')">View all</a>
                     </div>
-                    <p class="card-sub">Direct postings & live feeds in Nairobi, Kigali, Kampala & Remote EA.</p>
+                    <p class="card-sub">Dynamic matching against your verified skill profile.</p>
                     <div id="overviewQuickJobs"></div>
                 </div>
 
                 <div class="glass-card">
                     <div class="card-header-bar">
-                        <h3>East Africa Ecosystem</h3>
+                        <h3>My Profile & Skills</h3>
                         <a onclick="openProfileModal()">Edit Details</a>
                     </div>
-                    <p class="card-sub">Identity & Registry Status</p>
+                    <p class="card-sub">Interactive Competency Record</p>
+
+                    <div style="margin-bottom: 14px;">
+                        <span style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">Active Verified Skills:</span>
+                        <div id="overviewSkillBadges"></div>
+                    </div>
 
                     <div class="list-row">
                         <span style="color: var(--text-secondary); font-size: 13px;">Academic Credential</span>
                         <span class="status-pill">ALU Verified</span>
                     </div>
                     <div class="list-row">
-                        <span style="color: var(--text-secondary); font-size: 13px;">Ethereum Sepolia</span>
-                        <span style="font-weight: 600; font-size: 13px;">Connected</span>
+                        <span style="color: var(--text-secondary); font-size: 13px;">Attached Documents</span>
+                        <span style="font-weight: 600; font-size: 13px;" id="sideDocCount">1 Document</span>
                     </div>
                     <div class="list-row">
-                        <span style="color: var(--text-secondary); font-size: 13px;">Application Gateway</span>
-                        <span style="font-size: 13px; font-weight: 600; color: #34d399;">&ge; 70% Auto Apply</span>
-                    </div>
-                    <div class="list-row">
-                        <span style="color: var(--text-secondary); font-size: 13px;">Simulation Requirement</span>
-                        <span style="font-size: 13px; color: var(--accent-blue);">&lt; 70% Practical Test</span>
+                        <span style="color: var(--text-secondary); font-size: 13px;">Auto Apply Gate</span>
+                        <span style="font-size: 13px; font-weight: 600; color: #34d399;">&ge; 70% Match</span>
                     </div>
                 </div>
             </div>
@@ -469,11 +531,6 @@
                         <td style="color: var(--text-muted);">Open-Source & Web3 Peer Group</td>
                         <td style="color: #fbbf24; font-weight: 600; text-align: right;">Active Live</td>
                     </tr>
-                    <tr>
-                        <td>Dar es Salaam Tech Corridor (Tanzania)</td>
-                        <td style="color: var(--text-muted);">Remote EAC Systems Integration</td>
-                        <td style="color: var(--text-muted); text-align: right;">Active Live</td>
-                    </tr>
                 </table>
             </div>
         </div>
@@ -482,7 +539,7 @@
         <div id="pane-jobs" class="tab-pane">
             <div class="jobs-split-layout">
                 <div class="glass-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
                         <h3>East Africa Jobs</h3>
                         <button class="btn-btrust-action" id="btnPostJobTrigger" onclick="openPostJobModal()" style="display: none; padding: 6px 12px; font-size: 12px;">
                             + Post East Africa Job
@@ -494,16 +551,16 @@
                 </div>
 
                 <div class="glass-card">
-                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px;" id="detailHeading">Junior Software Engineer</h2>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;" id="detailHeading">Junior Software Engineer</h2>
                     <p style="font-size: 13px; color: var(--text-secondary); margin: 6px 0 16px;" id="detailSub">Nairobi Tech Labs · Nairobi, Kenya · Hybrid</p>
                     
-                    <div style="margin-bottom: 22px;">
+                    <div style="margin-bottom: 20px;">
                         <span class="tag-pill" id="detailJobType">Full-time</span>
                         <span class="tag-pill" id="detailJobSource">East Africa Verified</span>
                         <span class="tag-pill">Regional Ingestion</span>
                     </div>
 
-                    <div style="margin-bottom: 24px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); padding: 18px; border-radius: 8px;">
+                    <div style="margin-bottom: 22px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); padding: 16px; border-radius: 8px;">
                         <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600;">
                             <span>Profile match</span>
                             <span id="detailScore" style="font-family: 'Space Grotesk', sans-serif; font-size: 15px;">85%</span>
@@ -515,12 +572,12 @@
                     </div>
 
                     <h4 style="font-size: 14px; margin-bottom: 8px;">About the role</h4>
-                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 22px;" id="detailDescription">
+                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;" id="detailDescription">
                         Support the product engineering team in Nairobi by building web features, smart contract verification, and contributing to regional API integrations.
                     </p>
 
                     <h4 style="font-size: 14px; margin-bottom: 8px;">Key requirements</h4>
-                    <ul style="font-size: 13px; color: var(--text-secondary); margin-left: 20px; margin-bottom: 28px; line-height: 1.7;" id="detailRequirements"></ul>
+                    <ul style="font-size: 13px; color: var(--text-secondary); margin-left: 20px; margin-bottom: 24px; line-height: 1.7;" id="detailRequirements"></ul>
 
                     <div id="jobActionArea"></div>
                 </div>
@@ -535,7 +592,7 @@
                 </div>
                 <p class="card-sub">Applications submitted and reviewed through UjuziChain verification.</p>
 
-                <div id="emptyAppsView" style="text-align: center; margin-top: 100px; display: none;">
+                <div id="emptyAppsView" style="text-align: center; margin-top: 80px; display: none;">
                     <h4 style="font-size: 16px; margin-bottom: 6px;">No applications yet</h4>
                     <p style="font-size: 13px; color: var(--text-muted);">Applications submitted by candidates in East Africa will appear here.</p>
                 </div>
@@ -547,7 +604,7 @@
         <div id="pane-simulations" class="tab-pane">
             <div class="glass-card">
                 <div class="card-header-bar">
-                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Practical Job Simulation</h2>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 21px;">Practical Job Simulation</h2>
                     <span class="tag-pill" id="simRoleTag">Graduate QA Engineer</span>
                 </div>
                 <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="simCompanyTag">Kivu Digital · Kigali, Rwanda</p>
@@ -563,7 +620,7 @@
                             <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Inspect how the candidate application queries Ethereum Sepolia view functions.</p>
                         </div>
                     </div>
-                    <span style="font-size: 12px; color: var(--text-muted);">10 min</span>
+                    <span style="font-size: 12px; color: var(--text-muted); white-space: nowrap;">10 min</span>
                 </div>
 
                 <div class="step-tile">
@@ -574,7 +631,7 @@
                             <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Select the correct approach for gas-free smart contract verification:</p>
                         </div>
                     </div>
-                    <span style="font-size: 12px; color: var(--text-muted);">25 min</span>
+                    <span style="font-size: 12px; color: var(--text-muted); white-space: nowrap;">25 min</span>
                 </div>
 
                 <div class="assessment-box">
@@ -593,7 +650,7 @@
                         <span><strong>Option C:</strong> Store credentials in plain text in client localStorage without cryptographic signature</span>
                     </div>
 
-                    <div style="display: flex; gap: 12px; margin-top: 20px;">
+                    <div style="display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap;">
                         <button class="btn-btrust-action" onclick="submitSimulationAnswer()">
                             Submit Assessment <span>&rarr;</span>
                         </button>
@@ -609,14 +666,14 @@
         <div id="pane-credentials" class="tab-pane">
             <div class="glass-card">
                 <div class="card-header-bar">
-                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Credentials Registry</h2>
-                    <button class="btn-secondary" onclick="openProfileModal()">Add New Credential Doc</button>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 21px;">Credentials & Uploaded Documents</h2>
+                    <button class="btn-secondary" onclick="openProfileModal()">+ Upload New Document</button>
                 </div>
                 <p class="card-sub">Cryptographically verified academic & professional records.</p>
 
-                <div style="border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.02); border-radius: 10px; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: #34d399; display: flex; align-items: center; justify-content: center; font-weight: 700;">✓</div>
+                <div style="border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.02); border-radius: 10px; padding: 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div style="width: 34px; height: 34px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: #34d399; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">✓</div>
                         <div>
                             <h4 style="font-size: 14px;">BSc Software Engineering</h4>
                             <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">African Leadership University (Kigali, Rwanda)</p>
@@ -626,9 +683,8 @@
                     <span class="status-pill">Sepolia Verified</span>
                 </div>
 
-                <p style="font-size: 12px; color: var(--text-muted); background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); padding: 14px; border-radius: 8px;">
-                    Credential verification establishes trust for East African developers competing in global and regional hiring pipelines.
-                </p>
+                <h4 style="font-size: 14px; margin-bottom: 12px;">Candidate Attached Verification Documents:</h4>
+                <div id="credentialsAttachedList"></div>
             </div>
         </div>
 
@@ -636,19 +692,19 @@
         <div id="pane-verify" class="tab-pane">
             <div class="glass-card">
                 <div class="card-header-bar">
-                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px;">Verify Credential On-Chain</h2>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 21px;">Verify Credential On-Chain</h2>
                 </div>
                 <p class="card-sub">Query Ethereum Sepolia directly to authenticate any African university or partner credential.</p>
 
-                <div style="margin-top: 24px;">
-                    <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 8px;">Credential ID</label>
-                    <div style="display: flex; gap: 12px; max-width: 600px;">
-                        <input type="text" id="verifyIdField" value="UC-2026-001" style="flex: 1; padding: 12px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); border-radius: 8px; color: #ffffff; font-size: 13px; outline: none;">
+                <div style="margin-top: 20px;">
+                    <label style="font-size: 12.5px; font-weight: 600; display: block; margin-bottom: 8px;">Credential ID</label>
+                    <div style="display: flex; gap: 10px; max-width: 600px; flex-wrap: wrap;">
+                        <input type="text" id="verifyIdField" value="UC-2026-001" style="flex: 1; min-width: 200px; padding: 11px 13px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); border-radius: 8px; color: #ffffff; font-size: 13px; outline: none;">
                         <button class="btn-btrust-action" onclick="verifyOnSepolia()">Verify</button>
                     </div>
                 </div>
 
-                <div id="verifyOut" style="margin-top: 20px; display: none; padding: 16px; border-radius: 8px; font-size: 13px; max-width: 600px;"></div>
+                <div id="verifyOut" style="margin-top: 18px; display: none; padding: 14px; border-radius: 8px; font-size: 13px; max-width: 600px;"></div>
             </div>
         </div>
     </main>
@@ -697,11 +753,11 @@
         </div>
     </div>
 
-    <!-- Modal: Profile & Document Editor -->
+    <!-- Modal: Profile, Skills & Document Editor -->
     <div class="modal-overlay" id="profileModal" onclick="closeProfileModal(event)">
         <div class="modal-container" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h3 id="modalProfileTitle">Edit Profile & Documents</h3>
+                <h3 id="modalProfileTitle">Edit Profile, Skills & Documents</h3>
                 <button class="close-btn" onclick="closeProfileModal()">&times;</button>
             </div>
 
@@ -714,22 +770,29 @@
                     <label id="lblProfileTitle">Professional Title</label>
                     <input type="text" id="inputHeadline" class="form-input">
                 </div>
+
                 <div class="form-group">
-                    <label>Bio / Overview</label>
-                    <textarea id="inputBio" class="form-input" rows="3"></textarea>
+                    <label id="lblModalSkills">Technical Skills (comma-separated)</label>
+                    <input type="text" id="inputSkills" class="form-input" placeholder="e.g. JavaScript, Git, REST APIs, Solidity, SQL">
+                    <span style="font-size: 11px; color: var(--text-muted); display: block; margin-top: 4px;">Modifying skills will dynamically recalculate your job match scores.</span>
                 </div>
 
-                <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 20px 0;">
+                <div class="form-group">
+                    <label>Bio / Overview</label>
+                    <textarea id="inputBio" class="form-input" rows="2"></textarea>
+                </div>
 
-                <h4 style="font-size: 14px; margin-bottom: 8px;">Uploaded Documents & Proof</h4>
+                <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 16px 0;">
+
+                <h4 style="font-size: 13.5px; margin-bottom: 8px;">Uploaded Documents & Proof</h4>
                 <div class="drop-zone" onclick="document.getElementById('docFileInput').click()">
-                    <p style="font-size: 13px; font-weight: 500;">+ Click to upload verified document (PDF, PNG)</p>
+                    <p style="font-size: 13px; font-weight: 500;">+ Click to upload verified document (PDF, PNG, DOCX)</p>
                     <input type="file" id="docFileInput" style="display: none;" onchange="handleDocUpload(event)">
                 </div>
 
                 <div id="uploadedDocsList"></div>
 
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
                     <button type="button" class="btn-secondary" onclick="closeProfileModal()">Cancel</button>
                     <button type="submit" class="btn-btrust-action">Save Changes</button>
                 </div>
@@ -755,7 +818,7 @@
                 match: 85,
                 status: 'untested',
                 source: "Direct Submission",
-                requirements: ["JavaScript & Web3", "Git & Smart Contracts", "REST APIs", "Basic SQL"],
+                requirements: ["JavaScript", "Git", "REST APIs", "SQL"],
                 description: "Support our Nairobi core engineering team building decentralized verification infrastructure across East Africa."
             },
             {
@@ -766,7 +829,7 @@
                 match: 61,
                 status: 'untested',
                 source: "Norrsken Kigali Partner",
-                requirements: ["Automated Testing", "Cypress / Playwright", "API Testing", "Bug Tracking"],
+                requirements: ["Testing", "Cypress", "REST APIs", "Git"],
                 description: "Ensure rigorous reliability for regional financial platforms and cross-border settlement tooling built out of Kigali."
             },
             {
@@ -777,7 +840,7 @@
                 match: 42,
                 status: 'untested',
                 source: "EAC Developer Network",
-                requirements: ["Node.js / Express", "PostgreSQL", "Docker Basics", "RESTful Design"],
+                requirements: ["Node.js", "PostgreSQL", "Docker", "REST APIs"],
                 description: "Work with distributed systems teams across Kenya, Tanzania, and Rwanda handling high-throughput ingest."
             },
             {
@@ -788,7 +851,7 @@
                 match: 78,
                 status: 'untested',
                 source: "Kampala BitDevs",
-                requirements: ["Solidity", "Hardhat / Foundry", "EVM Basics", "Testing"],
+                requirements: ["Solidity", "Hardhat", "Git", "Testing"],
                 description: "Develop immutable registry contracts and decentralized identities tailored for African universities."
             }
         ];
@@ -813,14 +876,39 @@
         let profileData = JSON.parse(localStorage.getItem(`ujuzi_profile_${currentRole}`)) || {
             name: currentRole === "Recruiter" ? "Nairobi Tech Talent" : "Maxwel Okoth",
             headline: currentRole === "Recruiter" ? "Lead Technical Recruiter - East Africa" : "Full Stack Web3 Developer",
+            skills: ["JavaScript", "Git", "REST APIs", "SQL", "Solidity"],
             bio: currentRole === "Recruiter" ? "Vetting high-potential engineers in Kenya, Rwanda, and Uganda." : "Software engineer building decentralized solutions for Africa.",
             docs: [{ name: "ALU_BSc_Software_Engineering_Degree.pdf", size: "2.4 MB", date: "Sep 2026", verified: true }]
         };
 
+        if (!profileData.skills || profileData.skills.length === 0) {
+            profileData.skills = ["JavaScript", "Git", "REST APIs", "SQL", "Solidity"];
+        }
+
         let selectedJobIndex = 0;
         let selectedQuiz = 'A';
 
-        // Fetch Live African Remote Developer Roles from Remotive Public API
+        function calculateDynamicMatch(jobReqs) {
+            if (!profileData.skills || profileData.skills.length === 0) return 50;
+            const userSkillsLower = profileData.skills.map(s => s.toLowerCase());
+            let matched = 0;
+            jobReqs.forEach(req => {
+                if (userSkillsLower.some(us => req.toLowerCase().includes(us) || us.includes(req.toLowerCase()))) {
+                    matched++;
+                }
+            });
+            const ratio = matched / (jobReqs.length || 1);
+            return Math.min(95, Math.max(30, Math.round(ratio * 100)));
+        }
+
+        function refreshJobMatches() {
+            jobsList.forEach(j => {
+                if (j.requirements && j.requirements.length > 0) {
+                    j.match = calculateDynamicMatch(j.requirements);
+                }
+            });
+        }
+
         async function fetchLiveEastAfricaJobs() {
             try {
                 const res = await fetch('https://remotive.com/api/remote-jobs?category=software-dev&limit=6');
@@ -836,14 +924,13 @@
                     ];
 
                     const liveMapped = data.jobs.slice(0, 4).map((extJob, idx) => {
-                        const skills = extJob.tags && extJob.tags.length > 0 ? extJob.tags.slice(0, 4) : ["JavaScript", "REST APIs", "Git", "Backend"];
-                        const matchVal = 65 + (idx * 8); // realistic calculated spread
+                        const skills = extJob.tags && extJob.tags.length > 0 ? extJob.tags.slice(0, 4) : ["JavaScript", "REST APIs", "Git", "SQL"];
                         return {
                             id: `remotive-${extJob.id}`,
                             title: extJob.title,
                             company: extJob.company_name,
                             location: regionalHubs[idx % regionalHubs.length],
-                            match: Math.min(matchVal, 92),
+                            match: calculateDynamicMatch(skills),
                             status: 'untested',
                             source: "Live Feed (Remotive Africa)",
                             requirements: skills,
@@ -851,9 +938,9 @@
                         };
                     });
 
-                    // Merge recruiter postings + live feed + curated seed
                     const recruiterPosts = jobsList.filter(j => j.source === "Recruiter Submission");
                     jobsList = [...recruiterPosts, ...liveMapped, ...baseCuratedJobs];
+                    refreshJobMatches();
                     document.getElementById("metricFeedStatus").innerText = "Live Remote API Sync";
                     renderJobs();
                     renderOverviewSummary();
@@ -883,19 +970,31 @@
                 document.getElementById("modalProfileTitle").innerText = "Recruiter Profile & East Africa Organization";
                 document.getElementById("lblProfileName").innerText = "Recruiter / Organization Name";
                 document.getElementById("lblProfileTitle").innerText = "Hiring Agency / Company Department";
+                document.getElementById("lblModalSkills").innerText = "Primary Tech Stacks Hired (comma-separated)";
             } else {
                 document.getElementById("appsPaneTitle").innerText = "My Applications";
             }
 
+            refreshJobMatches();
             renderOverviewSummary();
             renderJobs();
             renderApplications();
+            renderAttachedDocs();
             fetchLiveEastAfricaJobs();
         }
 
         function renderOverviewSummary() {
             document.getElementById("metricJobsCount").innerText = jobsList.length;
             document.getElementById("metricApps").innerText = applicationsList.length;
+            document.getElementById("metricDocsCount").innerText = profileData.docs ? profileData.docs.length : 1;
+            document.getElementById("sideDocCount").innerText = `${profileData.docs ? profileData.docs.length : 1} Document(s)`;
+
+            const skillBox = document.getElementById("overviewSkillBadges");
+            if (profileData.skills && profileData.skills.length > 0) {
+                skillBox.innerHTML = profileData.skills.map(s => `<span class="skill-tag">${s}</span>`).join("");
+            } else {
+                skillBox.innerHTML = `<span style="font-size: 12px; color: var(--text-muted);">No skills added yet. Click edit to add skills.</span>`;
+            }
 
             const quickBox = document.getElementById("overviewQuickJobs");
             quickBox.innerHTML = jobsList.slice(0, 3).map(j => `
@@ -1065,6 +1164,7 @@
 
         function handleCandidateApply(subType) {
             const job = jobsList[selectedJobIndex];
+            const primaryDoc = (profileData.docs && profileData.docs[0]) ? profileData.docs[0].name : "ALU BSc Degree";
             const newApp = {
                 id: `app-${Date.now()}`,
                 jobTitle: job.title,
@@ -1073,7 +1173,7 @@
                 applicantAddress: currentWallet,
                 match: job.match,
                 submissionType: subType,
-                credentialName: "ALU BSc Software Engineering (Sepolia Verified)",
+                credentialName: `${primaryDoc} (Sepolia Verified)`,
                 date: "Just now"
             };
 
@@ -1099,14 +1199,14 @@
 
             if (currentRole === "Recruiter") {
                 list.innerHTML = applicationsList.map(app => `
-                    <div class="glass-card" style="margin-bottom: 14px; padding: 20px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div class="glass-card" style="margin-bottom: 14px; padding: 18px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
                             <div>
-                                <h4 style="font-size: 16px; font-weight: 700;">${app.applicantName}</h4>
-                                <p style="font-size: 12.5px; color: var(--text-muted); font-family: monospace; margin: 3px 0 8px;">
+                                <h4 style="font-size: 15px; font-weight: 700;">${app.applicantName}</h4>
+                                <p style="font-size: 12px; color: var(--text-muted); font-family: monospace; margin: 3px 0 6px;">
                                     Wallet: ${app.applicantAddress}
                                 </p>
-                                <p style="font-size: 13.5px; color: var(--text-secondary);">
+                                <p style="font-size: 13px; color: var(--text-secondary);">
                                     Applied for: <strong style="color: #ffffff;">${app.jobTitle}</strong> · ${app.company}
                                 </p>
                             </div>
@@ -1116,20 +1216,20 @@
                             </div>
                         </div>
 
-                        <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                        <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
                             <div style="font-size: 12px; color: #34d399; display: flex; align-items: center; gap: 6px;">
                                 <span>✓</span> <span>${app.credentialName}</span>
                             </div>
                             <div style="display: flex; gap: 8px;">
-                                <button class="btn-btrust-action" style="padding: 6px 14px; font-size: 12px;" onclick="alert('Candidate ${app.applicantName} shortlisted!')">Shortlist</button>
-                                <button class="btn-secondary" style="padding: 6px 14px; font-size: 12px;" onclick="alert('Opening candidate Sepolia on-chain proofs...')">Inspect Credentials</button>
+                                <button class="btn-btrust-action" style="padding: 6px 12px; font-size: 12px;" onclick="alert('Candidate ${app.applicantName} shortlisted!')">Shortlist</button>
+                                <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="alert('Opening candidate Sepolia on-chain proofs...')">Inspect Credentials</button>
                             </div>
                         </div>
                     </div>
                 `).join("");
             } else {
                 list.innerHTML = applicationsList.map(app => `
-                    <div class="list-row" style="padding: 16px 0;">
+                    <div class="list-row" style="padding: 14px 0;">
                         <div>
                             <h4>${app.jobTitle}</h4>
                             <p>${app.company}</p>
@@ -1139,6 +1239,24 @@
                     </div>
                 `).join("");
             }
+        }
+
+        function renderAttachedDocs() {
+            const container = document.getElementById("credentialsAttachedList");
+            if (!container) return;
+            if (!profileData.docs || profileData.docs.length === 0) {
+                container.innerHTML = `<p style="font-size: 12px; color: var(--text-muted);">No documents uploaded yet.</p>`;
+                return;
+            }
+            container.innerHTML = profileData.docs.map(d => `
+                <div class="doc-item">
+                    <div>
+                        <strong>${d.name}</strong>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${d.size} · Uploaded ${d.date}</div>
+                    </div>
+                    <span class="status-pill" style="font-size: 11px;">Verified Record</span>
+                </div>
+            `).join("");
         }
 
         function openPostJobModal() { document.getElementById("postJobModal").style.display = "flex"; }
@@ -1177,13 +1295,16 @@
             document.getElementById(`btn-tab-${tabName}`).classList.add('active');
             if (tabName === 'jobs') renderJobs();
             if (tabName === 'applications') renderApplications();
+            if (tabName === 'credentials') renderAttachedDocs();
         }
 
         function performLogout() { sessionStorage.clear(); window.location.href = "login.html"; }
+
         function openProfileModal() {
             document.getElementById("inputFullName").value = profileData.name;
             document.getElementById("inputHeadline").value = profileData.headline;
-            document.getElementById("inputBio").value = profileData.bio;
+            document.getElementById("inputBio").value = profileData.bio || "";
+            document.getElementById("inputSkills").value = profileData.skills ? profileData.skills.join(", ") : "";
             renderDocs();
             document.getElementById("profileModal").style.display = "flex";
         }
@@ -1194,19 +1315,27 @@
         }
         function renderDocs() {
             const container = document.getElementById("uploadedDocsList");
-            container.innerHTML = profileData.docs.map((doc, idx) => `
+            container.innerHTML = (profileData.docs || []).map((doc, idx) => `
                 <div class="doc-item">
                     <div>
                         <strong>${doc.name}</strong>
                         <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${doc.size} · Uploaded ${doc.date}</div>
                     </div>
-                    <span class="status-pill" style="font-size: 11px;">Verified</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="status-pill" style="font-size: 11px;">Verified</span>
+                        <button type="button" onclick="deleteDocItem(${idx})" style="background:transparent; border:none; color:#f87171; cursor:pointer; font-size:14px;">&times;</button>
+                    </div>
                 </div>
             `).join("");
+        }
+        function deleteDocItem(index) {
+            profileData.docs.splice(index, 1);
+            renderDocs();
         }
         function handleDocUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
+            if (!profileData.docs) profileData.docs = [];
             profileData.docs.push({ name: file.name, size: (file.size / 1024 / 1024).toFixed(2) + " MB", date: "Today", verified: true });
             renderDocs();
         }
@@ -1215,11 +1344,21 @@
             profileData.name = document.getElementById("inputFullName").value.trim();
             profileData.headline = document.getElementById("inputHeadline").value.trim();
             profileData.bio = document.getElementById("inputBio").value.trim();
+            
+            const rawSkills = document.getElementById("inputSkills").value.trim();
+            profileData.skills = rawSkills ? rawSkills.split(",").map(s => s.trim()).filter(Boolean) : ["JavaScript", "Git", "REST APIs", "SQL"];
+
             localStorage.setItem(`ujuzi_profile_${currentRole}`, JSON.stringify(profileData));
             document.getElementById("navDisplayName").innerText = profileData.name;
             document.getElementById("navAvatarInitials").innerText = profileData.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+            
+            refreshJobMatches();
+            renderOverviewSummary();
+            renderJobs();
+            renderAttachedDocs();
+
             document.getElementById("profileModal").style.display = "none";
-            alert("Profile details saved!");
+            alert("Profile, skills, and documents updated! Job matches have been recalculated.");
         }
 
         async function verifyOnSepolia() {
