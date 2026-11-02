@@ -139,14 +139,15 @@
             color: #ffffff;
             border: 1px solid var(--border-subtle);
             border-radius: 6px;
-            padding: 9px 16px;
-            font-size: 13px;
+            padding: 8px 14px;
+            font-size: 12.5px;
             font-weight: 500;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             white-space: nowrap;
         }
+        .btn-secondary:hover { border-color: var(--border-hover); background: rgba(255, 255, 255, 0.04); }
 
         .glass-card {
             background: var(--bg-card);
@@ -236,6 +237,85 @@
         }
         .quiz-option.active { border-color: #ffffff; background: rgba(255, 255, 255, 0.06); }
 
+        /* Irembo-Style In-Browser Document Viewer Modal */
+        .doc-viewer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .doc-viewer-container {
+            background: #0d0f14;
+            border: 1px solid var(--border-hover);
+            border-radius: 12px;
+            max-width: 900px;
+            width: 100%;
+            height: 88vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .doc-viewer-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #12151b;
+        }
+
+        .doc-viewer-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 310px;
+            overflow: hidden;
+        }
+
+        .doc-preview-pane {
+            background: #050608;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cert-paper {
+            width: 100%;
+            max-width: 480px;
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 8px;
+            padding: 32px 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            font-family: serif;
+            text-align: center;
+            border: 8px double #cbd5e1;
+            position: relative;
+        }
+
+        .doc-meta-sidebar {
+            background: #0f1217;
+            border-left: 1px solid var(--border-subtle);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .meta-field { margin-bottom: 14px; font-family: 'Inter', sans-serif; }
+        .meta-field label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); display: block; margin-bottom: 3px; }
+        .meta-field p { font-size: 12.5px; color: #ffffff; word-break: break-all; }
+
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -274,6 +354,8 @@
         @media (max-width: 900px) {
             .stat-grid { grid-template-columns: repeat(2, 1fr); }
             .dashboard-split, .jobs-split-layout { grid-template-columns: 1fr; }
+            .doc-viewer-body { grid-template-columns: 1fr; }
+            .doc-meta-sidebar { border-left: none; border-top: 1px solid var(--border-subtle); }
             .nav-links { display: none; }
         }
     </style>
@@ -320,9 +402,7 @@
                     <p id="overviewSubtext">Non-custodial, cryptographic talent verification across Nairobi, Kigali, Kampala, and Dar es Salaam.</p>
                 </div>
                 <div id="overviewHeroAction">
-                    <button class="btn-btrust-action" onclick="switchNav('jobs')">
-                        Browse East Africa Jobs <span>&rarr;</span>
-                    </button>
+                    <button class="btn-btrust-action" onclick="switchNav('jobs')">Browse East Africa Jobs <span>&rarr;</span></button>
                 </div>
             </div>
 
@@ -374,38 +454,22 @@
                     <div class="list-row">
                         <div>
                             <span style="font-size: 12.5px; font-weight: 600;">Academic Credential</span>
-                            <p style="font-size: 11px; color: var(--text-muted);">Verified by: ALU (Sepolia)</p>
+                            <p style="font-size: 11px; color: var(--text-muted);">African Leadership University</p>
                         </div>
-                        <span class="badge-verified-onchain">✓ On-Chain</span>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span class="badge-verified-onchain">✓ Sepolia</span>
+                            <button class="btn-secondary" style="padding: 3px 8px; font-size: 11px;" onclick="launchIremboViewer('ALU_BSc_Software_Engineering_Degree.pdf', 'African Leadership University', 'BSc Software Engineering', '0x8f3c7e4a1b9d...f02a', 'UC-2026-001')">👁️ View</button>
+                        </div>
                     </div>
 
                     <div class="list-row">
                         <div>
                             <span style="font-size: 12.5px; font-weight: 600;">Applied Assessment</span>
-                            <p style="font-size: 11px; color: var(--text-muted);">Verified by: Simulation Engine</p>
+                            <p style="font-size: 11px; color: var(--text-muted);">Practical Simulation Engine</p>
                         </div>
                         <span class="status-pill">Passed (100%)</span>
                     </div>
-
-                    <div class="list-row">
-                        <div>
-                            <span style="font-size: 12.5px; font-weight: 600;">Document Security</span>
-                            <p style="font-size: 11px; color: var(--text-muted);">Zero-Knowledge SHA-256 Hashing</p>
-                        </div>
-                        <span style="font-size: 11.5px; color: var(--text-secondary);">Zero-PII</span>
-                    </div>
                 </div>
-            </div>
-
-            <!-- Automated Verification Requests Inbox & Directory -->
-            <div class="glass-card" style="margin-top: 18px;">
-                <div class="card-header-bar">
-                    <h3>Institution & Employer Verification Tracking</h3>
-                    <a href="verify-request.html" target="_blank" style="color:var(--text-secondary); text-decoration:underline; font-size:12px;">Open Demo Verifier Link &rarr;</a>
-                </div>
-                <p class="card-sub">Automated verification emails dispatched to academic institutions and prior employers upon candidate registration.</p>
-
-                <div id="institutionsTrackList"></div>
             </div>
         </div>
 
@@ -415,9 +479,7 @@
                 <div class="glass-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
                         <h3>East Africa Jobs</h3>
-                        <button class="btn-btrust-action" id="btnPostJobTrigger" onclick="openPostJobModal()" style="display: none; padding: 5px 10px; font-size: 11.5px;">
-                            + Post Role
-                        </button>
+                        <button class="btn-btrust-action" id="btnPostJobTrigger" onclick="openPostJobModal()" style="display: none; padding: 5px 10px; font-size: 11.5px;">+ Post Role</button>
                     </div>
                     <p class="card-sub" id="jobsTotalSub">Verified roles in East Africa</p>
                     <input type="text" class="search-box-input" id="jobSearchBox" oninput="filterJobsList()" placeholder="Search Nairobi, Kigali, Kampala, skills...">
@@ -462,7 +524,6 @@
                     <h3 id="appsPaneTitle">Applications</h3>
                 </div>
                 <p class="card-sub" id="appsPaneSub">Applications submitted and reviewed through UjuziChain verification.</p>
-
                 <div id="emptyAppsView" style="text-align: center; margin-top: 80px; display: none;">
                     <h4 style="font-size: 15px; margin-bottom: 4px;">No applications yet</h4>
                     <p style="font-size: 12.5px; color: var(--text-muted);">Applications will appear here.</p>
@@ -482,14 +543,6 @@
                 <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 18px;">
                     Practical assessments prove real-world aptitude for candidates matching under 70%. Passing verifies practical competency, unlocking direct job application access.
                 </p>
-
-                <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h4 style="font-size: 13.5px;">Scenario Evaluation</h4>
-                        <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">Inspect how the candidate application queries Ethereum Sepolia view functions.</p>
-                    </div>
-                    <span style="font-size: 11.5px; color: var(--text-muted);">25 min</span>
-                </div>
 
                 <div class="assessment-box">
                     <p style="font-size: 13px; font-weight: 600; margin-bottom: 10px;">Which method reads on-chain credential validity without requiring gas fees?</p>
@@ -530,11 +583,14 @@
                             <p style="font-size: 12px; color: var(--text-secondary);">Issuer: African Leadership University (ALU)</p>
                             <p style="font-size: 11px; color: var(--text-muted); font-family: monospace; margin-top: 3px;">Credential ID: UC-2026-001 · Contract: 0xA40d...132F</p>
                         </div>
-                        <button class="btn-secondary" style="font-size: 11.5px; padding: 4px 8px;" onclick="switchNav('verify')">Verify Proof</button>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-btrust-action" style="font-size: 11.5px; padding: 5px 10px;" onclick="launchIremboViewer('ALU_BSc_Software_Engineering_Degree.pdf', 'African Leadership University', 'BSc Software Engineering', '0x8f3c7e4a1b9d...f02a', 'UC-2026-001')">👁️ View Document</button>
+                            <button class="btn-secondary" style="font-size: 11.5px; padding: 5px 10px;" onclick="switchNav('verify')">Verify Proof</button>
+                        </div>
                     </div>
                 </div>
 
-                <h4 style="font-size: 13.5px; margin-bottom: 10px;">Attached Verification Hashes (Zero-PII Storage):</h4>
+                <h4 style="font-size: 13.5px; margin-bottom: 10px;">Attached Verification Hashes:</h4>
                 <div id="credentialsAttachedList"></div>
             </div>
         </div>
@@ -559,6 +615,84 @@
             </div>
         </div>
     </main>
+
+    <!-- IREMBO-STYLE IN-BROWSER DOCUMENT VIEWER MODAL -->
+    <div class="doc-viewer-overlay" id="iremboViewerModal" onclick="closeIremboViewer(event)">
+        <div class="doc-viewer-container" onclick="event.stopPropagation()">
+            <div class="doc-viewer-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 16px;">📄</span>
+                    <div>
+                        <h4 style="font-size: 14px; font-weight: 700; color: #ffffff;" id="ivDocTitle">Document Inspection</h4>
+                        <p style="font-size: 11px; color: var(--text-muted);">Verified Document Previewer (No Download Required)</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span class="badge-verified-onchain" id="ivVerifyBadge">✓ Cryptographically Attested</span>
+                    <button onclick="closeIremboViewer()" style="background: transparent; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer;">&times;</button>
+                </div>
+            </div>
+
+            <div class="doc-viewer-body">
+                <!-- Preview Canvas -->
+                <div class="doc-preview-pane">
+                    <div class="cert-paper">
+                        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #64748b; margin-bottom: 8px;">Republic of Rwanda · Higher Education Attestation</div>
+                        <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px; color: #0f172a;" id="ivCertOrg">African Leadership University</h2>
+                        <div style="width: 40px; height: 2px; background: #0f172a; margin: 12px auto;"></div>
+                        <p style="font-size: 12px; color: #475569; font-style: italic; margin-bottom: 12px;">This document certifies that</p>
+                        <h3 style="font-size: 18px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; margin-bottom: 8px; color: #0284c7;" id="ivCertCandidate">Maxwel Okoth</h3>
+                        <p style="font-size: 12px; color: #475569; margin-bottom: 14px;">has satisfied all academic requirements and is awarded the degree of</p>
+                        <h4 style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 18px;" id="ivCertDegree">Bachelor of Science in Software Engineering</h4>
+                        
+                        <div style="border-top: 1px dashed #cbd5e1; padding-top: 14px; display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: #64748b; font-family: 'Inter', sans-serif;">
+                            <div>
+                                <span>Registry ID:</span><br>
+                                <strong id="ivCertRegId" style="color: #0f172a;">UC-2026-001</strong>
+                            </div>
+                            <div style="border: 2px solid #059669; color: #059669; padding: 4px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase;">
+                                [ SEAL VERIFIED ]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cryptographic Metadata Sidebar -->
+                <div class="doc-meta-sidebar">
+                    <h4 style="font-size: 13.5px; font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px;">Attestation Metadata</h4>
+                    
+                    <div class="meta-field">
+                        <label>Issuing Authority</label>
+                        <p id="ivMetaOrg">African Leadership University</p>
+                    </div>
+
+                    <div class="meta-field">
+                        <label>Smart Contract Registry</label>
+                        <p style="font-family: monospace; font-size: 11.5px; color: #38bdf8;">0xA40d77d6e31F5044C7151dAd78C8bA6C3313132F</p>
+                    </div>
+
+                    <div class="meta-field">
+                        <label>SHA-256 Digest (Zero-Knowledge)</label>
+                        <p style="font-family: monospace; font-size: 11px;" id="ivMetaHash">0x8f3c7e4a1b9d...f02a</p>
+                    </div>
+
+                    <div class="meta-field">
+                        <label>Network & Hardfork</label>
+                        <p>Ethereum Sepolia (Paris EVM)</p>
+                    </div>
+
+                    <div class="meta-field">
+                        <label>Validation Standard</label>
+                        <p>W3C Decentralized Identifiers (DID)</p>
+                    </div>
+
+                    <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-subtle);">
+                        <button class="btn-btrust-action" style="width: 100%; justify-content: center;" onclick="closeIremboViewer()">Done Inspecting</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Profile & Document Editor Modal -->
     <div class="modal-overlay" id="profileModal" onclick="closeProfileModal(event)">
@@ -585,7 +719,7 @@
                 <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 14px 0;">
 
                 <h4 style="font-size: 13px; margin-bottom: 4px;">Zero-Knowledge Document Hashing</h4>
-                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Select a file to generate a cryptographic SHA-256 fingerprint. File bytes are NOT stored.</p>
+                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Select a file to compute a SHA-256 fingerprint. Raw bytes are not stored.</p>
 
                 <div style="border: 2px dashed var(--border-subtle); border-radius: 6px; padding: 14px; text-align: center; cursor: pointer; margin-bottom: 12px;" onclick="document.getElementById('docFileInput').click()">
                     <p style="font-size: 12px;">+ Select Document (PDF / DOCX) to Hash</p>
@@ -647,6 +781,24 @@
         let selectedJobIndex = 0;
         let selectedQuiz = 'A';
 
+        // Launch Irembo Rwanda Style Viewer
+        function launchIremboViewer(docName, org, degree, hash, regId) {
+            document.getElementById("ivDocTitle").innerText = docName;
+            document.getElementById("ivCertOrg").innerText = org;
+            document.getElementById("ivCertDegree").innerText = degree;
+            document.getElementById("ivCertCandidate").innerText = profileData.name;
+            document.getElementById("ivCertRegId").innerText = regId;
+            document.getElementById("ivMetaOrg").innerText = org;
+            document.getElementById("ivMetaHash").innerText = hash;
+            document.getElementById("iremboViewerModal").style.display = "flex";
+        }
+
+        function closeIremboViewer(e) {
+            if (!e || e.target.id === "iremboViewerModal" || e.target.tagName === "BUTTON") {
+                document.getElementById("iremboViewerModal").style.display = "none";
+            }
+        }
+
         async function computeFileSHA256(file) {
             const buffer = await file.arrayBuffer();
             const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
@@ -666,7 +818,7 @@
                 verifiedBy: "Client-Side SHA-256 Hashed"
             });
             renderDocs();
-            alert(`Document hashed securely!\nSHA-256: ${fileHash}\nNo raw file contents were stored off-chain.`);
+            alert(`Document hashed securely!\nSHA-256: ${fileHash}\nReady for in-browser inspection.`);
         }
 
         function initRoleUI() {
@@ -686,38 +838,6 @@
             renderJobs();
             renderApplications();
             renderAttachedDocs();
-            renderInstitutionDirectory();
-        }
-
-        function renderInstitutionDirectory() {
-            const trackBox = document.getElementById("institutionsTrackList");
-            const directory = JSON.parse(localStorage.getItem('ujuzi_institutions_directory')) || [
-                {
-                    id: "vreq_alu01",
-                    orgName: "African Leadership University",
-                    officialEmail: "registrar@alueducation.com",
-                    candidateName: "Maxwel Okoth",
-                    documentName: "ALU_BSc_Software_Engineering_Degree.pdf",
-                    docHash: "0x8f3c7e4a1b9d...f02a",
-                    status: "Verified On-Chain",
-                    dateSent: "Today"
-                }
-            ];
-
-            trackBox.innerHTML = directory.map(item => `
-                <div class="list-row">
-                    <div>
-                        <strong style="font-size: 13px;">${item.orgName}</strong>
-                        <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">
-                            Official Email: ${item.officialEmail} · Document: ${item.documentName}
-                        </p>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <span class="status-pill">${item.status}</span>
-                        <a href="verify-request.html?id=${item.id}" target="_blank" class="btn-secondary" style="padding: 4px 10px; font-size: 11.5px;">Open Verifier Portal</a>
-                    </div>
-                </div>
-            `).join("");
         }
 
         function renderOverviewSummary() {
@@ -852,12 +972,14 @@
                                 <h4 style="font-size: 14.5px;">${app.applicantName}</h4>
                                 <span class="badge-verified-onchain">✓ ${app.verifiedStatus}</span>
                             </div>
-                            <p style="font-size: 11.5px; color: var(--text-muted); font-family: monospace; margin: 2px 0 4px;">
-                                Wallet: ${app.applicantAddress}
-                            </p>
+                            <p style="font-size: 11.5px; color: var(--text-muted); font-family: monospace; margin: 2px 0 4px;">Wallet: ${app.applicantAddress}</p>
                             <p style="font-size: 12.5px;">Applied for: <strong>${app.jobTitle}</strong> · ${app.company}</p>
                         </div>
-                        <span class="status-pill">${app.submissionType}</span>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span class="status-pill">${app.submissionType}</span>
+                            <!-- Recruiter Irembo-style in-browser document viewer button -->
+                            <button class="btn-btrust-action" style="padding: 5px 10px; font-size: 11.5px;" onclick="launchIremboViewer('Candidate_Verified_Credentials.pdf', 'African Leadership University', 'BSc Software Engineering', '0x8f3c7e4a1b9d...f02a', 'UC-2026-001')">👁️ Inspect Doc</button>
+                        </div>
                     </div>
                 </div>
             `).join("");
@@ -872,7 +994,10 @@
                         <strong>${d.name}</strong>
                         <div style="font-size: 10.5px; color: var(--text-muted); font-family: monospace;">SHA-256: ${d.sha256}</div>
                     </div>
-                    <span class="badge-verified-onchain">${d.verifiedBy || 'Institution Hashed'}</span>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span class="badge-verified-onchain">${d.verifiedBy || 'Attested'}</span>
+                        <button class="btn-secondary" style="padding: 3px 8px; font-size: 11px;" onclick="launchIremboViewer('${d.name}', 'African Leadership University', 'Software Engineering Attestation', '${d.sha256}', 'UC-2026-001')">👁️ View</button>
+                    </div>
                 </div>
             `).join("");
         }
