@@ -15,20 +15,25 @@
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
             --accent-green: #10b981;
+            --accent-blue: #38bdf8;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+        .light-theme {
+            --bg-base: #f8fafc;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --border-subtle: rgba(15, 23, 42, 0.1);
+            --border-hover: rgba(15, 23, 42, 0.25);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent-green: #059669;
+            --accent-blue: #0284c7;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; word-wrap: break-word; }
 
         html, body {
             width: 100%;
-            max-width: 100vw;
             overflow-x: hidden;
             scroll-behavior: smooth;
             background-color: var(--bg-base);
@@ -36,16 +41,10 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            touch-action: pan-y;
-            background-image: 
-                radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.035) 0%, transparent 60%),
-                radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
-                url("data:image/svg+xml,%3Csvg width='1200' height='800' viewBox='0 0 1200 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-100,200 C300,100 600,400 1300,150 M-100,260 C300,160 600,460 1300,210 M-100,320 C300,220 600,520 1300,270 M-100,380 C300,280 600,580 1300,330 M-100,440 C300,340 600,640 1300,390 M-100,500 C300,400 600,700 1300,450 M-100,560 C300,460 600,760 1300,510' stroke='rgba(255,255,255,0.035)' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
-            background-size: cover;
-            background-position: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Responsive Floating Navbar */
+        /* Top Navbar */
         .navbar-wrap {
             position: sticky;
             top: 14px;
@@ -57,31 +56,21 @@
         }
 
         .btrust-navbar {
-            background: rgba(18, 20, 26, 0.85);
+            background: var(--bg-card);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-subtle);
             border-radius: 14px;
             padding: 10px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: #ffffff;
-            flex-shrink: 0;
-        }
-
+        .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); }
         .logo-box {
-            background: #ffffff;
-            color: #000000;
+            background: var(--text-primary);
+            color: var(--bg-base);
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             border-radius: 6px;
@@ -92,346 +81,334 @@
             justify-content: center;
             font-size: 13px;
         }
+        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; }
 
-        .logo-text {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
+        .nav-links { display: flex; align-items: center; gap: 18px; }
+        .nav-item { color: var(--text-secondary); text-decoration: none; font-size: 13.5px; font-weight: 500; cursor: pointer; }
+        .nav-item:hover { color: var(--text-primary); }
+
+        .btn-theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
         }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 22px;
-        }
-
-        .nav-item {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .nav-item:hover { color: #ffffff; }
 
         .btn-launch {
-            background: #ffffff;
-            color: #000000;
+            background: var(--text-primary);
+            color: var(--bg-base);
             padding: 8px 16px;
             border-radius: 8px;
             font-size: 13px;
             font-weight: 600;
             text-decoration: none;
-            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             gap: 6px;
             white-space: nowrap;
-            flex-shrink: 0;
         }
 
-        .btn-launch:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
-        }
-
-        /* Container & Hero */
-        .container {
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .hero {
-            padding: 90px 0 70px;
-            max-width: 860px;
-        }
-
-        .hero h1 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 54px;
-            font-weight: 700;
-            letter-spacing: -1.5px;
-            line-height: 1.1;
-            margin-bottom: 22px;
-        }
-
-        .hero p {
-            font-size: 17px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            max-width: 640px;
-            margin-bottom: 34px;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 14px;
-            align-items: center;
-        }
+        /* Container & Sections */
+        .container { max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 24px; }
+        .hero { padding: 80px 0 60px; max-width: 860px; }
+        .hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: 52px; font-weight: 700; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 20px; }
+        .hero p { font-size: 17px; color: var(--text-secondary); line-height: 1.6; max-width: 660px; margin-bottom: 30px; }
 
         .btn-btrust-hero {
-            background: #ffffff;
-            color: #000000;
-            border: none;
+            background: var(--text-primary);
+            color: var(--bg-base);
             border-radius: 8px;
             padding: 13px 24px;
             font-size: 14.5px;
             font-weight: 600;
-            cursor: pointer;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-btrust-hero:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.18);
         }
 
         .btn-outline {
             background: transparent;
-            color: #ffffff;
+            color: var(--text-primary);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
             padding: 12px 20px;
             font-size: 14.5px;
             font-weight: 500;
             text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
+            cursor: pointer;
         }
 
-        .btn-outline:hover {
-            border-color: var(--border-hover);
-            background: rgba(255, 255, 255, 0.04);
-        }
+        .section { padding: 70px 0; border-top: 1px solid var(--border-subtle); }
+        .section-label { font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; font-size: 11.5px; letter-spacing: 1.5px; color: var(--accent-green); margin-bottom: 10px; display: inline-block; font-weight: 700; }
+        .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -1px; margin-bottom: 16px; }
 
-        /* About Section */
-        .section-about {
-            padding: 80px 0 60px;
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        .section-label {
-            font-family: 'Space Grotesk', sans-serif;
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 1.5px;
-            color: var(--accent-green);
-            margin-bottom: 12px;
-            display: inline-block;
-        }
-
-        .about-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 34px;
-            font-weight: 700;
-            letter-spacing: -1px;
-            line-height: 1.2;
-            margin-bottom: 18px;
-        }
-
-        .about-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 32px;
-        }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 28px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 28px; }
 
         .glass-card {
             background: var(--bg-card);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
             padding: 24px;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .glass-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+        .glass-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; margin-bottom: 10px; }
+        .glass-card p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* Step Circles */
+        .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 14px;
         }
 
-        .glass-card:hover { border-color: var(--border-hover); }
-
-        .glass-card h3 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 18px;
-            margin-bottom: 10px;
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-hover);
+            border-radius: 14px;
+            max-width: 580px;
+            width: 100%;
+            padding: 28px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
-        .glass-card p {
-            font-size: 13.5px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
+        footer { margin-top: auto; border-top: 1px solid var(--border-subtle); padding: 24px; text-align: center; font-size: 12.5px; color: var(--text-muted); }
 
-        footer {
-            margin-top: auto;
-            border-top: 1px solid var(--border-subtle);
-            padding: 24px 20px;
-            text-align: center;
-            font-size: 12.5px;
-            color: var(--text-muted);
-        }
-
-        /* Responsive Breakpoints */
-        @media (max-width: 900px) {
-            .about-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-            .hero h1 {
-                font-size: 40px;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .navbar-wrap {
-                padding: 0 12px;
-                top: 10px;
-                margin-top: 10px;
-            }
-
-            .btrust-navbar {
-                padding: 8px 12px;
-                border-radius: 12px;
-            }
-
-            .logo-box {
-                width: 28px;
-                height: 28px;
-                font-size: 11px;
-            }
-
-            .logo-text {
-                font-size: 16px;
-            }
-
-            /* On small screens, hide inner text links to prevent overlapping the CTA button */
-            .nav-links {
-                display: none;
-            }
-
-            .btn-launch {
-                padding: 6px 12px;
-                font-size: 12px;
-            }
-
-            .container {
-                padding: 0 16px;
-            }
-
-            .hero {
-                padding: 50px 0 40px;
-            }
-
-            .hero h1 {
-                font-size: 28px;
-                letter-spacing: -0.5px;
-                line-height: 1.2;
-                margin-bottom: 14px;
-            }
-
-            .hero p {
-                font-size: 14px;
-                line-height: 1.5;
-                margin-bottom: 24px;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-                width: 100%;
-                gap: 10px;
-            }
-
-            .btn-btrust-hero, .btn-outline {
-                width: 100%;
-            }
-
-            .section-about {
-                padding: 50px 0 40px;
-            }
-
-            .about-title {
-                font-size: 24px;
-            }
-
-            .glass-card {
-                padding: 20px;
-            }
+        @media (max-width: 850px) {
+            .grid-3, .grid-2 { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 32px; }
+            .nav-links { display: none; }
         }
     </style>
 </head>
-<body id="home">
+<body>
 
-    <!-- Responsive Navbar -->
+    <!-- Floating Navbar with Theme Toggle & Setup Guide -->
     <div class="navbar-wrap">
         <nav class="btrust-navbar">
-            <a href="#home" class="nav-brand">
+            <a href="index.html" class="nav-brand">
                 <div class="logo-box">UC</div>
                 <div class="logo-text">UjuziChain</div>
             </a>
 
             <div class="nav-links">
-                <a href="#home" class="nav-item">Home</a>
-                <a href="#about" class="nav-item">About Us</a>
+                <a href="#target-users" class="nav-item">Target Users</a>
+                <a href="#journeys" class="nav-item">User Journeys</a>
+                <a href="#verification-flow" class="nav-item">Verification Process</a>
+                <span class="nav-item" onclick="openSetupModal()">Setup Guide</span>
             </div>
 
-            <a href="login.html" class="btn-launch">
-                Launch App <span>&rarr;</span>
-            </a>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button class="btn-theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️ Light</button>
+                <a href="login.html" class="btn-launch">Launch Portal <span>&rarr;</span></a>
+            </div>
         </nav>
     </div>
 
-    <!-- Main Hero -->
     <main class="container">
+        <!-- Hero Section -->
         <section class="hero">
             <h1>We Verify Open-Source & Engineering Talent in the Global South</h1>
             <p>
-                UjuziChain bridges developers and recruiters through cryptographic academic records and practical skill simulations anchored on Ethereum Sepolia.
+                UjuziChain anchors African university credentials on Ethereum Sepolia and evaluates candidate ability through role simulations—eliminating resume fraud for East African tech hiring.
             </p>
-            <div class="hero-buttons">
-                <a href="login.html" class="btn-btrust-hero">
-                    Connect Portal <span>&rarr;</span>
-                </a>
-                <a href="#about" class="btn-outline">Read Documentation</a>
+            <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                <a href="login.html" class="btn-btrust-hero">Connect Portal <span>&rarr;</span></a>
+                <button class="btn-outline" onclick="openSetupModal()">3-Minute Setup Guide</button>
             </div>
         </section>
 
-        <!-- About Us Section -->
-        <section id="about" class="section-about">
-            <span class="section-label">About UjuziChain</span>
-            <h2 class="about-title">Decentralized Trust for the Future of African Tech</h2>
-            <p style="font-size: 14.5px; color: var(--text-secondary); max-width: 700px; line-height: 1.6;">
-                Traditional hiring is bogged down by unverified resumes and manual credential checks. UjuziChain removes intermediaries by combining on-chain smart contract verification with real-world skill simulations.
-            </p>
+        <!-- 1. TARGET USERS -->
+        <section id="target-users" class="section">
+            <span class="section-label">Stakeholder Profiles</span>
+            <h2 class="section-title">Who Is UjuziChain Built For?</h2>
+            <p style="color: var(--text-secondary); max-width: 650px; font-size: 14.5px;">Designed around the distinct challenges of African higher education and regional technical hiring.</p>
 
-            <div class="about-grid">
+            <div class="grid-3">
                 <div class="glass-card">
-                    <h3>On-Chain Registry</h3>
-                    <p>Credentials issued by certified institutions (like ALU) are immutably signed to our Sepolia smart contract, making academic fraud mathematically impossible.</p>
+                    <div style="font-size: 26px; margin-bottom: 8px;">🎓</div>
+                    <h3>East African Developers</h3>
+                    <p>Graduates from ALU, Moringa, and Makerere who need sovereign, tamper-proof proof of qualification that cannot be faked, lost, or held hostage by institutions.</p>
                 </div>
                 <div class="glass-card">
-                    <h3>Simulated Job Match</h3>
-                    <p>Candidates prove readiness through role-specific scenario tasks, giving hiring teams verified proof of engineering ability before scheduling an interview.</p>
+                    <div style="font-size: 26px; margin-bottom: 8px;">🏛️</div>
+                    <h3>Accredited Universities</h3>
+                    <p>Institutions like African Leadership University authorized to mint immutable degree credentials directly to our smart contract, protecting university reputation.</p>
                 </div>
                 <div class="glass-card">
-                    <h3>Zero Gatekeeping</h3>
-                    <p>Non-custodial MetaMask authentication lets talent from Nairobi, Kigali, and across Africa maintain sovereign ownership of their career identity.</p>
+                    <div style="font-size: 26px; margin-bottom: 8px;">💼</div>
+                    <h3>Regional Tech Recruiters</h3>
+                    <p>Engineering leads in Nairobi, Kigali, Kampala, and Dar es Salaam who waste weeks vetting forged CVs and need instant on-chain verification and objective screening tests.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. USER JOURNEYS (Recruiter vs Applicant) -->
+        <section id="journeys" class="section">
+            <span class="section-label">Operational Workflows</span>
+            <h2 class="section-title">Two Dedicated User Journeys</h2>
+
+            <div class="grid-2">
+                <!-- Applicant Journey -->
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="font-size: 20px; color: var(--accent-blue);">Applicant Journey</h3>
+                        <span style="font-size: 12px; font-weight: 600; color: var(--accent-blue);">Candidate Path</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 14px;">
+                        <span class="step-num">1</span>
+                        <strong style="display: block; font-size: 14px;">Connect Sovereign Wallet</strong>
+                        <p style="font-size: 13px;">Login with MetaMask via EIP-1193. Zero email passwords or centralized database honeypots.</p>
+                    </div>
+                    <div style="margin-bottom: 14px;">
+                        <span class="step-num">2</span>
+                        <strong style="display: block; font-size: 14px;">Claim On-Chain Credential</strong>
+                        <p style="font-size: 13px;">Attach ALU BSc degree or certificate issued on Sepolia (<code>0xA40d...132F</code>).</p>
+                    </div>
+                    <div style="margin-bottom: 14px;">
+                        <span class="step-num">3</span>
+                        <strong style="display: block; font-size: 14px;">Assessment or Auto-Apply</strong>
+                        <p style="font-size: 13px;">Match scores &ge; 70% unlock 1-click Auto Apply. Below 70% candidates pass a practical coding simulation.</p>
+                    </div>
+                </div>
+
+                <!-- Recruiter Journey -->
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="font-size: 20px; color: var(--accent-green);">Recruiter Journey</h3>
+                        <span style="font-size: 12px; font-weight: 600; color: var(--accent-green);">Employer Path</span>
+                    </div>
+
+                    <div style="margin-bottom: 14px;">
+                        <span class="step-num">1</span>
+                        <strong style="display: block; font-size: 14px;">Publish Regional Openings</strong>
+                        <p style="font-size: 13px;">Post roles targeted to Nairobi, Kigali, Kampala, or Dar es Salaam with tailored skill requirements.</p>
+                    </div>
+                    <div style="margin-bottom: 14px;">
+                        <span class="step-num">2</span>
+                        <strong style="display: block; font-size: 14px;">Access Verified Candidate Inbox</strong>
+                        <p style="font-size: 13px;">Receive pre-screened applications with verified wallet identities and practical simulation proof.</p>
+                    </div>
+                    <div style="margin-bottom: 14px;">
+                        <span class="step-num">3</span>
+                        <strong style="display: block; font-size: 14px;">Cryptographic Degree Verification</strong>
+                        <p style="font-size: 13px;">Verify credentials directly against Ethereum Sepolia in 1-click without contacting registrar offices.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. THE VERIFICATION PROCESS (W3C Triad) -->
+        <section id="verification-flow" class="section">
+            <span class="section-label">Trust Architecture</span>
+            <h2 class="section-title">The On-Chain Verification Process</h2>
+            <p style="color: var(--text-secondary); max-width: 650px; font-size: 14.5px;">Separating who issues, who holds, and who verifies credentials according to the W3C decentralized trust triad.</p>
+
+            <div class="grid-3">
+                <div class="glass-card">
+                    <span class="step-num">1</span>
+                    <h3>The Issuer (ALU)</h3>
+                    <p>African Leadership University registers as an authorized issuer. It computes the hash of the graduate's diploma and calls <code>issueCredential(bytes32 id)</code> on Sepolia.</p>
+                </div>
+                <div class="glass-card">
+                    <span class="step-num">2</span>
+                    <h3>The Holder (Candidate)</h3>
+                    <p>The student controls their Ethereum address. They hold their credential ID (<code>UC-2026-001</code>) and present it with their verified wallet without revealing sensitive PII.</p>
+                </div>
+                <div class="glass-card">
+                    <span class="step-num">3</span>
+                    <h3>The Verifier (Recruiter)</h3>
+                    <p>Employers run a gasless <code>verifyCredential</code> query against our smart contract. The EVM checks the state and mathematically confirms legitimacy in milliseconds.</p>
                 </div>
             </div>
         </section>
     </main>
 
+    <!-- 4. SETUP INSTRUCTIONS MODAL (Replaces abstract documentation) -->
+    <div class="modal-overlay" id="setupModal" onclick="closeSetupModal(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px;">UjuziChain Quickstart Setup</h3>
+                <button onclick="closeSetupModal()" style="background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer;">&times;</button>
+            </div>
+            
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Follow these steps to connect to the Sepolia testnet environment in under 3 minutes:</p>
+
+            <div style="margin-bottom: 16px;">
+                <strong style="font-size: 13.5px; color: var(--text-primary);">1. Install MetaMask Extension</strong>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Download MetaMask for Firefox, Chrome, or Brave from <code>metamask.io</code>.</p>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <strong style="font-size: 13.5px; color: var(--text-primary);">2. Switch to Sepolia Test Network</strong>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">In MetaMask, toggle "Show test networks" and select <b>Ethereum Sepolia</b>.</p>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <strong style="font-size: 13.5px; color: var(--text-primary);">3. Get Free Testnet ETH (Optional)</strong>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Verification and applications are 100% gas-free (view calls). To test recruiter job minting, grab test ETH from <code>sepoliafaucet.com</code>.</p>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <strong style="font-size: 13.5px; color: var(--text-primary);">4. Test Credential ID</strong>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Use sample credential ID <code>UC-2026-001</code> to test live on-chain verification against smart contract <code>0xA40d77d6e31F5044C7151dAd78C8bA6C3313132F</code>.</p>
+            </div>
+
+            <button class="btn-btrust-hero" style="width: 100%; justify-content: center;" onclick="window.location.href='login.html'">Proceed to Portal Login <span>&rarr;</span></button>
+        </div>
+    </div>
+
     <footer>
-        <p>&copy; 2026 UjuziChain. Powered by Ethereum Sepolia & Netlify.</p>
+        <p>&copy; 2026 UjuziChain. Ethereum Sepolia Smart Contract: <code>0xA40d77d6e31F5044C7151dAd78C8bA6C3313132F</code></p>
     </footer>
 
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            document.getElementById('themeBtn').innerText = isLight ? '🌙 Dark' : '☀️ Light';
+            localStorage.setItem('ujuzi_theme', isLight ? 'light' : 'dark');
+        }
+
+        if (localStorage.getItem('ujuzi_theme') === 'light') {
+            document.body.classList.add('light-theme');
+            document.getElementById('themeBtn').innerText = '🌙 Dark';
+        }
+
+        function openSetupModal() { document.getElementById('setupModal').style.display = 'flex'; }
+        function closeSetupModal(e) {
+            if (!e || e.target.id === 'setupModal' || e.target.tagName === 'BUTTON') {
+                document.getElementById('setupModal').style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
