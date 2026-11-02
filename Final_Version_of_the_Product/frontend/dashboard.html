@@ -20,13 +20,7 @@
             --accent-blue: #38bdf8;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            word-wrap: break-word;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; word-wrap: break-word; }
 
         html, body {
             width: 100%;
@@ -55,7 +49,6 @@
         .btrust-navbar {
             background: rgba(14, 16, 20, 0.85);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
             padding: 10px 18px;
@@ -94,13 +87,11 @@
             border-radius: 6px;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.15s;
         }
         .nav-btn:hover { color: #ffffff; background: rgba(255, 255, 255, 0.05); }
         .nav-btn.active { background: #ffffff; color: #000000; font-weight: 600; }
 
         .nav-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-
         .profile-pill {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-subtle);
@@ -141,11 +132,6 @@
             align-items: center;
             gap: 8px;
             white-space: nowrap;
-            transition: all 0.2s;
-        }
-        .btn-btrust-action:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
         }
 
         .btn-secondary {
@@ -161,7 +147,6 @@
             align-items: center;
             white-space: nowrap;
         }
-        .btn-secondary:hover { border-color: var(--border-hover); background: rgba(255, 255, 255, 0.04); }
 
         .glass-card {
             background: var(--bg-card);
@@ -171,7 +156,6 @@
             padding: 22px;
             transition: border-color 0.2s;
         }
-        .glass-card:hover { border-color: var(--border-hover); }
 
         .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
         .stat-card p.label { font-size: 12.5px; color: var(--text-secondary); font-weight: 500; }
@@ -194,9 +178,6 @@
             border-radius: 20px;
             font-size: 11px;
             font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
         }
 
         .status-pill { background: rgba(16, 185, 129, 0.12); color: #34d399; padding: 3px 8px; border-radius: 20px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
@@ -224,9 +205,7 @@
             justify-content: space-between;
             align-items: center;
             gap: 8px;
-            transition: all 0.15s;
         }
-        .job-select-item:hover { background: rgba(255, 255, 255, 0.04); }
         .job-select-item.selected { border-color: #ffffff; background: rgba(255, 255, 255, 0.06); }
 
         .tag-pill {
@@ -256,26 +235,6 @@
             font-size: 12.5px;
         }
         .quiz-option.active { border-color: #ffffff; background: rgba(255, 255, 255, 0.06); }
-
-        /* Floating Help Button */
-        .help-trigger-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 99;
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            border-radius: 20px;
-            padding: 8px 14px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
 
         .modal-overlay {
             position: fixed;
@@ -437,6 +396,17 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Automated Verification Requests Inbox & Directory -->
+            <div class="glass-card" style="margin-top: 18px;">
+                <div class="card-header-bar">
+                    <h3>Institution & Employer Verification Tracking</h3>
+                    <a href="verify-request.html" target="_blank" style="color:var(--text-secondary); text-decoration:underline; font-size:12px;">Open Demo Verifier Link &rarr;</a>
+                </div>
+                <p class="card-sub">Automated verification emails dispatched to academic institutions and prior employers upon candidate registration.</p>
+
+                <div id="institutionsTrackList"></div>
+            </div>
         </div>
 
         <!-- 2. JOBS -->
@@ -590,44 +560,6 @@
         </div>
     </main>
 
-    <!-- Floating Help Button -->
-    <button class="help-trigger-btn" onclick="openHelpModal()">
-        <span>❓</span> Support
-    </button>
-
-    <!-- Help Modal -->
-    <div class="modal-overlay" id="helpModal" onclick="closeHelpModal(event)">
-        <div class="modal-container" onclick="event.stopPropagation()">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
-                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 18px;">UjuziChain Help & Support</h3>
-                <button onclick="closeHelpModal()" style="background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer;">&times;</button>
-            </div>
-
-            <div style="margin-bottom: 14px;">
-                <strong style="color: #ffffff; font-size: 13px;">MetaMask Connection:</strong>
-                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
-                    Ensure your wallet is connected to <b>Ethereum Sepolia</b>. All contract verification queries are read-only (zero gas).
-                </p>
-            </div>
-
-            <div style="margin-bottom: 14px;">
-                <strong style="color: #ffffff; font-size: 13px;">Simulation Gating Rules:</strong>
-                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
-                    Matches &ge; 70% qualify for 1-click Auto Apply. Matches under 70% take the practical simulation to prove competency.
-                </p>
-            </div>
-
-            <div style="margin-bottom: 16px;">
-                <strong style="color: #ffffff; font-size: 13px;">Sensitive Document Security:</strong>
-                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
-                    UjuziChain hashes your document locally via SHA-256. Raw PDF bytes are never stored off-chain.
-                </p>
-            </div>
-
-            <button class="btn-secondary" style="width: 100%; justify-content: center;" onclick="closeHelpModal()">Close Help</button>
-        </div>
-    </div>
-
     <!-- Profile & Document Editor Modal -->
     <div class="modal-overlay" id="profileModal" onclick="closeProfileModal(event)">
         <div class="modal-container" onclick="event.stopPropagation()">
@@ -754,6 +686,38 @@
             renderJobs();
             renderApplications();
             renderAttachedDocs();
+            renderInstitutionDirectory();
+        }
+
+        function renderInstitutionDirectory() {
+            const trackBox = document.getElementById("institutionsTrackList");
+            const directory = JSON.parse(localStorage.getItem('ujuzi_institutions_directory')) || [
+                {
+                    id: "vreq_alu01",
+                    orgName: "African Leadership University",
+                    officialEmail: "registrar@alueducation.com",
+                    candidateName: "Maxwel Okoth",
+                    documentName: "ALU_BSc_Software_Engineering_Degree.pdf",
+                    docHash: "0x8f3c7e4a1b9d...f02a",
+                    status: "Verified On-Chain",
+                    dateSent: "Today"
+                }
+            ];
+
+            trackBox.innerHTML = directory.map(item => `
+                <div class="list-row">
+                    <div>
+                        <strong style="font-size: 13px;">${item.orgName}</strong>
+                        <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">
+                            Official Email: ${item.officialEmail} · Document: ${item.documentName}
+                        </p>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span class="status-pill">${item.status}</span>
+                        <a href="verify-request.html?id=${item.id}" target="_blank" class="btn-secondary" style="padding: 4px 10px; font-size: 11.5px;">Open Verifier Portal</a>
+                    </div>
+                </div>
+            `).join("");
         }
 
         function renderOverviewSummary() {
@@ -908,7 +872,7 @@
                         <strong>${d.name}</strong>
                         <div style="font-size: 10.5px; color: var(--text-muted); font-family: monospace;">SHA-256: ${d.sha256}</div>
                     </div>
-                    <span class="badge-verified-onchain">${d.verifiedBy}</span>
+                    <span class="badge-verified-onchain">${d.verifiedBy || 'Institution Hashed'}</span>
                 </div>
             `).join("");
         }
@@ -924,13 +888,6 @@
         }
 
         function performLogout() { sessionStorage.clear(); window.location.href = "login.html"; }
-
-        function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
-        function closeHelpModal(e) {
-            if (!e || e.target.id === 'helpModal' || e.target.tagName === 'BUTTON') {
-                document.getElementById('helpModal').style.display = 'none';
-            }
-        }
 
         function openProfileModal() {
             document.getElementById("inputFullName").value = profileData.name;

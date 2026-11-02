@@ -11,20 +11,14 @@
             --bg-base: #090a0d;
             --bg-card: rgba(16, 18, 22, 0.85);
             --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.2);
+            --border-hover: rgba(255, 255, 255, 0.22);
             --text-primary: #ffffff;
             --text-secondary: #9ca3af;
             --text-muted: #6b7280;
             --accent-green: #10b981;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            word-wrap: break-word;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; word-wrap: break-word; }
 
         html, body {
             width: 100%;
@@ -41,7 +35,6 @@
             background-size: cover;
         }
 
-        /* Minimal Btrust Floating Top Navbar */
         .navbar-wrap {
             position: sticky;
             top: 14px;
@@ -55,7 +48,6 @@
         .btrust-navbar {
             background: rgba(14, 16, 20, 0.85);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
             padding: 10px 18px;
@@ -65,15 +57,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
 
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: #ffffff;
-            cursor: pointer;
-        }
-
+        .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #ffffff; cursor: pointer; }
         .logo-box {
             background: #ffffff;
             color: #000000;
@@ -87,13 +71,7 @@
             justify-content: center;
             font-size: 13px;
         }
-
-        .logo-text {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 17px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-        }
+        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
 
         .btn-nav-back {
             background: rgba(255, 255, 255, 0.05);
@@ -107,11 +85,6 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.2s;
-        }
-        .btn-nav-back:hover {
-            border-color: var(--border-hover);
-            background: rgba(255, 255, 255, 0.08);
         }
 
         .auth-wrapper {
@@ -127,11 +100,10 @@
         .auth-card {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-subtle);
             border-radius: 14px;
             width: 100%;
-            max-width: 440px;
+            max-width: 480px;
             padding: 30px 24px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
             text-align: center;
@@ -159,42 +131,13 @@
             cursor: pointer;
             transition: all 0.2s;
         }
+        .role-tab.active { background: #ffffff; color: #000000; font-weight: 600; }
 
-        .role-tab.active {
-            background: #ffffff;
-            color: #000000;
-            font-weight: 600;
-        }
+        .form-title { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; text-align: left; }
+        .form-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; text-align: left; }
 
-        .form-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            text-align: left;
-        }
-
-        .form-sub {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 18px;
-            line-height: 1.5;
-            text-align: left;
-        }
-
-        .input-group {
-            margin-bottom: 13px;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-        }
-
+        .input-group { margin-bottom: 13px; text-align: left; }
+        .input-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 5px; }
         .form-input {
             width: 100%;
             background: rgba(0, 0, 0, 0.4);
@@ -208,7 +151,24 @@
         }
         .form-input:focus { border-color: rgba(255, 255, 255, 0.3); }
 
-        /* Terms & Privacy Box */
+        .verifier-box {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 8px;
+            padding: 14px;
+            margin: 14px 0;
+            text-align: left;
+        }
+        .verifier-box-title {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #34d399;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
         .terms-box {
             background: rgba(0, 0, 0, 0.25);
             border: 1px solid var(--border-subtle);
@@ -224,12 +184,7 @@
             line-height: 1.45;
         }
 
-        .terms-link {
-            color: #ffffff;
-            text-decoration: underline;
-            cursor: pointer;
-            font-weight: 600;
-        }
+        .terms-link { color: #ffffff; text-decoration: underline; cursor: pointer; font-weight: 600; }
         .terms-link:hover { color: var(--accent-green); }
 
         .btn-action {
@@ -250,66 +205,9 @@
             transition: all 0.2s ease;
         }
         .btn-action:disabled { opacity: 0.45; cursor: not-allowed; }
-        .btn-action:not(:disabled):hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
-        }
 
-        .toggle-mode {
-            text-align: center;
-            margin-top: 18px;
-            font-size: 12.5px;
-            color: var(--text-muted);
-        }
-        .toggle-mode a {
-            color: #ffffff;
-            text-decoration: underline;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        /* Modal Overlay for Terms & Privacy */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.78);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 16px;
-        }
-
-        .modal-box {
-            background: #0f1115;
-            border: 1px solid var(--border-hover);
-            border-radius: 12px;
-            max-width: 580px;
-            width: 100%;
-            padding: 24px;
-            max-height: 85vh;
-            overflow-y: auto;
-            text-align: left;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            border-bottom: 1px solid var(--border-subtle);
-            padding-bottom: 12px;
-        }
-        .modal-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; }
-        .close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
-        .close-btn:hover { color: #ffffff; }
-
-        .legal-body { font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; }
-        .legal-body h4 { font-size: 13.5px; color: #ffffff; margin: 12px 0 4px; }
-        .legal-body p { margin-bottom: 10px; }
+        .toggle-mode { text-align: center; margin-top: 18px; font-size: 12.5px; color: var(--text-muted); }
+        .toggle-mode a { color: #ffffff; text-decoration: underline; cursor: pointer; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -341,19 +239,40 @@
                     <label id="lblName">Full Name</label>
                     <input type="text" id="regFullName" class="form-input" placeholder="e.g. Maxwel Okoth">
                 </div>
+
                 <div class="input-group">
                     <label id="lblTitle">Professional Title</label>
                     <input type="text" id="regTitle" class="form-input" placeholder="e.g. Full Stack Web3 Developer">
                 </div>
+
+                <div class="input-group" id="groupSkills">
+                    <label>Technical Skills (comma-separated)</label>
+                    <input type="text" id="regSkills" class="form-input" placeholder="e.g. JavaScript, Git, REST APIs, Solidity, SQL">
+                </div>
+
+                <!-- Automated Verification Dispatch Target -->
+                <div class="verifier-box" id="verifierSection">
+                    <div class="verifier-box-title">
+                        <span>✉️</span> Automated Credential Verification Target
+                    </div>
+                    <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px;">
+                        An automated verification dispatch will be sent to your institution/former employer, registering them to UjuziChain to attest your record.
+                    </p>
+                    
+                    <div class="input-group" style="margin-bottom: 10px;">
+                        <label style="color: #ffffff;">Former Institution or Company Name</label>
+                        <input type="text" id="regVerifierOrg" class="form-input" placeholder="e.g. African Leadership University or Safaricom">
+                    </div>
+
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label style="color: #ffffff;">Official Institutional / Work Email</label>
+                        <input type="email" id="regVerifierEmail" class="form-input" placeholder="e.g. registrar@alueducation.com or hr@safaricom.co.ke">
+                    </div>
+                </div>
+
                 <div class="input-group">
-                    <label>East Africa Regional Hub</label>
-                    <select id="regLocation" class="form-input" style="background: #111318;">
-                        <option value="Nairobi, Kenya">Nairobi, Kenya</option>
-                        <option value="Kigali, Rwanda">Kigali, Rwanda</option>
-                        <option value="Kampala, Uganda">Kampala, Uganda</option>
-                        <option value="Dar es Salaam, Tanzania">Dar es Salaam, Tanzania</option>
-                        <option value="Remote (East Africa)">Remote (East Africa)</option>
-                    </select>
+                    <label>Upload Document / Certificate to Verify (PDF)</label>
+                    <input type="file" id="regDocFile" class="form-input" style="padding: 7px 10px; cursor: pointer;">
                 </div>
             </div>
 
@@ -361,7 +280,7 @@
             <div class="terms-box">
                 <input type="checkbox" id="termsCheck" onchange="toggleAuthBtnState()" style="margin-top: 3px; cursor: pointer;">
                 <label for="termsCheck" style="cursor: pointer;">
-                    I agree to the <span class="terms-link" onclick="openTermsModal(event)">Terms of Service</span> and acknowledge the <span class="terms-link" onclick="openPrivacyModal(event)">Privacy Policy</span>. Credentials are authenticated non-custodially on-chain without storing private data.
+                    I agree to the Terms of Service & Privacy Policy. Verification requests transmit cryptographic hashes (SHA-256) with zero raw PII disclosure.
                 </label>
             </div>
 
@@ -377,83 +296,11 @@
         </div>
     </div>
 
-    <!-- Terms of Service Modal -->
-    <div class="modal-overlay" id="termsModal" onclick="closeTermsModal(event)">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3>Terms of Service</h3>
-                <button class="close-btn" onclick="closeTermsModal()">&times;</button>
-            </div>
-            <div class="legal-body">
-                <p>Welcome to <strong>UjuziChain</strong>. By connecting an Ethereum wallet address, you agree to these Terms of Service governing decentralized talent matching across East Africa.</p>
-                
-                <h4>1. Non-Custodial Sovereign Identity</h4>
-                <p>Authentication operates entirely via public key cryptography (EIP-1193 / MetaMask). UjuziChain does not hold custody of your private keys or personal credentials.</p>
-
-                <h4>2. On-Chain Verification & Integrity</h4>
-                <p>Academic credentials recorded on the Ethereum Sepolia smart contract (<code>0xA40d77d6e31F5044C7151dAd78C8bA6C3313132F</code>) are public, immutable, and non-repudiable.</p>
-
-                <h4>3. Role Assessments & Gating</h4>
-                <p>Practical assessments and simulation thresholds determine application eligibility objectively. Candidates agree to undergo scenario verification for role matching.</p>
-
-                <h4>4. Governing Jurisdiction</h4>
-                <p>UjuziChain complies with EAC regional digital commerce treaties and East African sovereign regulatory frameworks.</p>
-            </div>
-            <button class="btn-action" style="margin-top: 14px;" onclick="closeTermsModal()">I Understand</button>
-        </div>
-    </div>
-
-    <!-- Privacy Policy Modal -->
-    <div class="modal-overlay" id="privacyModal" onclick="closePrivacyModal(event)">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3>Decentralized Privacy Policy</h3>
-                <button class="close-btn" onclick="closePrivacyModal()">&times;</button>
-            </div>
-            <div class="legal-body">
-                <p>UjuziChain is architected to eliminate centralized data honeypots in compliance with the <strong>Kenya Data Protection Act (2019)</strong> and <strong>GDPR</strong> principles.</p>
-                
-                <h4>1. Zero Plaintext Document Storage</h4>
-                <p>Documents uploaded to UjuziChain are hashed on your client machine using the browser's native Web Crypto API (SHA-256). Raw PDF bytes and personal contact information are never stored on central servers.</p>
-
-                <h4>2. Non-Custodial Identification</h4>
-                <p>We do not store passwords, session cookies, or tracking pixels. Your identifier is your public Ethereum address ($secp256k1$).</p>
-
-                <h4>3. Blockchain Transparency</h4>
-                <p>Smart contract assertions only record unique credential hashes (<code>bytes32</code>) and university degree titles. No personally identifiable student records (PII) are published un-hashed to the ledger.</p>
-
-                <h4>4. Data Sovereignty</h4>
-                <p>Candidates retain complete ownership of their career identity. Closing or clearing your browser session eliminates local persistence without leaving residual database records.</p>
-            </div>
-            <button class="btn-action" style="margin-top: 14px;" onclick="closePrivacyModal()">Accept & Close</button>
-        </div>
-    </div>
-
     <script src="js/auth.js"></script>
     <script>
         function toggleAuthBtnState() {
             const check = document.getElementById('termsCheck');
             document.getElementById('authSubmitBtn').disabled = !check.checked;
-        }
-
-        function openTermsModal(e) {
-            if (e) e.preventDefault();
-            document.getElementById('termsModal').style.display = 'flex';
-        }
-        function closeTermsModal(e) {
-            if (!e || e.target.id === 'termsModal' || e.target.tagName === 'BUTTON') {
-                document.getElementById('termsModal').style.display = 'none';
-            }
-        }
-
-        function openPrivacyModal(e) {
-            if (e) e.preventDefault();
-            document.getElementById('privacyModal').style.display = 'flex';
-        }
-        function closePrivacyModal(e) {
-            if (!e || e.target.id === 'privacyModal' || e.target.tagName === 'BUTTON') {
-                document.getElementById('privacyModal').style.display = 'none';
-            }
         }
     </script>
 </body>
