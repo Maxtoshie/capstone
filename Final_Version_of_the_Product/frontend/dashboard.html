@@ -23,7 +23,7 @@
 
         .light-theme {
             --bg-base: #f8fafc;
-            --bg-card: rgba(255, 255, 255, 0.9);
+            --bg-card: rgba(255, 255, 255, 0.92);
             --border-subtle: rgba(15, 23, 42, 0.1);
             --border-hover: rgba(15, 23, 42, 0.25);
             --text-primary: #0f172a;
@@ -44,7 +44,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.25s ease, color 0.25s ease;
         }
 
         .navbar-wrap {
@@ -92,7 +92,7 @@
             background: transparent;
             border: 1px solid transparent;
             color: var(--text-secondary);
-            font-size: 13.5px;
+            font-size: 13px;
             font-weight: 500;
             padding: 8px 12px;
             border-radius: 8px;
@@ -190,7 +190,6 @@
         .list-row { display: flex; justify-content: space-between; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--border-subtle); gap: 10px; }
         .list-row:last-child { border-bottom: none; }
 
-        /* Verified vs Unverified Badges */
         .badge-verified-onchain {
             background: rgba(16, 185, 129, 0.15);
             color: #34d399;
@@ -227,7 +226,7 @@
             font-weight: 600;
         }
 
-        .skill-tag { background: rgba(0, 0, 0, 0.15); color: var(--text-primary); border: 1px solid var(--border-subtle); padding: 3px 8px; border-radius: 6px; font-size: 11.5px; display: inline-block; margin: 2px 4px 2px 0; }
+        .status-pill { background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; }
 
         .jobs-split-layout { display: grid; grid-template-columns: 1.15fr 1.6fr; gap: 20px; }
         .search-box-input {
@@ -294,7 +293,6 @@
         }
         .quiz-option.active { border-color: var(--text-primary); background: rgba(255, 255, 255, 0.08); }
 
-        /* Floating Help Center Button */
         .help-trigger-btn {
             position: fixed;
             bottom: 24px;
@@ -358,7 +356,6 @@
 </head>
 <body>
 
-    <!-- Navbar with Light/Dark Switcher -->
     <div class="navbar-wrap">
         <nav class="btrust-navbar">
             <div class="nav-brand" onclick="switchNav('overview')">
@@ -378,7 +375,6 @@
 
             <div class="nav-actions">
                 <button class="btn-theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️ Light</button>
-
                 <div class="profile-pill" onclick="openProfileModal()" title="Edit Profile & Documents">
                     <div class="profile-avatar" id="navAvatarInitials">MO</div>
                     <span class="profile-name-text" id="navDisplayName">Demo User</span>
@@ -755,7 +751,6 @@
         let selectedJobIndex = 0;
         let selectedQuiz = 'A';
 
-        // Cryptographic Document Hashing (Web Crypto API)
         async function computeFileSHA256(file) {
             const buffer = await file.arrayBuffer();
             const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
@@ -796,7 +791,6 @@
             document.getElementById("navAvatarInitials").innerText = profileData.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
             document.getElementById("navWalletAddress").innerText = currentWallet.length > 10 ? `${currentWallet.substring(0, 6)}...${currentWallet.substring(38)}` : currentWallet;
 
-            // Identity badge distinction
             const badgeBox = document.getElementById("identityStatusBadge");
             if (profileData.isOnChainVerified) {
                 badgeBox.innerHTML = `<span class="badge-verified-onchain">✓ Sepolia On-Chain Verified Identity</span>`;
