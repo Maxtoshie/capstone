@@ -103,7 +103,7 @@ Final_Version_of_the_Product/
 
 ## 6. Submission Deliverables
 
-- **Technical Walkthrough Video:** [Link to Walkthrough Video](#) *(replace `#` with your video URL)*
+- **Technical Walkthrough Video:** [Watch the Walkthrough Video](https://drive.google.com/drive/folders/1OGWCHmBCQFR1kfvYRZJgGx97NXxcz9VD?usp=sharing)
 - **5-Page Technical Report (PDF):** `ujuzichain_technical_report.pdf` (included in submission directory)
 - **Live Production URL:** [https://ujuzichain.netlify.app](https://ujuzichain.netlify.app)
 - **GitHub Repository:** [https://github.com/Maxtoshie/capstone](https://github.com/Maxtoshie/capstone)
