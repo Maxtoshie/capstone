@@ -104,7 +104,7 @@ Final_Version_of_the_Product/
 ## 6. Submission Deliverables
 
 - **Technical Walkthrough Video:** [Watch the Walkthrough Video](https://drive.google.com/drive/folders/1OGWCHmBCQFR1kfvYRZJgGx97NXxcz9VD?usp=sharing)
-- **5-Page Technical Report (PDF):** `ujuzichain_technical_report.pdf` (included in submission directory)
+- **Technical Report (PDF):** [UjuziChain_Technical_Report.pdf](https://github.com/Maxtoshie/capstone/blob/main/UjuziChain_Technical_Report.pdf)
 - **Live Production URL:** [https://ujuzichain.netlify.app](https://ujuzichain.netlify.app)
 - **GitHub Repository:** [https://github.com/Maxtoshie/capstone](https://github.com/Maxtoshie/capstone)
 
