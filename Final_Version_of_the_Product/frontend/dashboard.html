@@ -1433,10 +1433,37 @@
         function performLogout() { sessionStorage.clear(); window.location.href = "login.html"; }
 
         function openProfileModal() {
+            const isApplicant = (currentRole === "Applicant");
             document.getElementById("inputFullName").value = profileData.name;
             document.getElementById("inputHeadline").value = profileData.headline;
-            document.getElementById("inputSkills").value = profileData.skills ? profileData.skills.join(", ") : "";
-            renderDocs();
+            
+            const skillsGroup = document.getElementById("inputSkills")?.closest(".form-group");
+            const docsSection = document.getElementById("uploadedDocsList")?.closest("div");
+            const docHeader = docsSection?.previousElementSibling;
+            const docHr = docHeader?.previousElementSibling;
+
+            // Tailor modal labels and sections for Recruiter
+            const nameLabel = document.querySelector("#profileForm .form-group:nth-child(1) label");
+            const titleLabel = document.querySelector("#profileForm .form-group:nth-child(2) label");
+
+            if (!isApplicant) {
+                if (nameLabel) nameLabel.innerText = "Recruiter Name";
+                if (titleLabel) titleLabel.innerText = "Company / Organization & Title";
+                if (skillsGroup) skillsGroup.style.display = "none";
+                if (docsSection) docsSection.style.display = "none";
+                if (docHeader) docHeader.style.display = "none";
+                if (docHr) docHr.style.display = "none";
+            } else {
+                if (nameLabel) nameLabel.innerText = "Full Name";
+                if (titleLabel) titleLabel.innerText = "Professional Title";
+                if (skillsGroup) skillsGroup.style.display = "block";
+                if (docsSection) docsSection.style.display = "block";
+                if (docHeader) docHeader.style.display = "block";
+                if (docHr) docHr.style.display = "block";
+                document.getElementById("inputSkills").value = profileData.skills ? profileData.skills.join(", ") : "";
+                renderDocs();
+            }
+
             document.getElementById("profileModal").style.display = "flex";
         }
         function closeProfileModal(e) {
@@ -1467,6 +1494,11 @@
 
             localStorage.setItem(`ujuzi_profile_${currentRole}`, JSON.stringify(profileData));
             document.getElementById("navDisplayName").innerText = profileData.name;
+            const initials = profileData.name.split(" ").filter(Boolean).map(n => n[0]).join("").substring(0, 2).toUpperCase() || "UC";
+            const avatarEl = document.getElementById("navAvatarInitials");
+            if (avatarEl) avatarEl.innerText = initials;
+            const mobAvatar = document.getElementById("mobAvatarInitials");
+            if (mobAvatar) mobAvatar.innerText = initials;
             document.getElementById("profileModal").style.display = "none";
             renderOverviewSummary();
             renderAttachedDocs();
