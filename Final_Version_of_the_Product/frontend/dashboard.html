@@ -593,7 +593,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                 Credentials
             </button>
-            <button class="nav-btn" id="btn-tab-verify" onclick="sidebarSelect('verify')">
+            <button class="nav-btn" id="btn-tab-verify" onclick="sidebarSelect('verify')" style="display: none;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 Verify Credential
             </button>
@@ -856,7 +856,7 @@
                     </div>
                 </div>
 
-                <div id="verifyOut" style="margin-top: 16px; display: none; padding: 12px; border-radius: 6px; font-size: 12.5px; max-width: 580px;"></div>
+                <div id="verifyResultPane" style="margin-top: 16px; font-size: 12.5px; max-width: 640px;"></div>
             </div>
         </div>
 
@@ -1143,6 +1143,10 @@
         function initRoleUI() {
             // Only show Issuer Console to authorized Issuers/Admins, never on the Applicant Portal
             const isApplicant = (currentRole === "Applicant");
+            
+            // "Verify Credential" belongs on the Recruiter workspace
+            const verifyBtn = document.getElementById("btn-tab-verify");
+            if (verifyBtn) verifyBtn.style.display = isApplicant ? "none" : "flex";
             const issuerBtn = document.getElementById("btn-tab-issuer");
             if (issuerBtn) issuerBtn.style.display = isApplicant ? "none" : "inline-block";
 
@@ -1414,7 +1418,7 @@
         }
 
         async function verifyOnSepolia() {
-            UC.verifyUI(document.getElementById("verifyIdField").value.trim());
+            UC.verifyUI(document.getElementById("verifyIdField").value.trim(), "verifyResultPane");
         }
         // Skill scoring now comes from the tested engine instead of hard-coded percentages.
         function recomputeMatches() {
