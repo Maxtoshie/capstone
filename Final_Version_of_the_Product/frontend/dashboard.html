@@ -1141,32 +1141,89 @@
         }
 
         function initRoleUI() {
-            // Only show Issuer Console to authorized Issuers/Admins, never on the Applicant Portal
             const isApplicant = (currentRole === "Applicant");
-            
-            // "Verify Credential" belongs on the Recruiter workspace
-            const verifyBtn = document.getElementById("btn-tab-verify");
-            if (verifyBtn) verifyBtn.style.display = isApplicant ? "none" : "flex";
-            const issuerBtn = document.getElementById("btn-tab-issuer");
-            if (issuerBtn) issuerBtn.style.display = isApplicant ? "none" : "inline-block";
 
-            // If an applicant was somehow parked on the issuer tab, redirect to overview
+            // 1. Update Top Bar and Sidebar Branding
+            const topRoleBadge = document.getElementById("topRoleBadge");
+            if (topRoleBadge) topRoleBadge.innerText = isApplicant ? "Applicant Portal" : "Recruiter Portal";
+
+            const pageHeaderTitle = document.getElementById("pageHeaderTitle");
+            if (pageHeaderTitle) pageHeaderTitle.innerText = isApplicant ? "Applicant Workspace" : "Recruiter Workspace";
+
+            // 2. Sidebar Navigation Role Filtering
+            // Applicants get: Overview, Jobs, Applications, Simulations, Credentials
+            // Recruiters get: Overview, Jobs, Applications (Inbox), Verify Credential, Issuer Console
+            const btnSims = document.getElementById("btn-tab-simulations");
+            const btnCreds = document.getElementById("btn-tab-credentials");
+            const btnVerify = document.getElementById("btn-tab-verify");
+            const btnIssuer = document.getElementById("btn-tab-issuer");
+            const btnApps = document.getElementById("btn-tab-applications");
+
+            if (btnSims) btnSims.style.display = isApplicant ? "flex" : "none";
+            if (btnCreds) btnCreds.style.display = isApplicant ? "flex" : "none";
+            if (btnVerify) btnVerify.style.display = isApplicant ? "none" : "flex";
+            if (btnIssuer) btnIssuer.style.display = isApplicant ? "none" : "flex";
+            if (btnApps) {
+                const label = btnApps.querySelector("span") || btnApps.lastChild;
+                if (label) label.textContent = isApplicant ? " My Applications" : " Applications Inbox";
+            }
+
+            // 3. Hero Banner & CTAs
+            const overviewHeroAction = document.getElementById("overviewHeroAction");
+            if (overviewHeroAction) {
+                overviewHeroAction.innerHTML = isApplicant
+                    ? `<button class="btn-btrust-action" onclick="sidebarSelect('jobs')">Browse East Africa Jobs <span>&rarr;</span></button>`
+                    : `<button class="btn-btrust-action" onclick="sidebarSelect('applications')">Review Candidate Pipeline <span>&rarr;</span></button>`;
+            }
+
+            // 4. Overview Metrics & Card Labels
+            const stat3 = document.querySelector(".stat-grid .stat-card:nth-child(3)");
+            const stat4 = document.querySelector(".stat-grid .stat-card:nth-child(4)");
+            if (!isApplicant) {
+                if (stat3) {
+                    stat3.querySelector(".label").innerText = "Shortlisted";
+                    stat3.querySelector(".sub").innerText = "Simulation Qualified";
+                }
+                if (stat4) {
+                    stat4.querySelector(".label").innerText = "Verified Candidates";
+                    stat4.querySelector(".sub").innerText = "On-Chain Attested";
+                }
+                const profileCard = document.querySelector(".dashboard-split .glass-card:nth-child(2)");
+                if (profileCard) {
+                    profileCard.innerHTML = `
+                        <div class="card-header-bar">
+                            <h3>Candidate Verification</h3>
+                            <a onclick="sidebarSelect('verify')" style="color:var(--text-secondary); text-decoration:none; font-size:12px; cursor:pointer;">Verify Tool</a>
+                        </div>
+                        <p class="card-sub">Instant zero-knowledge checks via Ethereum Sepolia.</p>
+                        <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 10px;">
+                            <div class="list-row">
+                                <div>
+                                    <h4 style="font-size: 13.5px;">Gasless Verification (eth_call)</h4>
+                                    <p style="font-size: 11.5px; color: var(--text-muted);">Direct Sepolia smart contract query</p>
+                                </div>
+                                <span class="badge-verified-onchain">Active</span>
+                            </div>
+                            <div class="list-row">
+                                <div>
+                                    <h4 style="font-size: 13.5px;">EIP-191 Signature Verification</h4>
+                                    <p style="font-size: 11.5px; color: var(--text-muted);">Cryptographic ecrecover proof</p>
+                                </div>
+                                <span class="badge-verified-onchain">Active</span>
+                            </div>
+                            <button class="btn-btrust-action" style="margin-top: 8px; justify-content: center;" onclick="sidebarSelect('verify')">
+                                Open Verification Console &rarr;
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+
+            // Fallback safety redirect
             const activePane = document.querySelector(".tab-pane.active");
-            if (isApplicant && activePane && activePane.id === "pane-issuer") {
+            if (isApplicant && activePane && (activePane.id === "pane-issuer" || activePane.id === "pane-verify")) {
                 switchNav("overview");
             }
-            document.getElementById("topRoleBadge").innerText = `${currentRole} Portal`;
-            document.getElementById("navDisplayName").innerText = profileData.name;
-            document.getElementById("navAvatarInitials").innerText = profileData.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
-            document.getElementById("navWalletAddress").innerText = currentWallet.length > 10 ? `${currentWallet.substring(0, 6)}...${currentWallet.substring(38)}` : currentWallet;
-
-            const badgeBox = document.getElementById("identityStatusBadge");
-            if (profileData.isOnChainVerified) {
-                badgeBox.innerHTML = `<span class="badge-verified-onchain">✓ Sepolia On-Chain Verified Identity</span>`;
-            } else {
-                badgeBox.innerHTML = `<span style="font-size:11px; color:#f59e0b;">⚠️ Unverified Self-Reported Profile</span>`;
-            }
-
             renderOverviewSummary();
             renderJobs();
             renderApplications();
