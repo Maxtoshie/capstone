@@ -9,16 +9,16 @@ const UC = (function () {
   const RPC_FALLBACK = "https://rpc.sepolia.org";
 
   const ABI = [
-    "function verifyCredential(bytes32 credentialId) external view returns (bool isValid, string degree, string institutionName)",
-    "function getCredentialDetails(bytes32 credentialId) external view returns (string studentName, string degree, string institutionName, uint256 issueDate, bool isValid, address institutionAddress)",
-    "function issueCredential(bytes32 credentialId, string studentName, string degree, string institutionName, address recipient) external",
+    "function admin() external view returns (address)",
+    "function approvedInstitutions(address) external view returns (bool)",
+    "function credentials(bytes32) external view returns (string studentId, string degree, bool isValid)",
+    "function registerInstitution(address institution) external",
+    "function issueCredential(bytes32 credentialId, string studentId, string degree) external",
     "function revokeCredential(bytes32 credentialId) external",
-    "function registerInstitution(address institutionAddress, string institutionName) external",
-    "function isAuthorizedInstitution(address institutionAddress) external view returns (bool)",
-    "function getOwner() external view returns (address)",
-    "event CredentialIssued(bytes32 indexed credentialId, address indexed recipient, string studentName, string degree, string institutionName, uint256 issueDate)",
-    "event CredentialRevoked(bytes32 indexed credentialId, uint256 revocationDate)",
-    "event InstitutionRegistered(address indexed institutionAddress, string institutionName)"
+    "function verifyCredential(bytes32 credentialId) external view returns (bool isValid, string studentId, string degree)",
+    "event InstitutionRegistered(address indexed institution)",
+    "event CredentialIssued(bytes32 indexed credentialId, string studentId)",
+    "event CredentialRevoked(bytes32 indexed credentialId)"
   ];
 
   const $ = id => document.getElementById(id);
@@ -26,6 +26,7 @@ const UC = (function () {
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const short = (s, l = 6, r = 4) => { if (!s) return ""; s = String(s); return s.length <= l + r + 3 ? s : `${s.slice(0, l)}…${s.slice(-r)}`; };
   const txLink = h => `<a class="ext" href="${EXPLORER}/tx/${h}" target="_blank" rel="noopener">${short(h, 10, 8)}</a>`;
+  const addrLink = a => `<a class="ext" href="${EXPLORER}/address/${a}" target="_blank" rel="noopener">${short(a, 10, 6)}</a>`;
   const rejected = e => (e && (e.code === 4001 || e.code === "ACTION_REJECTED" || /user rejected/i.test(e.message || "")));
   const errMsg = e => (e && (e.shortMessage || e.reason || e.message)) ? String(e.shortMessage || e.reason || e.message).replace(/^execution reverted:? /i, "") : "transaction failed";
 
@@ -89,14 +90,10 @@ const UC = (function () {
     const c = await getContract(false);
     const p = c.runner.provider || c.runner;
     const t0 = performance.now();
-    const [block, [valid, deg, inst]] = await Promise.all([p.getBlockNumber(), c.verifyCredential(bId)]);
+    const [block, [valid, studentId, degree]] = await Promise.all([p.getBlockNumber(), c.verifyCredential(bId)]);
     const ms = Math.round(performance.now() - t0);
-    let details = null;
-    if (valid || deg || inst) {
-      try { details = await c.getCredentialDetails(bId); } catch (_) {}
-    }
-    const state = valid ? "VALID" : (deg || inst ? "REVOKED" : "NOT_FOUND");
-    return { rawId, bId, valid, degree: deg, institution: inst, details, block, ms, state };
+    const state = valid ? "VALID" : (studentId ? "REVOKED" : "NOT_FOUND");
+    return { rawId, bId, valid, studentId, degree, block, ms, state };
   }
 
   async function verifyUI(rawId, hostId = "verifyResultPane") {
@@ -111,18 +108,15 @@ const UC = (function () {
       const rows = [
         ["Registry key (bytes32)", chip(r.bId)],
         ["Status", `<strong style="color:${isOk ? '#34d399' : (isRev ? '#fbbf24' : '#f87171')}">${r.state}</strong>`],
+        ["Student ID / Ref", esc(r.studentId || "—")],
         ["Degree / Qualification", esc(r.degree || "—")],
-        ["Issuing Authority", esc(r.institution || "—")],
-        ["Student Name", esc(r.details ? r.details[0] : "—")],
-        ["Issue Date", r.details && Number(r.details[3]) ? new Date(Number(r.details[3]) * 1000).toUTCString() : "—"],
-        ["Issuer Address", r.details && r.details[5] ? chip(r.details[5]) : "—"],
         ["Head Block read at", `#${r.block.toLocaleString()}`],
         ["Contract", `<a class="ext" href="${EXPLORER}/address/${ADDRESS}" target="_blank" rel="noopener">${short(ADDRESS, 10, 6)}</a>`],
         ["Latency", `${r.ms} ms (eth_call · Gas paid: 0)`]
       ];
       host.innerHTML = `<div class="receipt ${r.state}"><div class="receipt-head">${icon} ${title}</div>${rows.map(([k, v]) => `<div class="receipt-row"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("")}<div class="receipt-foot">Read-only cryptographic check. Any client querying Sepolia at block #${r.block.toLocaleString()} will receive the same result.</div></div>`;
     } catch (e) {
-      host.innerHTML = `<div class="receipt ERROR"><div class="receipt-head">✗ Could not complete the on-chain read</div><div class="receipt-row"><div class="k">Reason</div><div class="v">${esc(errMsg(e))}</div></div></div>`;
+      host.innerHTML = `<div class="receipt ERROR"><div class="receipt-head">✗ Could not complete on-chain read</div><div class="receipt-row"><div class="k">Reason</div><div class="v">${esc(errMsg(e))}</div></div></div>`;
     }
   }
 
@@ -183,7 +177,7 @@ const UC = (function () {
     const bp = new ethers.BrowserProvider(window.ethereum);
     const s = await bp.getSigner();
     if ((await s.getAddress()).toLowerCase() !== wallet.toLowerCase()) {
-      throw new Error("The active MetaMask account differs from the signed-in wallet.");
+      throw new Error("Active MetaMask account differs from signed-in wallet.");
     }
     return { message: msg, signature: await s.signMessage(msg) };
   }
@@ -197,7 +191,7 @@ const UC = (function () {
       const rec = ethers.verifyMessage(a.message, a.signature);
       const ok = rec.toLowerCase() === a.applicantAddress.toLowerCase();
       out.innerHTML = ok
-        ? `<span style="color:#34d399">✓ ecrecover → ${esc(short(rec, 8, 6))} matches the applicant wallet</span>`
+        ? `<span style="color:#34d399">✓ ecrecover → ${esc(short(rec, 8, 6))} matches applicant wallet</span>`
         : `<span style="color:#f87171">✗ signer ${esc(short(rec, 8, 6))} does NOT match applicant wallet</span>`;
     } catch (e) {
       out.innerHTML = `<span style="color:#f87171">✗ invalid signature</span>`;
@@ -205,11 +199,11 @@ const UC = (function () {
   }
 
   function sigRow(app) {
-    if (!app.signature) return `<div class="sig-row">No wallet signature attached (unsigned application).</div>`;
+    if (!app.signature) return `<div class="sig-row">No wallet signature attached.</div>`;
     return `<div class="sig-row">✍ Signed with wallet · ${chip(app.signature)} <button class="btn-secondary" style="padding:2px 6px;font-size:10.5px" onclick="UC.checkSignature('${app.id}')">verify ecrecover</button><span id="sig-${app.id}" style="margin-left:6px"></span></div>`;
   }
 
-  /* ---------- Issuer Console & Attestations ---------- */
+  /* ---------- Issuer Console & Governance ---------- */
   async function issuerInit() {
     const demo = $("issuerDemoNote");
     if (demo) demo.style.display = (typeof currentWallet !== "undefined" && sessionStorage.getItem("userAddress")) ? "none" : "block";
@@ -217,69 +211,88 @@ const UC = (function () {
   }
 
   async function connectIssuer() {
-    if (!window.ethereum) { alert("MetaMask not detected."); return; }
+    const out = $("issuerRoles");
     try {
-      const p = new ethers.BrowserProvider(window.ethereum);
-      const s = await p.getSigner();
-      const addr = await s.getAddress();
-      $("issuerWallet").innerHTML = `Active wallet: ${chip(addr)} (Sepolia)`;
-      const c = await getContract(false);
-      const [isAuth, owner] = await Promise.all([c.isAuthorizedInstitution(addr), c.getOwner()]);
-      $("rbOwner")?.classList.toggle("on", owner.toLowerCase() === addr.toLowerCase());
-      $("rbAuth")?.classList.toggle("on", isAuth);
-    } catch (e) { alert(errMsg(e)); }
+      const c = await getContract(true);
+      const s = c.runner;
+      const me = await s.getAddress();
+      $("issuerWallet").innerHTML = `Active wallet: ${addrLink(me)} (Sepolia)`;
+      
+      const [adm, isAuth] = await Promise.all([c.admin(), c.approvedInstitutions(me)]);
+      const isAdmin = adm.toLowerCase() === me.toLowerCase();
+      
+      if (out) {
+        out.innerHTML = `
+          <span class="rb ${isAdmin ? "on" : ""}">${isAdmin ? "✓" : "✗"} Contract Admin</span>
+          <span class="rb ${isAuth ? "on" : ""}">${isAuth ? "✓" : "✗"} Approved Institution</span>
+        `;
+      }
+      if ($("btnRegInst")) $("btnRegInst").disabled = !isAdmin;
+      if ($("btnIssue")) $("btnIssue").disabled = !isAuth;
+      if ($("btnRevoke")) $("btnRevoke").disabled = !isAuth;
+      if ($("roleHint")) {
+        $("roleHint").textContent = (isAdmin || isAuth) ? "" : "This wallet is not yet registered. An admin must call Register Institution for it first.";
+      }
+    } catch (e) {
+      if (out) out.innerHTML = `<span class="rb">${esc(rejected(e) ? "Connection rejected" : errMsg(e))}</span>`;
+    }
   }
 
   async function registerInstitution() {
-    const addr = $("instAddr")?.value.trim(), name = $("instName")?.value.trim();
-    if (!addr || !name) { alert("Please provide both an address and name."); return; }
-    await runTx("regTracker", `Register institution: ${name}`, async () => {
+    const addr = $("instAddr")?.value.trim();
+    if (!addr || !ethers.isAddress(addr)) {
+      if ($("txReg")) $("txReg").innerHTML = `<div class="chain-note">Enter a valid 0x… Ethereum address.</div>`;
+      return;
+    }
+    await runTx("txReg", `registerInstitution(${short(addr, 8, 6)})`, async () => {
       const c = await getContract(true);
-      return await c.registerInstitution(addr, name);
+      return await c.registerInstitution(addr);
     });
+    connectIssuer();
     loadLedger();
   }
 
   async function issue() {
-    const rawId = $("issId")?.value.trim(), student = $("issStudent")?.value.trim(), deg = $("issDegree")?.value.trim(), inst = $("issInst")?.value.trim(), recip = $("issRecip")?.value.trim();
-    if (!rawId || !student || !deg || !inst || !recip) { alert("Please complete all issuance fields."); return; }
-    const bId = bytes32(rawId);
-    await runTx("issTracker", `Issue credential: ${rawId}`, async () => {
+    const ref = $("issRef")?.value.trim(), sid = $("issStudent")?.value.trim(), deg = $("issDegree")?.value.trim();
+    if (!ref || !sid || !deg) {
+      if ($("txIssue")) $("txIssue").innerHTML = `<div class="chain-note">Please fill in all three fields.</div>`;
+      return;
+    }
+    const id = bytes32(ref);
+    await runTx("txIssue", `issueCredential(${ref})`, async () => {
       const c = await getContract(true);
-      return await c.issueCredential(bId, student, deg, inst, recip);
+      return await c.issueCredential(id, sid, deg);
     });
     loadLedger();
   }
 
   async function revoke() {
-    const rawId = $("revId")?.value.trim();
-    if (!rawId) { alert("Please provide a Credential ID."); return; }
-    const bId = bytes32(rawId);
-    await runTx("revTracker", `Revoke credential: ${rawId}`, async () => {
+    const ref = $("revRef")?.value.trim();
+    if (!ref) {
+      if ($("txRevoke")) $("txRevoke").innerHTML = `<div class="chain-note">Enter a Credential reference.</div>`;
+      return;
+    }
+    const id = bytes32(ref);
+    await runTx("txRevoke", `revokeCredential(${ref})`, async () => {
       const c = await getContract(true);
-      return await c.revokeCredential(bId);
+      return await c.revokeCredential(id);
     });
     loadLedger();
   }
 
-  function fillDemo(type) {
-    const r = (typeof currentWallet !== "undefined" && currentWallet) ? currentWallet : "0xE174F15fc91870c2B0e92E437962955EA08F5d51";
-    if (type === "alu") {
-      if ($("issId")) $("issId").value = "UC-ALU-2026-SE01";
-      if ($("issStudent")) $("issStudent").value = (typeof profileData !== "undefined" ? profileData.name : "Maxwel Okoth");
-      if ($("issDegree")) $("issDegree").value = "BSc Software Engineering (Honours)";
-      if ($("issInst")) $("issInst").value = "African Leadership University";
-      if ($("issRecip")) $("issRecip").value = r;
-    }
+  function fillDemo() {
+    if ($("issRef")) $("issRef").value = "UC-2026-001";
+    if ($("issStudent")) $("issStudent").value = "STU-0001";
+    if ($("issDegree")) $("issDegree").value = "BSc Software Engineering";
   }
 
   async function loadLedger() {
     const tb = $("ledgerBody"); if (!tb) return;
-    tb.innerHTML = `<tr><td colspan="5" style="color:var(--text-muted);padding:10px 8px">Querying Sepolia events…</td></tr>`;
+    tb.innerHTML = `<tr><td colspan="4" style="color:var(--text-muted);padding:10px 8px">Querying Sepolia events…</td></tr>`;
     try {
       const c = await getContract(false);
-      const prov = c.runner.provider || c.runner;
-      const head = await prov.getBlockNumber();
+      const p = c.runner.provider || c.runner;
+      const head = await p.getBlockNumber();
       const from = head > 50000 ? head - 50000 : 0;
       const [evIss, evRev, evInst] = await Promise.all([
         c.queryFilter(c.filters.CredentialIssued(), from, "latest").catch(() => []),
@@ -287,23 +300,16 @@ const UC = (function () {
         c.queryFilter(c.filters.InstitutionRegistered(), from, "latest").catch(() => [])
       ]);
       const rows = [];
-      for (const e of evIss) rows.push({ b: e.blockNumber, tx: e.transactionHash, t: `<span class="tag-issued">ISSUE</span>`, d: `${esc(e.args[2])} · ${esc(e.args[3])} (${esc(e.args[4])})`, id: e.args[0] });
-      for (const e of evRev) rows.push({ b: e.blockNumber, tx: e.transactionHash, t: `<span class="tag-revoked">REVOKE</span>`, d: `revoked by issuer`, id: e.args[0] });
-      for (const e of evInst) rows.push({ b: e.blockNumber, tx: e.transactionHash, t: `<span class="tag-inst">REGISTER</span>`, d: esc(e.args[1]), id: e.args[0] });
+      for (const e of evIss) rows.push({ b: e.blockNumber, tx: e.transactionHash, t: `<span class="tag-issued">ISSUE</span>`, subj: `ID: ${short(e.args[0], 8, 6)} · Student: ${esc(e.args[1])}` });
+      for (const e of evRev) rows.push({ b: e.blockNumber, tx: e.transactionHash, t: `<span class="tag-revoked">REVOKE</span>`, subj: `ID: ${short(e.args[0], 8, 6)}` });
+      for (const e of evInst) rows.push({ b: e.blockNumber, tx: e.transactionHash, t: `<span class="tag-inst">REGISTER</span>`, subj: `Institution: ${short(e.args[0], 8, 6)}` });
       rows.sort((x, y) => y.b - x.b);
-      if (!rows.length) { tb.innerHTML = `<tr><td colspan="5" style="color:var(--text-muted);padding:10px 8px">No events in the last 50,000 blocks.</td></tr>`; return; }
-      tb.innerHTML = rows.map(r => `<tr><td>#${r.b.toLocaleString()}</td><td>${r.t}</td><td>${chip(short(r.id, 10, 6), r.id)}</td><td>${r.d}</td><td>${txLink(r.tx)}</td></tr>`).join("");
+      if (!rows.length) { tb.innerHTML = `<tr><td colspan="4" style="color:var(--text-muted);padding:10px 8px">No events in the last 50,000 blocks.</td></tr>`; return; }
+      tb.innerHTML = rows.map(r => `<tr><td>${r.t}</td><td>${r.subj}</td><td>#${r.b.toLocaleString()}</td><td>${txLink(r.tx)}</td></tr>`).join("");
     } catch (e) {
-      tb.innerHTML = `<tr><td colspan="5" style="color:#f87171;padding:10px 8px">${esc(errMsg(e))}</td></tr>`;
+      tb.innerHTML = `<tr><td colspan="4" style="color:#f87171;padding:10px 8px">${esc(errMsg(e))}</td></tr>`;
     }
   }
-
-  function attestOnChain() {
-    const s = $("attestStatus"); if (s) s.innerHTML = "Submitting to Sepolia…";
-    alert("Attestation submission initiated on Ethereum Sepolia.");
-  }
-  function renderAttestations() {}
-  function verifyAttestation(i) { verifyUI(i); }
 
   async function tickStatus() {
     const p = $("chainPillText"); if (!p) return;
@@ -332,6 +338,6 @@ const UC = (function () {
   return {
     CHAIN, ADDRESS, short, esc, chip, copy, bytes32, derivedId, lookup, verifyUI, viewerProof,
     runTx, issuerInit, connectIssuer, registerInstitution, issue, revoke, fillDemo, loadLedger,
-    signApplication, checkSignature, sigRow, attestOnChain, renderAttestations, verifyAttestation, tickStatus
+    signApplication, checkSignature, sigRow, tickStatus
   };
 })();
