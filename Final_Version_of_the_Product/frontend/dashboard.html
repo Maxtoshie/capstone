@@ -77,7 +77,23 @@
         .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; }
         .role-badge { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-subtle); color: var(--text-secondary); font-size: 11px; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
 
-        .nav-links { display: flex; align-items: center; gap: 4px; }
+        .nav-links { display: flex; align-items: center; gap: 6px; }
+        .nav-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s ease-in-out;
+        }
+        .nav-btn:hover { color: #ffffff; background: rgba(255, 255, 255, 0.06); }
+        .nav-btn.active { background: #ffffff; color: #000000; font-weight: 600; }
+        .nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .btrust-navbar { gap: 16px; padding: 8px 18px; }
         .nav-btn {
             background: transparent;
             border: 1px solid transparent;
@@ -883,6 +899,16 @@
         }
 
         function initRoleUI() {
+            // Only show Issuer Console to authorized Issuers/Admins, never on the Applicant Portal
+            const isApplicant = (currentRole === "Applicant");
+            const issuerBtn = document.getElementById("btn-tab-issuer");
+            if (issuerBtn) issuerBtn.style.display = isApplicant ? "none" : "inline-block";
+
+            // If an applicant was somehow parked on the issuer tab, redirect to overview
+            const activePane = document.querySelector(".tab-pane.active");
+            if (isApplicant && activePane && activePane.id === "pane-issuer") {
+                switchNav("overview");
+            }
             document.getElementById("topRoleBadge").innerText = `${currentRole} Portal`;
             document.getElementById("navDisplayName").innerText = profileData.name;
             document.getElementById("navAvatarInitials").innerText = profileData.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();

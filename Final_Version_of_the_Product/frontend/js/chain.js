@@ -201,7 +201,7 @@ const UC = (function () {
               <button class="btrust-drawer-link" data-tab="simulations">Simulations</button>
               <button class="btrust-drawer-link" data-tab="credentials">Credentials</button>
               <button class="btrust-drawer-link" data-tab="verify">Verify Credential</button>
-              <button class="btrust-drawer-link" data-tab="issuer">Issuer Console</button>
+              <button class="btrust-drawer-link" data-tab="issuer" id="mobTabIssuer">Issuer Console</button>
             </div>
             <div class="btrust-drawer-footer">
               <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
@@ -262,6 +262,9 @@ const UC = (function () {
         if (dN) dN.innerText = n;
         if (dW) dW.innerText = short(u, 6, 4);
         if (dA) dA.innerText = n.split(" ").map(p => p[0]).join("").toUpperCase();
+        const role = sessionStorage.getItem("userRole") || "Applicant";
+        const mobIss = $("mobTabIssuer");
+        if (mobIss) mobIss.style.display = (role === "Applicant") ? "none" : "block";
       }
     };
 
