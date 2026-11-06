@@ -1416,7 +1416,7 @@
             app.reviewStatus = "Forwarded to Company";
             localStorage.setItem('ujuzi_ea_applications', JSON.stringify(applicationsList));
             renderApplications();
-            alert(`Candidate ${app.applicantName} approved! Application package cryptographically verified and forwarded to ${app.company}.`);
+            alert("✓ Success: " + app.applicantName + "'s verified credentials and wallet signature have been forwarded to " + app.company + ".");
         }
 
         function rejectApplication(appId) {
