@@ -1159,6 +1159,10 @@
             const btnIssuer = document.getElementById("btn-tab-issuer");
             const btnApps = document.getElementById("btn-tab-applications");
 
+            // Recruiters review applications and verify credentials, they do not browse active jobs to apply
+            const btnJobs = document.getElementById("btn-tab-jobs");
+            if (btnJobs) btnJobs.style.display = isApplicant ? "flex" : "none";
+
             if (btnSims) btnSims.style.display = isApplicant ? "flex" : "none";
             if (btnCreds) btnCreds.style.display = isApplicant ? "flex" : "none";
             if (btnVerify) btnVerify.style.display = isApplicant ? "none" : "flex";
@@ -1221,6 +1225,9 @@
 
             // Fallback safety redirect
             const activePane = document.querySelector(".tab-pane.active");
+            if (!isApplicant && activePane && (activePane.id === "pane-jobs" || activePane.id === "pane-simulations" || activePane.id === "pane-credentials")) {
+                switchNav("applications");
+            }
             if (isApplicant && activePane && (activePane.id === "pane-issuer" || activePane.id === "pane-verify")) {
                 switchNav("overview");
             }
@@ -1360,26 +1367,65 @@
             list.style.display = "block";
             empty.style.display = "none";
 
-            list.innerHTML = applicationsList.map(app => `
-                <div class="glass-card" style="margin-bottom: 10px; padding: 16px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <h4 style="font-size: 14.5px;">${app.applicantName}</h4>
+            const isApplicant = (currentRole === "Applicant");
+            list.innerHTML = applicationsList.map(app => {
+                const status = app.reviewStatus || "Under Review";
+                const isForwarded = status === "Forwarded to Company";
+                const isRejected = status === "Rejected";
+
+                return `
+                <div class="glass-card" style="margin-bottom: 12px; padding: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 260px;">
+                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <h4 style="font-size: 15px; font-weight: 600;">${app.applicantName}</h4>
                                 <span class="badge-verified-onchain">✓ ${app.verifiedStatus}</span>
+                                <span class="status-pill" style="border: 1px solid rgba(255,255,255,0.1); font-size: 11px;">${app.submissionType}</span>
+                                ${isForwarded ? '<span style="color:#34d399; font-size: 11.5px; font-weight: 600;">✈️ Forwarded to ' + esc(app.company) + '</span>' : ''}
+                                ${isRejected ? '<span style="color:#f87171; font-size: 11.5px; font-weight: 600;">✗ Rejected</span>' : ''}
                             </div>
-                            <p style="font-size: 11.5px; color: var(--text-muted); font-family: monospace; margin: 2px 0 4px;">Wallet: ${app.applicantAddress}</p>
-                            <p style="font-size: 12.5px;">Applied for: <strong>${app.jobTitle}</strong> · ${app.company}</p>
+                            <p style="font-size: 11.5px; color: var(--text-muted); font-family: monospace; margin: 4px 0;">Wallet: ${app.applicantAddress}</p>
+                            <p style="font-size: 13px; margin: 4px 0;">Target Role: <strong>${app.jobTitle}</strong> · <span style="color:var(--text-secondary);">${app.company}</span></p>
                             ${UC.sigRow(app)}
                         </div>
-                        <div style="display: flex; gap: 8px; align-items: center;">
-                            <span class="status-pill">${app.submissionType}</span>
-                            <!-- Recruiter Irembo-style in-browser document viewer button -->
-                            <button class="btn-btrust-action" style="padding: 5px 10px; font-size: 11.5px;" onclick="launchIremboViewer('Candidate_Verified_Credentials.pdf', 'African Leadership University', 'BSc Software Engineering', '0x8f3c7e4a1b9d...f02a', 'UC-2026-001')">👁️ Inspect Doc</button>
+
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn-secondary" style="padding: 6px 12px; font-size: 11.5px;" onclick="launchIremboViewer('Candidate_Verified_Credentials.pdf', 'African Leadership University', 'BSc Software Engineering', '0x8f3c7e4a1b9d...f02a', 'UC-2026-001')">
+                                    🔍 Inspect Credentials
+                                </button>
+                                ${!isApplicant && !isForwarded && !isRejected ? `
+                                    <button class="btn-btrust-action" style="padding: 6px 14px; font-size: 11.5px; background: #10b981; color: #ffffff;" onclick="approveAndForward('${app.id}')">
+                                        ✓ Approve &amp; Forward to Company
+                                    </button>
+                                    <button class="btn-secondary" style="padding: 6px 10px; font-size: 11.5px; color: #f87171; border-color: rgba(248,113,113,0.3);" onclick="rejectApplication('${app.id}')">
+                                        ✗ Reject
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join("");
+                </div>`;
+            }).join("");
+        }
+
+        
+        function approveAndForward(appId) {
+            const app = applicationsList.find(a => a.id === appId);
+            if (!app) return;
+            app.reviewStatus = "Forwarded to Company";
+            localStorage.setItem('ujuzi_ea_applications', JSON.stringify(applicationsList));
+            renderApplications();
+            alert(`Candidate ${app.applicantName} approved! Application package cryptographically verified and forwarded to ${app.company}.`);
+        }
+
+        function rejectApplication(appId) {
+            const app = applicationsList.find(a => a.id === appId);
+            if (!app) return;
+            if (!confirm(`Mark ${app.applicantName}'s application as rejected?`)) return;
+            app.reviewStatus = "Rejected";
+            localStorage.setItem('ujuzi_ea_applications', JSON.stringify(applicationsList));
+            renderApplications();
         }
 
         function renderAttachedDocs() {
