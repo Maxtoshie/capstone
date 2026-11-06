@@ -184,8 +184,14 @@
             line-height: 1.45;
         }
 
-        .terms-link { color: #ffffff; text-decoration: underline; cursor: pointer; font-weight: 600; }
-        .terms-link:hover { color: var(--accent-green); }
+        .terms-link {
+            color: #ffffff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 600;
+            transition: color 0.15s ease;
+        }
+        .terms-link:hover { color: #34d399; }
 
         .btn-action {
             width: 100%;
@@ -208,6 +214,52 @@
 
         .toggle-mode { text-align: center; margin-top: 18px; font-size: 12.5px; color: var(--text-muted); }
         .toggle-mode a { color: #ffffff; text-decoration: underline; cursor: pointer; font-weight: 500; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-card {
+            background: #111317;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            max-width: 540px;
+            width: 100%;
+            padding: 24px;
+            max-height: 85vh;
+            overflow-y: auto;
+            text-align: left;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 12px;
+        }
+        .modal-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; color: #ffffff; }
+        .close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; line-height: 1; }
+        .close-btn:hover { color: #ffffff; }
+
+        .legal-body { font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; }
+        .legal-body h4 { font-size: 13.5px; color: #ffffff; margin: 14px 0 4px; }
+        .legal-body p { margin-bottom: 10px; }
     </style>
     <link rel="stylesheet" href="css/chain.css">
 </head>
@@ -281,7 +333,7 @@
             <div class="terms-box">
                 <input type="checkbox" id="termsCheck" onchange="toggleAuthBtnState()" style="margin-top: 3px; cursor: pointer;">
                 <label for="termsCheck" style="cursor: pointer;">
-                    I agree to the Terms of Service & Privacy Policy. Verification requests transmit cryptographic hashes (SHA-256) with zero raw PII disclosure.
+                    I agree to the <span class="terms-link" onclick="openTermsModal(event)">Terms of Service</span> &amp; <span class="terms-link" onclick="openPrivacyModal(event)">Privacy Policy</span>. Verification requests transmit cryptographic hashes (SHA-256) with zero raw PII disclosure.
                 </label>
             </div>
 
@@ -297,11 +349,65 @@
         </div>
     </div>
 
+    <!-- Terms Modal -->
+    <div class="modal-overlay" id="termsModal" onclick="closeTermsModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Terms of Service</h3>
+                <button class="close-btn" onclick="closeTermsModal()">&times;</button>
+            </div>
+            <div class="legal-body">
+                <h4>1. Platform Purpose</h4>
+                <p>UjuziChain is a decentralized academic credential and competency verification platform. All blockchain transactions occur on the Ethereum Sepolia Testnet for research and academic demonstration purposes.</p>
+                <h4>2. Self-Sovereign Identity</h4>
+                <p>Users are solely responsible for safeguarding their private keys and wallet credentials. UjuziChain does not hold custody of user keys or funds.</p>
+                <h4>3. Document Privacy</h4>
+                <p>Document digests (SHA-256 hashes) are generated locally in the browser. UjuziChain does not store or process raw document files or personally identifiable information on centralized servers.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Modal -->
+    <div class="modal-overlay" id="privacyModal" onclick="closePrivacyModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Privacy Policy</h3>
+                <button class="close-btn" onclick="closePrivacyModal()">&times;</button>
+            </div>
+            <div class="legal-body">
+                <h4>Zero-PII Storage Architecture</h4>
+                <p>UjuziChain adheres to strict zero-PII storage principles. Uploaded certificates and transcripts are processed exclusively in client-side memory via the Web Cryptography API. Only mathematical cryptographic digests are anchored to the public blockchain registry.</p>
+                <h4>On-Chain Transparency</h4>
+                <p>Interactions with Ethereum Sepolia smart contracts are public and immutable. By attesting or verifying credentials, users acknowledge that the associated cryptographic hash and wallet addresses are recorded on the public ledger.</p>
+            </div>
+        </div>
+    </div>
+
     <script src="js/auth.js"></script>
     <script>
         function toggleAuthBtnState() {
             const check = document.getElementById('termsCheck');
             document.getElementById('authSubmitBtn').disabled = !check.checked;
+        }
+
+        function openTermsModal(e) {
+            if (e) e.preventDefault();
+            document.getElementById('termsModal').style.display = 'flex';
+        }
+        function closeTermsModal(e) {
+            if (!e || e.target.id === 'termsModal' || e.target.tagName === 'BUTTON') {
+                document.getElementById('termsModal').style.display = 'none';
+            }
+        }
+
+        function openPrivacyModal(e) {
+            if (e) e.preventDefault();
+            document.getElementById('privacyModal').style.display = 'flex';
+        }
+        function closePrivacyModal(e) {
+            if (!e || e.target.id === 'privacyModal' || e.target.tagName === 'BUTTON') {
+                document.getElementById('privacyModal').style.display = 'none';
+            }
         }
     </script>
 </body>
