@@ -587,7 +587,7 @@
             </button>
             <button class="nav-btn" id="btn-tab-simulations" onclick="sidebarSelect('simulations')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                Simulations
+                Assessments
             </button>
             <button class="nav-btn" id="btn-tab-credentials" onclick="sidebarSelect('credentials')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
@@ -775,33 +775,40 @@
             </div>
         </div>
 
-        <!-- 4. SIMULATIONS -->
+        <!-- 4. JOB-SPECIFIC ASSESSMENTS -->
         <div id="pane-simulations" class="tab-pane">
             <div class="glass-card">
                 <div class="card-header-bar">
-                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Practical Job Simulation</h2>
-                    <span class="tag-pill" id="simRoleTag">Role Assessment</span>
+                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Technical Competency Assessment</h2>
+                    <span class="tag-pill" id="simRoleTag" style="background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3);">Role Assessment</span>
                 </div>
-                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px;" id="simCompanyTag">Nairobi, Kenya</p>
-                <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 18px;">
-                    Practical assessments prove real-world aptitude for candidates matching under 70%. Passing verifies practical competency, unlocking direct job application access.
-                </p>
+                <p style="font-size: 13px; color: var(--text-muted); margin: 6px 0 16px;" id="simCompanyTag">Targeting: Role Assessment</p>
+                <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:12px 14px; margin-bottom:18px;">
+                    <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
+                        This practical assessment measures applied competency against requirements for 
+                        <strong id="assessmentTargetTitle" style="color:#ffffff;">Junior Software Engineer</strong>. 
+                        Scoring &ge;70% or passing this benchmark unlocks <strong>Verified via Assessment</strong> status.
+                    </p>
+                </div>
 
-                <div class="assessment-box">
-                    <p style="font-size: 13px; font-weight: 600; margin-bottom: 10px;">Which method reads on-chain credential validity without requiring gas fees?</p>
+                <div class="assessment-box" id="dynamicAssessmentContainer">
+                    <p id="assessmentQuestionText" style="font-size: 13.5px; font-weight: 600; margin-bottom: 12px; line-height: 1.5;">
+                        Loading question...
+                    </p>
                     
-                    <div class="quiz-option active" id="optA" onclick="pickQuizOption('A')">
-                        <input type="radio" name="quiz" checked>
-                        <span><strong>Option A:</strong> Call <code>contract.verifyCredential(bytes32)</code> as a <code>view</code> query via JSON-RPC provider</span>
+                    <div class="quiz-option active" id="optA" onclick="pickQuizOption('A')" style="cursor:pointer; margin-bottom:8px; padding:12px; border:1px solid var(--border-subtle); border-radius:8px;">
+                        <input type="radio" name="quiz" checked style="margin-right:8px;">
+                        <span id="optAText">Option A</span>
                     </div>
-                    <div class="quiz-option" id="optB" onclick="pickQuizOption('B')">
-                        <input type="radio" name="quiz">
-                        <span><strong>Option B:</strong> Broadcast an Ethereum state-changing transaction requiring ETH gas fee</span>
+                    <div class="quiz-option" id="optB" onclick="pickQuizOption('B')" style="cursor:pointer; margin-bottom:16px; padding:12px; border:1px solid var(--border-subtle); border-radius:8px;">
+                        <input type="radio" name="quiz" style="margin-right:8px;">
+                        <span id="optBText">Option B</span>
                     </div>
 
-                    <div style="display: flex; gap: 10px; margin-top: 16px;">
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                         <button class="btn-btrust-action" onclick="submitSimulationAnswer()">Submit Assessment <span>&rarr;</span></button>
-                        <button class="btn-secondary" onclick="demoFailSimulation()" style="color: #f87171;">Test Fail</button>
+                        <button class="btn-secondary" onclick="demoFailSimulation()" style="color: #f87171; border-color: rgba(248,113,113,0.3);">Test Fail</button>
+                        <button class="btn-secondary" onclick="sidebarSelect('jobs')" style="margin-left:auto;">&larr; Back to Jobs</button>
                     </div>
                 </div>
             </div>
@@ -1039,12 +1046,108 @@
         const currentRole = sessionStorage.getItem("userRole") || "Applicant";
         const currentWallet = sessionStorage.getItem("userAddress") || "0xE174F15fc91870c2B0e92E437962955EA08F5d51";
 
+        // Curated regional base with contextual role assessments
         const baseCuratedJobs = [
-            { id: 0, title: "Junior Software Engineer", company: "Nairobi Tech Labs", location: "Nairobi, Kenya · Hybrid", match: 85, status: 'untested', requirements: ["JavaScript", "Git", "REST APIs", "SQL"], description: "Support core engineering team building decentralized verification infrastructure across East Africa." },
-            { id: 1, title: "Graduate QA Engineer", company: "Kivu Digital", location: "Kigali, Rwanda · Hybrid", match: 61, status: 'untested', requirements: ["Testing", "Cypress", "REST APIs", "Git"], description: "Ensure rigorous reliability for cross-border settlement tooling built out of Kigali." },
-            { id: 2, title: "Backend Developer Intern", company: "East Africa Systems", location: "Dar es Salaam, Tanzania · Remote EA", match: 42, status: 'untested', requirements: ["Node.js", "PostgreSQL", "Docker", "REST APIs"], description: "Work with distributed systems teams across Kenya, Tanzania, and Rwanda." },
-            { id: 3, title: "Web3 Smart Contract Trainee", company: "Pearl Blockchain Labs", location: "Kampala, Uganda · On-site", match: 78, status: 'untested', requirements: ["Solidity", "Hardhat", "Git", "Testing"], description: "Develop immutable registry contracts tailored for African universities." }
+            { 
+                id: 0, 
+                title: "Junior Software Engineer", 
+                company: "Nairobi Tech Labs", 
+                location: "Nairobi, Kenya · Hybrid", 
+                match: 85, 
+                status: 'untested', 
+                requirements: ["JavaScript", "Git", "REST APIs", "SQL"], 
+                description: "Support core engineering team building decentralized verification infrastructure across East Africa.",
+                assessment: {
+                    q: "In a production REST service handling candidate verifications, how should idempotency be maintained for duplicate network retries?",
+                    optA: "A: Require an Idempotency-Key header on state-changing requests and verify hash before reprocessing",
+                    optB: "B: Increment the applicant count blindly on every incoming HTTP request payload",
+                    correct: "A"
+                }
+            },
+            { 
+                id: 1, 
+                title: "Graduate QA Engineer", 
+                company: "Kivu Digital", 
+                location: "Kigali, Rwanda · Hybrid", 
+                match: 61, 
+                status: 'untested', 
+                requirements: ["Testing", "Cypress", "REST APIs", "Git"], 
+                description: "Ensure rigorous reliability for cross-border settlement tooling built out of Kigali.",
+                assessment: {
+                    q: "When running end-to-end integration tests on credential issuing endpoints, what assertion best confirms a non-tampered response?",
+                    optA: "A: Assert HTTP status 200 and verify returned SHA-256 digest matches expected cryptographic hash buffer",
+                    optB: "B: Only check that the HTTP response body string contains more than 10 characters",
+                    correct: "A"
+                }
+            },
+            { 
+                id: 2, 
+                title: "Backend Developer Intern", 
+                company: "East Africa Systems", 
+                location: "Dar es Salaam, Tanzania · Remote EA", 
+                match: 42, 
+                status: 'untested', 
+                requirements: ["Node.js", "PostgreSQL", "Docker", "REST APIs"], 
+                description: "Work with distributed systems teams across Kenya, Tanzania, and Rwanda.",
+                assessment: {
+                    q: "In PostgreSQL, how do you prevent race conditions when two recruiters review the same application concurrently?",
+                    optA: "A: Query the row using SELECT ... FOR UPDATE within an explicit database transaction block",
+                    optB: "B: Read the application row into local memory with no database locking mechanism",
+                    correct: "A"
+                }
+            },
+            { 
+                id: 3, 
+                title: "Web3 Smart Contract Trainee", 
+                company: "Pearl Blockchain Labs", 
+                location: "Kampala, Uganda · On-site", 
+                match: 78, 
+                status: 'untested', 
+                requirements: ["Solidity", "Hardhat", "Git", "Testing"], 
+                description: "Develop immutable registry contracts tailored for African universities.",
+                assessment: {
+                    q: "Which Solidity design pattern prevents reentrancy attacks when external contracts interact with registry state?",
+                    optA: "A: The Checks-Effects-Interactions pattern (or OpenZeppelin ReentrancyGuard modifier)",
+                    optB: "B: Performing external contract calls before updating internal state variables",
+                    correct: "A"
+                }
+            }
         ];
+
+        // Fetch Live Remote Tech Jobs from Public API (Remotive)
+        async function fetchLiveJobFeed() {
+            try {
+                const res = await fetch("https://remotive.com/api/remote-jobs?category=software-dev&limit=4");
+                if (!res.ok) throw new Error("API rate-limit or network");
+                const data = await res.json();
+                if (data && data.jobs && data.jobs.length > 0) {
+                    const liveJobs = data.jobs.map((j, i) => ({
+                        id: 100 + i,
+                        title: j.title,
+                        company: j.company_name,
+                        location: j.candidate_required_location || "Global Remote",
+                        match: 65,
+                        status: 'untested',
+                        requirements: ["JavaScript", "Git", "REST APIs", "Node.js"],
+                        description: j.description ? j.description.replace(/<[^>]*>?/gm, '').slice(0, 180) + '...' : 'Live verified technical opening.',
+                        sourceUrl: j.url,
+                        assessment: {
+                            q: `Practical Assessment for ${j.title}: How do you ensure high availability and zero data-loss in this distributed role?`,
+                            optA: "A: Employ stateless microservices behind a load-balancer with distributed logging and health checks",
+                            optB: "B: Run everything in a single unmonitored container with no automated health recovery",
+                            correct: "A"
+                        }
+                    }));
+                    jobsList = [...baseCuratedJobs, ...liveJobs];
+                    recomputeMatches();
+                    renderOverviewSummary();
+                    renderJobs();
+                    console.log("Live jobs feed loaded successfully from Remotive API.");
+                }
+            } catch (e) {
+                console.log("Using cached East Africa job listings (offline or blocked API):", e);
+            }
+        }
 
         let jobsList = JSON.parse(localStorage.getItem('ujuzi_ea_jobs')) || baseCuratedJobs;
         let applicationsList = JSON.parse(localStorage.getItem('ujuzi_ea_applications')) || [
@@ -1299,7 +1402,7 @@
                 actionArea.innerHTML = `<button class="btn-btrust-action" onclick="handleCandidateApply('Verified via Simulation')">Apply Now <span>&rarr;</span></button>`;
             } else {
                 guidance.innerText = `Match score is below 70%. Complete practical assessment to unlock application.`;
-                actionArea.innerHTML = `<button class="btn-btrust-action" onclick="switchNav('simulations')">Take Simulation to Apply <span>&rarr;</span></button>`;
+                actionArea.innerHTML = `<button class="btn-btrust-action" onclick="setupAssessmentForCurrentJob(); switchNav('simulations')">Take Simulation to Apply <span>&rarr;</span></button>`;
             }
         }
 
@@ -1309,17 +1412,49 @@
             document.getElementById('optB').classList.toggle('active', opt === 'B');
         }
 
+
+        function setupAssessmentForCurrentJob() {
+            const job = jobsList[selectedJobIndex] || jobsList[0];
+            if (!job) return;
+
+            const t = document.getElementById("assessmentTargetTitle");
+            if (t) t.innerText = `${job.title} (${job.company})`;
+            const rTag = document.getElementById("simRoleTag");
+            if (rTag) rTag.innerText = job.title;
+            const cTag = document.getElementById("simCompanyTag");
+            if (cTag) cTag.innerText = `Location: ${job.location}`;
+
+            const q = job.assessment || {
+                q: "Which method reads on-chain credential validity without requiring gas fees?",
+                optA: "A: Call contract.verifyCredential(bytes32) as a view query via JSON-RPC provider",
+                optB: "B: Broadcast an Ethereum state-changing transaction requiring ETH gas fee",
+                correct: "A"
+            };
+
+            const qText = document.getElementById("assessmentQuestionText");
+            if (qText) qText.innerText = q.q;
+            const optAText = document.getElementById("optAText");
+            if (optAText) optAText.innerText = q.optA;
+            const optBText = document.getElementById("optBText");
+            if (optBText) optBText.innerText = q.optB;
+            pickQuizOption('A');
+        }
+
         function submitSimulationAnswer() {
-            if (selectedQuiz === 'A') {
-                jobsList[selectedJobIndex].status = 'passed';
-                alert("Assessment Passed! Practical competency score: 100%. Job application unlocked.");
+            const job = jobsList[selectedJobIndex];
+            const correctOpt = (job.assessment && job.assessment.correct) ? job.assessment.correct : 'A';
+
+            if (selectedQuiz === correctOpt) {
+                job.status = 'passed';
+                alert(`✓ Assessment Passed for ${job.title}! Practical competency score: 100%. Job application unlocked.`);
             } else {
-                jobsList[selectedJobIndex].status = 'failed';
-                alert("Assessment Failed. Marked Ineligible for this opening.");
+                job.status = 'failed';
+                alert(`✗ Assessment Failed for ${job.title}. Marked Ineligible for this role.`);
             }
-            switchNav('jobs');
+            sidebarSelect('jobs');
             renderJobs();
         }
+
 
         function demoFailSimulation() {
             jobsList[selectedJobIndex].status = 'failed';
@@ -1563,6 +1698,7 @@
         }
         import('./js/services/UjuziEngine.js').then(m => { window.CompetencyAlgorithm = m.CompetencyAlgorithm; recomputeMatches(); }).catch(e => console.warn("Engine not loaded, using stored scores", e));
         initRoleUI();
+        fetchLiveJobFeed();
     </script>
     </div><!-- /.micro-main-area -->
 </body>
