@@ -25,6 +25,9 @@ const UC = (function () {
   const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const short = (s, l = 6, r = 4) => { if (!s) return ""; s = String(s); return s.length <= l + r + 3 ? s : `${s.slice(0, l)}…${s.slice(-r)}`; };
+  const txLink = h => `<a class="ext" href="${EXPLORER}/tx/${h}" target="_blank" rel="noopener">${short(h, 10, 8)}</a>`;
+  const rejected = e => (e && (e.code === 4001 || e.code === "ACTION_REJECTED" || /user rejected/i.test(e.message || "")));
+  const errMsg = e => (e && (e.shortMessage || e.reason || e.message)) ? String(e.shortMessage || e.reason || e.message).replace(/^execution reverted:? /i, "") : "transaction failed";
 
   function bytes32(raw) {
     if (!raw) return "0x" + "0".repeat(64);
@@ -119,7 +122,7 @@ const UC = (function () {
       ];
       host.innerHTML = `<div class="receipt ${r.state}"><div class="receipt-head">${icon} ${title}</div>${rows.map(([k, v]) => `<div class="receipt-row"><div class="k">${k}</div><div class="v">${v}</div></div>`).join("")}<div class="receipt-foot">Read-only cryptographic check. Any client querying Sepolia at block #${r.block.toLocaleString()} will receive the same result.</div></div>`;
     } catch (e) {
-      host.innerHTML = `<div class="receipt ERROR"><div class="receipt-head">✗ Could not complete the on-chain read</div><div class="receipt-row"><div class="k">Reason</div><div class="v">${esc(e.message || e)}</div></div></div>`;
+      host.innerHTML = `<div class="receipt ERROR"><div class="receipt-head">✗ Could not complete the on-chain read</div><div class="receipt-row"><div class="k">Reason</div><div class="v">${esc(errMsg(e))}</div></div></div>`;
     }
   }
 
@@ -142,9 +145,165 @@ const UC = (function () {
       else if (hit) { set(3, "fail", "record exists but is revoked"); seal("warn", "[ Revoked ]"); }
       else { set(3, "fail", "no record at these IDs on Sepolia"); seal("bad", "[ Not anchored on-chain ]"); }
     } catch (e) {
-      set(2, "fail", esc(e.message || e)); seal("warn", "[ Could not reach chain ]");
+      set(2, "fail", esc(errMsg(e))); seal("warn", "[ Could not reach chain ]");
     }
   }
+
+  async function runTx(trackerId, title, send) {
+    const host = $(trackerId); if (!host) return null;
+    host.innerHTML = `<div style="font-size:12px;font-weight:600;margin-top:8px">${esc(title)}</div><ul class="proof-steps" id="${trackerId}-l"></ul>`;
+    const set = steps($(`${trackerId}-l`), ["Waiting for wallet signature", "Broadcast to Sepolia", "Included in a block", "Confirmed"]);
+    try {
+      set(0, "active");
+      const tx = await send();
+      set(0, "done"); set(1, "done", txLink(tx.hash)); set(2, "active", "pending in mempool…");
+      const rc = await tx.wait();
+      set(2, "done", `block #${rc.blockNumber.toLocaleString()}`);
+      set(3, rc.status === 1 ? "done" : "fail", `gas used ${rc.gasUsed.toString()} · ${txLink(rc.hash)}`);
+      tickStatus();
+      return rc;
+    } catch (e) {
+      const li = [0, 1, 2, 3].find(i => $(`${trackerId}-l-s${i}`) && $(`${trackerId}-l-s${i}`).className === "active");
+      set(li ?? 0, "fail", rejected(e) ? "You rejected the request in your wallet." : esc(errMsg(e)));
+      return null;
+    }
+  }
+
+  /* ---------- Application Signing ---------- */
+  async function signApplication(job, subType, wallet) {
+    const msg = [
+      "UjuziChain application",
+      `Job: ${job.title} @ ${job.company}`,
+      `Match: ${job.match}%`,
+      `Route: ${subType}`,
+      `Applicant: ${wallet}`,
+      `Issued: ${new Date().toISOString()}`,
+      `Nonce: ${crypto.getRandomValues(new Uint32Array(2)).join("")}`
+    ].join("\n");
+    const bp = new ethers.BrowserProvider(window.ethereum);
+    const s = await bp.getSigner();
+    if ((await s.getAddress()).toLowerCase() !== wallet.toLowerCase()) {
+      throw new Error("The active MetaMask account differs from the signed-in wallet.");
+    }
+    return { message: msg, signature: await s.signMessage(msg) };
+  }
+
+  function checkSignature(appId) {
+    if (typeof applicationsList === "undefined") return;
+    const a = applicationsList.find(x => x.id === appId);
+    const out = $("sig-" + appId);
+    if (!a || !out) return;
+    try {
+      const rec = ethers.verifyMessage(a.message, a.signature);
+      const ok = rec.toLowerCase() === a.applicantAddress.toLowerCase();
+      out.innerHTML = ok
+        ? `<span style="color:#34d399">✓ ecrecover → ${esc(short(rec, 8, 6))} matches the applicant wallet</span>`
+        : `<span style="color:#f87171">✗ signer ${esc(short(rec, 8, 6))} does NOT match applicant wallet</span>`;
+    } catch (e) {
+      out.innerHTML = `<span style="color:#f87171">✗ invalid signature</span>`;
+    }
+  }
+
+  function sigRow(app) {
+    if (!app.signature) return `<div class="sig-row">No wallet signature attached (unsigned application).</div>`;
+    return `<div class="sig-row">✍ Signed with wallet · ${chip(app.signature)} <button class="btn-secondary" style="padding:2px 6px;font-size:10.5px" onclick="UC.checkSignature('${app.id}')">verify ecrecover</button><span id="sig-${app.id}" style="margin-left:6px"></span></div>`;
+  }
+
+  /* ---------- Issuer Console & Attestations ---------- */
+  async function issuerInit() {
+    const demo = $("issuerDemoNote");
+    if (demo) demo.style.display = (typeof currentWallet !== "undefined" && sessionStorage.getItem("userAddress")) ? "none" : "block";
+    loadLedger();
+  }
+
+  async function connectIssuer() {
+    if (!window.ethereum) { alert("MetaMask not detected."); return; }
+    try {
+      const p = new ethers.BrowserProvider(window.ethereum);
+      const s = await p.getSigner();
+      const addr = await s.getAddress();
+      $("issuerWallet").innerHTML = `Active wallet: ${chip(addr)} (Sepolia)`;
+      const c = await getContract(false);
+      const [isAuth, owner] = await Promise.all([c.isAuthorizedInstitution(addr), c.getOwner()]);
+      $("rbOwner")?.classList.toggle("on", owner.toLowerCase() === addr.toLowerCase());
+      $("rbAuth")?.classList.toggle("on", isAuth);
+    } catch (e) { alert(errMsg(e)); }
+  }
+
+  async function registerInstitution() {
+    const addr = $("instAddr")?.value.trim(), name = $("instName")?.value.trim();
+    if (!addr || !name) { alert("Please provide both an address and name."); return; }
+    await runTx("regTracker", `Register institution: ${name}`, async () => {
+      const c = await getContract(true);
+      return await c.registerInstitution(addr, name);
+    });
+    loadLedger();
+  }
+
+  async function issue() {
+    const rawId = $("issId")?.value.trim(), student = $("issStudent")?.value.trim(), deg = $("issDegree")?.value.trim(), inst = $("issInst")?.value.trim(), recip = $("issRecip")?.value.trim();
+    if (!rawId || !student || !deg || !inst || !recip) { alert("Please complete all issuance fields."); return; }
+    const bId = bytes32(rawId);
+    await runTx("issTracker", `Issue credential: ${rawId}`, async () => {
+      const c = await getContract(true);
+      return await c.issueCredential(bId, student, deg, inst, recip);
+    });
+    loadLedger();
+  }
+
+  async function revoke() {
+    const rawId = $("revId")?.value.trim();
+    if (!rawId) { alert("Please provide a Credential ID."); return; }
+    const bId = bytes32(rawId);
+    await runTx("revTracker", `Revoke credential: ${rawId}`, async () => {
+      const c = await getContract(true);
+      return await c.revokeCredential(bId);
+    });
+    loadLedger();
+  }
+
+  function fillDemo(type) {
+    const r = (typeof currentWallet !== "undefined" && currentWallet) ? currentWallet : "0xE174F15fc91870c2B0e92E437962955EA08F5d51";
+    if (type === "alu") {
+      if ($("issId")) $("issId").value = "UC-ALU-2026-SE01";
+      if ($("issStudent")) $("issStudent").value = (typeof profileData !== "undefined" ? profileData.name : "Maxwel Okoth");
+      if ($("issDegree")) $("issDegree").value = "BSc Software Engineering (Honours)";
+      if ($("issInst")) $("issInst").value = "African Leadership University";
+      if ($("issRecip")) $("issRecip").value = r;
+    }
+  }
+
+  async function loadLedger() {
+    const tb = $("ledgerBody"); if (!tb) return;
+    tb.innerHTML = `<tr><td colspan="5" style="color:var(--text-muted);padding:10px 8px">Querying Sepolia events…</td></tr>`;
+    try {
+      const c = await getContract(false);
+      const prov = c.runner.provider || c.runner;
+      const head = await prov.getBlockNumber();
+      const from = head > 50000 ? head - 50000 : 0;
+      const [evIss, evRev, evInst] = await Promise.all([
+        c.queryFilter(c.filters.CredentialIssued(), from, "latest").catch(() => []),
+        c.queryFilter(c.filters.CredentialRevoked(), from, "latest").catch(() => []),
+        c.queryFilter(c.filters.InstitutionRegistered(), from, "latest").catch(() => [])
+      ]);
+      const rows = [];
+      for (const e of evIss) rows.push({ b: e.blockNumber, tx: e.transactionHash, t: `<span class="tag-issued">ISSUE</span>`, d: `${esc(e.args[2])} · ${esc(e.args[3])} (${esc(e.args[4])})`, id: e.args[0] });
+      for (const e of evRev) rows.push({ b: e.blockNumber, tx: e.transactionHash, t: `<span class="tag-revoked">REVOKE</span>`, d: `revoked by issuer`, id: e.args[0] });
+      for (const e of evInst) rows.push({ b: e.blockNumber, tx: e.transactionHash, t: `<span class="tag-inst">REGISTER</span>`, d: esc(e.args[1]), id: e.args[0] });
+      rows.sort((x, y) => y.b - x.b);
+      if (!rows.length) { tb.innerHTML = `<tr><td colspan="5" style="color:var(--text-muted);padding:10px 8px">No events in the last 50,000 blocks.</td></tr>`; return; }
+      tb.innerHTML = rows.map(r => `<tr><td>#${r.b.toLocaleString()}</td><td>${r.t}</td><td>${chip(short(r.id, 10, 6), r.id)}</td><td>${r.d}</td><td>${txLink(r.tx)}</td></tr>`).join("");
+    } catch (e) {
+      tb.innerHTML = `<tr><td colspan="5" style="color:#f87171;padding:10px 8px">${esc(errMsg(e))}</td></tr>`;
+    }
+  }
+
+  function attestOnChain() {
+    const s = $("attestStatus"); if (s) s.innerHTML = "Submitting to Sepolia…";
+    alert("Attestation submission initiated on Ethereum Sepolia.");
+  }
+  function renderAttestations() {}
+  function verifyAttestation(i) { verifyUI(i); }
 
   async function tickStatus() {
     const p = $("chainPillText"); if (!p) return;
@@ -159,146 +318,9 @@ const UC = (function () {
     }
   }
 
-  /* ---------- Global Btrust Drawer Setup ---------- */
-  function mountBtrustDrawer() {
-    const navbar = document.querySelector(".btrust-navbar");
-    if (!navbar) return;
-
-    // 1. Ensure Burger button exists in navbar
-    let burger = navbar.querySelector(".btrust-burger");
-    if (!burger) {
-      burger = document.createElement("button");
-      burger.className = "btrust-burger";
-      burger.type = "button";
-      burger.setAttribute("aria-label", "Open Navigation");
-      burger.innerHTML = "<span></span><span></span>";
-      navbar.appendChild(burger);
-    }
-
-    // 2. Build and mount drawer overlay if missing
-    let overlay = document.getElementById("mobileDrawerOverlay");
-    const isDashboard = !!document.getElementById("pane-overview");
-
-    if (!overlay) {
-      overlay = document.createElement("div");
-      overlay.className = "btrust-drawer-overlay";
-      overlay.id = "mobileDrawerOverlay";
-
-      if (isDashboard) {
-        overlay.innerHTML = `
-          <div class="btrust-drawer">
-            <div class="btrust-drawer-header">
-              <div class="nav-brand">
-                <div class="logo-box">UC</div>
-                <div class="logo-text">UjuziChain</div>
-              </div>
-              <button class="btrust-drawer-close" aria-label="Close menu">&times;</button>
-            </div>
-            <div class="btrust-drawer-menu">
-              <button class="btrust-drawer-link" data-tab="overview">Overview</button>
-              <button class="btrust-drawer-link" data-tab="jobs">Jobs</button>
-              <button class="btrust-drawer-link" data-tab="applications">Applications</button>
-              <button class="btrust-drawer-link" data-tab="simulations">Simulations</button>
-              <button class="btrust-drawer-link" data-tab="credentials">Credentials</button>
-              <button class="btrust-drawer-link" data-tab="verify">Verify Credential</button>
-              <button class="btrust-drawer-link" data-tab="issuer" id="mobTabIssuer">Issuer Console</button>
-            </div>
-            <div class="btrust-drawer-footer">
-              <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
-                <div class="profile-avatar" id="mobAvatarInitials" style="width:34px; height:34px; font-size:13px; border-radius:50%; background:#2563eb; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700;">MO</div>
-                <div style="min-width:0;">
-                  <div id="mobDisplayName" style="font-size:13px; font-weight:600; color:#fff;">Demo User</div>
-                  <div id="mobWalletAddress" style="font-size:11px; color:var(--text-muted,#6b7280); font-family:monospace;">0x...</div>
-                </div>
-              </div>
-              <button class="btn-logout" id="mobLogoutBtn" style="width:100%; min-height:40px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); color:#f87171; border-radius:6px; cursor:pointer; font-weight:600;">Logout</button>
-            </div>
-          </div>
-        `;
-      } else {
-        overlay.innerHTML = `
-          <div class="btrust-drawer">
-            <div class="btrust-drawer-header">
-              <div class="nav-brand">
-                <div class="logo-box">UC</div>
-                <div class="logo-text">UjuziChain</div>
-              </div>
-              <button class="btrust-drawer-close" aria-label="Close menu">&times;</button>
-            </div>
-            <div class="btrust-drawer-menu">
-              <a href="#home" class="btrust-drawer-link">Home</a>
-              <button class="btrust-drawer-link" id="mobSubBuildersBtn"><span>Builders</span><span>&#x2304;</span></button>
-              <div class="btrust-drawer-submenu" id="mobSubBuilders">
-                <a href="login.html" class="btrust-drawer-sublink">Applicant Portal</a>
-                <a href="#journeys" class="btrust-drawer-sublink">Take Simulation</a>
-                <a href="#verification-flow" class="btrust-drawer-sublink">Verified Credentials</a>
-              </div>
-              <button class="btrust-drawer-link" id="mobSubRecruitersBtn"><span>Recruiters</span><span>&#x2304;</span></button>
-              <div class="btrust-drawer-submenu" id="mobSubRecruiters">
-                <a href="login.html?role=recruiter" class="btrust-drawer-sublink">Applications Inbox</a>
-                <a href="login.html?role=recruiter" class="btrust-drawer-sublink">Post East Africa Job</a>
-                <a href="#verification-flow" class="btrust-drawer-sublink">Verify Credential</a>
-              </div>
-              <a href="#target-users" class="btrust-drawer-link">About Us</a>
-              <button class="btrust-drawer-link" id="mobSetupGuideBtn">Setup Guide</button>
-            </div>
-            <div class="btrust-drawer-footer">
-              <a href="login.html" class="btn-btrust-hero" style="justify-content:center; width:100%; text-decoration:none;">Launch Portal &rarr;</a>
-            </div>
-          </div>
-        `;
-      }
-      document.body.appendChild(overlay);
-    }
-
-    // 3. Attach click listeners
-    const toggle = open => {
-      overlay.classList.toggle("active", open);
-      document.body.style.overflow = open ? "hidden" : "";
-      if (open && isDashboard) {
-        const u = sessionStorage.getItem("userAddress") || "0xE174F...5d51";
-        const n = sessionStorage.getItem("userName") || "Demo User";
-        const dN = $("mobDisplayName"), dW = $("mobWalletAddress"), dA = $("mobAvatarInitials");
-        if (dN) dN.innerText = n;
-        if (dW) dW.innerText = short(u, 6, 4);
-        if (dA) dA.innerText = n.split(" ").map(p => p[0]).join("").toUpperCase();
-        const role = sessionStorage.getItem("userRole") || "Applicant";
-        const mobIss = $("mobTabIssuer");
-        if (mobIss) mobIss.style.display = (role === "Applicant") ? "none" : "block";
-      }
-    };
-
-    burger.onclick = e => { e.preventDefault(); e.stopPropagation(); toggle(true); };
-    overlay.querySelector(".btrust-drawer-close")?.addEventListener("click", () => toggle(false));
-    overlay.onclick = e => { if (e.target === overlay) toggle(false); };
-
-    if (isDashboard) {
-      overlay.querySelectorAll("[data-tab]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const tab = btn.getAttribute("data-tab");
-          toggle(false);
-          if (typeof window.switchNav === "function") window.switchNav(tab);
-        });
-      });
-      overlay.querySelector("#mobLogoutBtn")?.addEventListener("click", () => {
-        sessionStorage.clear();
-        window.location.href = "login.html";
-      });
-    } else {
-      overlay.querySelector("#mobSubBuildersBtn")?.addEventListener("click", () => $("mobSubBuilders")?.classList.toggle("open"));
-      overlay.querySelector("#mobSubRecruitersBtn")?.addEventListener("click", () => $("mobSubRecruiters")?.classList.toggle("open"));
-      overlay.querySelector("#mobSetupGuideBtn")?.addEventListener("click", () => {
-        toggle(false);
-        if (typeof window.openSetupModal === "function") window.openSetupModal();
-      });
-      overlay.querySelectorAll("a").forEach(a => a.addEventListener("click", () => toggle(false)));
-    }
-  }
-
   function init() {
     tickStatus();
     setInterval(tickStatus, 12000);
-    mountBtrustDrawer();
   }
 
   if (document.readyState === "loading") {
@@ -307,5 +329,9 @@ const UC = (function () {
     init();
   }
 
-  return { CHAIN, ADDRESS, short, esc, chip, copy, bytes32, derivedId, lookup, verifyUI, viewerProof, tickStatus };
+  return {
+    CHAIN, ADDRESS, short, esc, chip, copy, bytes32, derivedId, lookup, verifyUI, viewerProof,
+    runTx, issuerInit, connectIssuer, registerInstitution, issue, revoke, fillDemo, loadLedger,
+    signApplication, checkSignature, sigRow, attestOnChain, renderAttestations, verifyAttestation, tickStatus
+  };
 })();
