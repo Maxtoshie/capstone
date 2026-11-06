@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>UjuziChain - Verifiable Credential Infrastructure</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -389,6 +389,7 @@
             .nav-links { display: none; }
         }
     </style>
+    <link rel="stylesheet" href="css/chain.css">
 </head>
 <body id="home">
 
@@ -400,7 +401,8 @@
                 <div class="logo-text">UjuziChain</div>
             </a>
 
-            <div class="nav-links">
+            <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" onclick="toggleNav(this)">&#9776;</button>
+            <div class="nav-links" id="navLinks">
                 <a href="#home" class="nav-item">Home</a>
 
                 <!-- Builders Dropdown -->
@@ -629,6 +631,14 @@
     </footer>
 
     <script>
+        function toggleNav(btn) {
+            const open = document.getElementById('navLinks').classList.toggle('open');
+            btn.setAttribute('aria-expanded', open); btn.innerHTML = open ? '&times;' : '&#9776;';
+        }
+        document.addEventListener('click', e => {
+            const l = document.getElementById('navLinks');
+            if (l && l.classList.contains('open') && e.target.closest('a.nav-item, a.dropdown-link')) { l.classList.remove('open'); }
+        });
         function openSetupModal() { document.getElementById('setupModal').style.display = 'flex'; }
         function closeSetupModal(e) {
             if (!e || e.target.id === 'setupModal' || e.target.tagName === 'BUTTON') {

@@ -53,7 +53,7 @@ async function computeSHA256(file) {
     const buffer = await file.arrayBuffer();
     const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return "0x" + hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 24) + "...";
+    return "0x" + hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 async function executeAuth() {
@@ -106,6 +106,15 @@ async function executeAuth() {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         const walletAddress = accounts[0];
 
+        // Proof of key ownership: sign a one-time challenge (no gas, no transaction).
+        btn.innerText = "Sign the login message...";
+        const nonce = Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2, '0')).join('');
+        const challenge = `Sign in to UjuziChain\nRole: ${currentRole}\nWallet: ${walletAddress}\nNonce: ${nonce}\nIssued: ${new Date().toISOString()}`;
+        const signer = await new ethers.BrowserProvider(window.ethereum).getSigner();
+        const signature = await signer.signMessage(challenge);
+        if (ethers.verifyMessage(challenge, signature).toLowerCase() !== walletAddress.toLowerCase()) throw new Error("Signature did not match the wallet");
+        sessionStorage.setItem("authSignature", signature);
+        sessionStorage.setItem("authChallenge", challenge);
         sessionStorage.setItem("userRole", currentRole);
         sessionStorage.setItem("userAddress", walletAddress);
 

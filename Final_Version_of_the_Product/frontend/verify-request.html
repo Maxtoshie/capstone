@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>UjuziChain - Institutional Verification Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -84,6 +85,7 @@
         }
         .btn-reject:hover { background: rgba(239, 68, 68, 0.1); }
     </style>
+    <link rel="stylesheet" href="css/chain.css">
 </head>
 <body>
 
@@ -128,12 +130,14 @@
 
         <div style="margin-top: 24px; display: flex; justify-content: flex-end; gap: 12px;">
             <button class="btn-reject" onclick="handleDecision(false)">Reject Record</button>
-            <button class="btn-approve" onclick="handleDecision(true)">✓ Attest & Verify On-Chain</button>
+            <button class="btn-approve" onclick="handleDecision(true)">✓ Attest &amp; Sign On-Chain</button>
         </div>
 
+        <div id="txAttest"></div>
         <div id="confirmMsg" style="display: none; margin-top: 16px; padding: 12px; border-radius: 6px; font-size: 12.5px; text-align: center;"></div>
     </div>
 
+    <script src="js/chain.js"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         const reqId = params.get('id') || "latest";
@@ -156,37 +160,29 @@
         document.getElementById("dispDocHash").innerText = entry.docHash;
         document.getElementById("dispTargetOrg").innerText = entry.orgName;
 
-        function handleDecision(approved) {
+        async function handleDecision(approved) {
             const pill = document.getElementById("statusPill");
             const msg = document.getElementById("confirmMsg");
             msg.style.display = "block";
-
             if (approved) {
-                pill.innerText = "Verified by Institution";
-                pill.style.color = "#34d399";
-                pill.style.background = "rgba(16, 185, 129, 0.15)";
-                msg.style.background = "rgba(16, 185, 129, 0.1)";
-                msg.style.color = "#34d399";
-                msg.style.border = "1px solid rgba(16, 185, 129, 0.3)";
-                msg.innerHTML = `<strong>Attestation Successful!</strong><br>Candidate verified by ${entry.orgName}. Smart contract assertion recorded.`;
-
-                // Update applicant profile to verified
-                const applicantProfile = JSON.parse(localStorage.getItem('ujuzi_profile_Applicant'));
-                if (applicantProfile) {
-                    applicantProfile.isOnChainVerified = true;
-                    if (applicantProfile.docs && applicantProfile.docs[0]) {
-                        applicantProfile.docs[0].verified = true;
-                    }
-                    localStorage.setItem('ujuzi_profile_Applicant', JSON.stringify(applicantProfile));
+                msg.style.cssText += ";background:rgba(0,0,0,.25);color:#fff;border:1px solid rgba(255,255,255,.12)";
+                msg.innerHTML = "Opening your wallet. This writes a real transaction to the UjuziChain registry on Sepolia, so the connected wallet must be an approved institution.";
+                const res = await UC.attestOnChain(entry, "txAttest");
+                if (res) {
+                    pill.innerText = "Anchored on-chain";
+                    pill.style.color = "#34d399"; pill.style.background = "rgba(16, 185, 129, 0.15)";
+                    msg.style.background = "rgba(16, 185, 129, 0.1)"; msg.style.color = "#34d399"; msg.style.border = "1px solid rgba(16, 185, 129, 0.3)";
+                    msg.innerHTML = "<strong>Attestation recorded on Sepolia.</strong><br>Credential ID: " + UC.chip(res.id) + "<br>Any recruiter can now verify it with a free read call.";
+                    const p = JSON.parse(localStorage.getItem('ujuzi_profile_Applicant'));
+                    if (p) { p.isOnChainVerified = true; if (p.docs && p.docs[0]) p.docs[0].verified = true; localStorage.setItem('ujuzi_profile_Applicant', JSON.stringify(p)); }
+                } else {
+                    msg.style.background = "rgba(239, 68, 68, 0.1)"; msg.style.color = "#f87171"; msg.style.border = "1px solid rgba(239, 68, 68, 0.3)";
+                    msg.innerHTML = "The transaction was not completed, so nothing was verified. See the step list above for the reason.";
                 }
             } else {
-                pill.innerText = "Rejected";
-                pill.style.color = "#f87171";
-                pill.style.background = "rgba(239, 68, 68, 0.15)";
-                msg.style.background = "rgba(239, 68, 68, 0.1)";
-                msg.style.color = "#f87171";
-                msg.style.border = "1px solid rgba(239, 68, 68, 0.3)";
-                msg.innerText = "Record has been rejected. The candidate will be notified.";
+                pill.innerText = "Rejected"; pill.style.color = "#f87171"; pill.style.background = "rgba(239, 68, 68, 0.15)";
+                msg.style.background = "rgba(239, 68, 68, 0.1)"; msg.style.color = "#f87171"; msg.style.border = "1px solid rgba(239, 68, 68, 0.3)";
+                msg.innerText = "Record rejected. Nothing was written to the blockchain.";
             }
         }
     </script>

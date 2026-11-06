@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>UjuziChain - East Africa Talent & Credential Infrastructure</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    <script src="js/chain.js"></script>
     <style>
         :root {
             --bg-base: #090a0d;
@@ -359,8 +360,9 @@
             .nav-links { display: none; }
         }
     </style>
+    <link rel="stylesheet" href="css/chain.css">
 </head>
-<body>
+<body class="has-tabbar">
 
     <div class="navbar-wrap">
         <nav class="btrust-navbar">
@@ -377,6 +379,7 @@
                 <button class="nav-btn" id="btn-tab-simulations" onclick="switchNav('simulations')">Simulations</button>
                 <button class="nav-btn" id="btn-tab-credentials" onclick="switchNav('credentials')">Credentials</button>
                 <button class="nav-btn" id="btn-tab-verify" onclick="switchNav('verify')">Verify Credential</button>
+                <button class="nav-btn" id="btn-tab-issuer" onclick="switchNav('issuer')">Issuer Console</button>
             </div>
 
             <div class="nav-actions">
@@ -384,6 +387,7 @@
                     <div class="profile-avatar" id="navAvatarInitials">MO</div>
                     <span class="profile-name-text" id="navDisplayName">Demo User</span>
                 </div>
+                <div class="chain-pill" id="chainPill"><span class="pulse-dot"></span><span id="chainPillText">Sepolia · …</span></div>
                 <div class="wallet-pill">
                     <span class="wallet-dot"></span>
                     <span id="navWalletAddress">0x...</span>
@@ -590,6 +594,8 @@
                     </div>
                 </div>
 
+                <h4 style="font-size: 13.5px; margin-bottom: 10px;">On-chain attestations from institutions:</h4>
+                <div id="attestList" style="margin-bottom: 20px;"></div>
                 <h4 style="font-size: 13.5px; margin-bottom: 10px;">Attached Verification Hashes:</h4>
                 <div id="credentialsAttachedList"></div>
             </div>
@@ -612,6 +618,51 @@
                 </div>
 
                 <div id="verifyOut" style="margin-top: 16px; display: none; padding: 12px; border-radius: 6px; font-size: 12.5px; max-width: 580px;"></div>
+            </div>
+        </div>
+
+        <!-- 7. ISSUER CONSOLE -->
+        <div id="pane-issuer" class="tab-pane">
+            <div class="hero-banner">
+                <div>
+                    <h1>Issuer Console</h1>
+                    <p>Write to the registry. Every action here is a signed transaction on Ethereum Sepolia, visible to anyone on Etherscan.</p>
+                </div>
+                <div><button class="btn-btrust-action" onclick="UC.connectIssuer()">Connect issuer wallet <span>&rarr;</span></button></div>
+            </div>
+            <div class="demo-banner" id="issuerDemoNote" style="display:none">No wallet session. Sign in first so the console can use your wallet.</div>
+            <div class="glass-card" style="margin-bottom:18px">
+                <div id="issuerWallet" style="font-size:12.5px">Wallet not connected.</div>
+                <div class="role-badges" id="issuerRoles"></div>
+                <p id="roleHint" style="font-size:11.5px;color:var(--text-muted)"></p>
+            </div>
+            <div class="chain-grid">
+                <div class="glass-card">
+                    <div class="card-header-bar"><h3>Issue credential</h3><button class="btn-secondary" onclick="UC.fillDemo()">Fill demo</button></div>
+                    <p class="card-sub">Calls <code>issueCredential(bytes32, string, string)</code>. Approved institutions only.</p>
+                    <div class="chain-field"><label>Credential reference</label><input class="form-input" id="issRef" placeholder="UC-2026-001"></div>
+                    <div class="chain-field"><label>Student reference (pseudonymous)</label><input class="form-input" id="issStudent" placeholder="STU-0001"></div>
+                    <div class="chain-field"><label>Credential title</label><input class="form-input" id="issDegree" placeholder="BSc Software Engineering"></div>
+                    <div class="chain-note">Everything you submit is public and permanent. Use a pseudonymous student reference, never a name, national ID or email.</div>
+                    <button class="btn-btrust-action" id="btnIssue" onclick="UC.issue()">Sign &amp; issue</button>
+                    <div id="txIssue"></div>
+                </div>
+                <div class="glass-card">
+                    <div class="card-header-bar"><h3>Governance</h3></div>
+                    <p class="card-sub">Admin approves institutions. Approved institutions can revoke.</p>
+                    <div class="chain-field"><label>Institution wallet to approve</label><input class="form-input" id="instAddr" placeholder="0x…"></div>
+                    <button class="btn-secondary" id="btnRegInst" onclick="UC.registerInstitution()">Register institution (admin)</button>
+                    <div id="txReg"></div>
+                    <hr style="border:0;border-top:1px solid var(--border-subtle);margin:16px 0">
+                    <div class="chain-field"><label>Revoke credential reference</label><input class="form-input" id="revRef" placeholder="UC-2026-001"></div>
+                    <button class="btn-secondary" id="btnRevoke" style="color:#f87171" onclick="UC.revoke()">Revoke on-chain</button>
+                    <div id="txRevoke"></div>
+                </div>
+            </div>
+            <div class="glass-card">
+                <div class="card-header-bar"><h3>Registry ledger</h3><button class="btn-secondary" onclick="UC.loadLedger()">Refresh</button></div>
+                <p class="card-sub">Recent events emitted by the contract (read straight from Sepolia logs).</p>
+                <div class="ledger-wrap"><table class="ledger-table"><thead><tr><th>Event</th><th>Subject</th><th>Block</th><th>Transaction</th></tr></thead><tbody id="ledgerBody"></tbody></table></div>
             </div>
         </div>
     </main>
@@ -686,6 +737,10 @@
                         <p>W3C Decentralized Identifiers (DID)</p>
                     </div>
 
+                    <div class="meta-field">
+                        <label>Live on-chain proof</label>
+                        <div id="ivProof"></div>
+                    </div>
                     <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-subtle);">
                         <button class="btn-btrust-action" style="width: 100%; justify-content: center;" onclick="closeIremboViewer()">Done Inspecting</button>
                     </div>
@@ -791,6 +846,7 @@
             document.getElementById("ivMetaOrg").innerText = org;
             document.getElementById("ivMetaHash").innerText = hash;
             document.getElementById("iremboViewerModal").style.display = "flex";
+            UC.viewerProof(regId, hash);
         }
 
         function closeIremboViewer(e) {
@@ -803,7 +859,7 @@
             const buffer = await file.arrayBuffer();
             const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return "0x" + hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 16) + "...";
+            return "0x" + hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
         async function handleDocUpload(e) {
@@ -818,7 +874,7 @@
                 verifiedBy: "Client-Side SHA-256 Hashed"
             });
             renderDocs();
-            alert(`Document hashed securely!\nSHA-256: ${fileHash}\nReady for in-browser inspection.`);
+            alert(`Document hashed in your browser.\nSHA-256: ${UC.short(fileHash, 18, 10)}\nThe file itself was not uploaded anywhere.`);
         }
 
         function initRoleUI() {
@@ -931,8 +987,13 @@
             renderJobs();
         }
 
-        function handleCandidateApply(subType) {
+        async function handleCandidateApply(subType) {
             const job = jobsList[selectedJobIndex];
+            let proof = null;
+            if (window.ethereum && sessionStorage.getItem("userAddress")) {
+                try { proof = await UC.signApplication(job, subType, currentWallet); }
+                catch (e) { alert("Application not sent: the wallet signature was not completed.\n" + (e.shortMessage || e.message || e)); return; }
+            }
             applicationsList.unshift({
                 id: `app-${Date.now()}`,
                 jobTitle: job.title,
@@ -942,7 +1003,9 @@
                 match: job.match,
                 submissionType: subType,
                 credentialName: "ALU BSc Degree (Sepolia Verified: 0xA40d...132F)",
-                verifiedStatus: "On-Chain Verified",
+                verifiedStatus: proof ? "Wallet-signed" : "Unsigned (demo)",
+                message: proof ? proof.message : null,
+                signature: proof ? proof.signature : null,
                 date: "Just now"
             });
             localStorage.setItem('ujuzi_ea_applications', JSON.stringify(applicationsList));
@@ -950,7 +1013,6 @@
             renderApplications();
             switchNav('applications');
         }
-
         function renderApplications() {
             const list = document.getElementById("submittedAppsList");
             const empty = document.getElementById("emptyAppsView");
@@ -974,6 +1036,7 @@
                             </div>
                             <p style="font-size: 11.5px; color: var(--text-muted); font-family: monospace; margin: 2px 0 4px;">Wallet: ${app.applicantAddress}</p>
                             <p style="font-size: 12.5px;">Applied for: <strong>${app.jobTitle}</strong> · ${app.company}</p>
+                            ${UC.sigRow(app)}
                         </div>
                         <div style="display: flex; gap: 8px; align-items: center;">
                             <span class="status-pill">${app.submissionType}</span>
@@ -1009,7 +1072,9 @@
             document.getElementById(`btn-tab-${tabName}`).classList.add('active');
             if (tabName === 'jobs') renderJobs();
             if (tabName === 'applications') renderApplications();
-            if (tabName === 'credentials') renderAttachedDocs();
+            if (tabName === 'credentials') { renderAttachedDocs(); UC.renderAttestations(); }
+            if (tabName === 'issuer') UC.issuerInit();
+            window.scrollTo({ top: 0 });
         }
 
         function performLogout() { sessionStorage.clear(); window.location.href = "login.html"; }
@@ -1052,44 +1117,20 @@
             document.getElementById("profileModal").style.display = "none";
             renderOverviewSummary();
             renderAttachedDocs();
+            recomputeMatches();
             alert("Profile details and document hashes updated!");
         }
 
         async function verifyOnSepolia() {
-            const rawId = document.getElementById("verifyIdField").value.trim();
-            const out = document.getElementById("verifyOut");
-            out.style.display = "block";
-            out.style.background = "rgba(0,0,0,0.3)";
-            out.style.border = "1px solid var(--border-subtle)";
-            out.style.color = "#ffffff";
-            out.innerText = "Querying live Ethereum Sepolia smart contract...";
-
-            try {
-                const provider = window.ethereum ? new ethers.BrowserProvider(window.ethereum) : ethers.getDefaultProvider("sepolia");
-                const contract = new ethers.Contract(contractAddress, contractABI, provider);
-
-                let bytes32Id = rawId.startsWith("0x") && rawId.length === 66 ? rawId : ethers.encodeBytes32String(rawId.substring(0, 31));
-                const [isValid, studentId, degree] = await contract.verifyCredential(bytes32Id);
-
-                if (isValid || rawId === "UC-2026-001") {
-                    out.style.background = "rgba(16, 185, 129, 0.1)";
-                    out.style.border = "1px solid rgba(16, 185, 129, 0.3)";
-                    out.style.color = "#34d399";
-                    out.innerHTML = `<strong>✓ Cryptographically Verified On-Chain (Sepolia)</strong><br>Authorized Issuer: African Leadership University (ALU)<br>Degree: BSc Software Engineering<br>Contract Address: 0xA40d77d6e31F5044C7151dAd78C8bA6C3313132F`;
-                } else {
-                    out.style.background = "rgba(239, 68, 68, 0.1)";
-                    out.style.border = "1px solid rgba(239, 68, 68, 0.3)";
-                    out.style.color = "#f87171";
-                    out.innerText = "Credential ID not recorded on Sepolia.";
-                }
-            } catch (err) {
-                out.style.background = "rgba(16, 185, 129, 0.1)";
-                out.style.border = "1px solid rgba(16, 185, 129, 0.3)";
-                out.style.color = "#34d399";
-                out.innerHTML = `<strong>✓ Cryptographically Verified On-Chain (Sepolia)</strong><br>Authorized Issuer: African Leadership University (ALU)<br>Degree: BSc Software Engineering`;
-            }
+            UC.verifyUI(document.getElementById("verifyIdField").value.trim());
         }
-
+        // Skill scoring now comes from the tested engine instead of hard-coded percentages.
+        function recomputeMatches() {
+            if (!window.CompetencyAlgorithm) return;
+            jobsList.forEach(j => { j.match = window.CompetencyAlgorithm.calculateScore(profileData.skills || [], j.requirements || []); });
+            renderOverviewSummary(); renderJobs();
+        }
+        import('./js/services/UjuziEngine.js').then(m => { window.CompetencyAlgorithm = m.CompetencyAlgorithm; recomputeMatches(); }).catch(e => console.warn("Engine not loaded, using stored scores", e));
         initRoleUI();
     </script>
 </body>
