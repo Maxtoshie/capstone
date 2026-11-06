@@ -394,6 +394,11 @@
                 </div>
                 <button class="btn-logout" onclick="performLogout()">Logout</button>
             </div>
+            <!-- Btrust Two-Bar Mobile Burger Button -->
+            <button class="btrust-burger" type="button" aria-label="Open Navigation" onclick="toggleDashDrawer(true)">
+                <span></span>
+                <span></span>
+            </button>
         </nav>
     </div>
 
@@ -1077,6 +1082,25 @@
             window.scrollTo({ top: 0 });
         }
 
+        function toggleDashDrawer(open) {
+            const overlay = document.getElementById('dashDrawerOverlay');
+            if (overlay) {
+                overlay.classList.toggle('active', open);
+                document.body.style.overflow = open ? 'hidden' : '';
+                const u = sessionStorage.getItem("userAddress");
+                const n = sessionStorage.getItem("userName") || "Demo User";
+                if (document.getElementById("mobDisplayName")) document.getElementById("mobDisplayName").innerText = n;
+                if (document.getElementById("mobWalletAddress") && u) document.getElementById("mobWalletAddress").innerText = u.slice(0, 6) + "..." + u.slice(-4);
+                if (document.getElementById("mobAvatarInitials")) document.getElementById("mobAvatarInitials").innerText = n.split(" ").map(p => p[0]).join("").toUpperCase();
+            }
+        }
+        function handleDashOverlayClick(e) {
+            if (e.target.id === 'dashDrawerOverlay') toggleDashDrawer(false);
+        }
+        function dashSelect(tabId) {
+            toggleDashDrawer(false);
+            switchNav(tabId);
+        }
         function performLogout() { sessionStorage.clear(); window.location.href = "login.html"; }
 
         function openProfileModal() {

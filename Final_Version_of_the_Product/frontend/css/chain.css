@@ -1,18 +1,180 @@
 /* =========================================================
-   UjuziChain: responsive overrides + on-chain UI components
+   UjuziChain: Btrust-Style Navigation & Responsive Styles
    Loaded AFTER each page's inline <style> so it wins ties.
    ========================================================= */
 html { -webkit-text-size-adjust: 100%; }
 img, svg, video { max-width: 100%; height: auto; }
 code, .mono, .hash-chip { word-break: break-all; }
 
-/* ---------- Responsive: tablet and below ---------- */
+/* ---------- Btrust Two-Bar Hamburger Button ---------- */
+.btrust-burger {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  width: 40px;
+  height: 40px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 6px;
+  z-index: 1001;
+}
+
+.btrust-burger span {
+  display: block;
+  height: 2px;
+  background-color: #ffffff;
+  border-radius: 2px;
+  transition: all 0.25s ease-in-out;
+}
+
+.btrust-burger span:nth-child(1) { width: 22px; }
+.btrust-burger span:nth-child(2) { width: 16px; }
+
+/* ---------- Btrust Full-Height Slide-Over Drawer ---------- */
+.btrust-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.btrust-drawer-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.btrust-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 360px;
+  background: #0d0f12;
+  border-left: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  z-index: 2001;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 24px 20px;
+  box-sizing: border-box;
+}
+
+.btrust-drawer-overlay.active .btrust-drawer {
+  transform: translateX(0);
+}
+
+.btrust-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.btrust-drawer-close {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #94a3b8;
+  font-size: 20px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btrust-drawer-close:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btrust-drawer-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 18px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.btrust-drawer-link {
+  font-size: 16px;
+  font-weight: 500;
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 12px 10px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btrust-drawer-link:hover, .btrust-drawer-link.active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.btrust-drawer-submenu {
+  display: none;
+  flex-direction: column;
+  padding-left: 14px;
+  margin-bottom: 6px;
+  gap: 2px;
+}
+
+.btrust-drawer-submenu.open {
+  display: flex;
+}
+
+.btrust-drawer-sublink {
+  font-size: 14px;
+  color: #94a3b8;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btrust-drawer-sublink:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btrust-drawer-footer {
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ---------- Responsive Breakpoints ---------- */
 @media (max-width: 900px) {
   .navbar-wrap { padding: 0 12px !important; top: 8px !important; margin-top: 8px !important; }
-  .btrust-navbar { padding: 8px 12px !important; }
+  .btrust-navbar { padding: 8px 14px !important; }
   main { padding: 0 12px !important; margin-top: 16px !important; }
-  input, select, textarea, .form-input, .search-box-input { font-size: 16px !important; } /* stops iOS focus-zoom */
+  input, select, textarea, .form-input, .search-box-input { font-size: 16px !important; }
   .btn-secondary, .btn-btrust-action, .btn-action, .btn-launch, .btn-approve, .btn-reject { min-height: 40px; }
+  
   .doc-viewer-overlay { padding: 0 !important; }
   .doc-viewer-container { height: 100vh !important; height: 100dvh !important; max-height: none !important; border-radius: 0 !important; border: 0 !important; }
   .doc-viewer-body { overflow-y: auto !important; grid-template-columns: 1fr !important; grid-template-rows: auto auto; }
@@ -21,39 +183,13 @@ code, .mono, .hash-chip { word-break: break-all; }
   .modal-overlay { padding: 8px !important; align-items: flex-end !important; }
   .modal-container { max-height: 92vh; max-height: 92dvh; border-radius: 14px 14px 0 0 !important; }
 
-  /* Dashboard: the top links used to vanish on phones. They become a bottom tab bar. */
-  body.has-tabbar { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
-  .has-tabbar .nav-links {
-    display: flex !important; position: fixed; left: 0; right: 0; bottom: 0; z-index: 150;
-    background: rgba(10, 12, 16, 0.97); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
-    border-top: 1px solid var(--border-subtle); padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
-    gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-  }
-  .has-tabbar .nav-links::-webkit-scrollbar { display: none; }
-  .has-tabbar .nav-btn { flex: 0 0 auto; min-height: 44px; padding: 8px 14px; font-size: 12.5px; }
-
-  /* Landing page: hamburger menu */
-  .nav-toggle { display: inline-flex !important; }
-  .nav-links.open {
-    display: flex !important; flex-direction: column; align-items: stretch; gap: 4px;
-    position: absolute; top: calc(100% + 8px); left: 12px; right: 12px; z-index: 200;
-    background: rgba(14, 16, 20, 0.98); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 10px;
-    max-height: calc(100vh - 110px); overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,.6);
-  }
-  .nav-links.open .nav-item { padding: 12px 10px; font-size: 15px; }
-  .nav-links.open .dropdown { display: block; }
-  .nav-links.open .dropdown-content {
-    display: block !important; position: static !important; transform: none !important; min-width: 0 !important;
-    box-shadow: none !important; border: 0 !important; background: transparent !important; padding: 0 0 0 12px !important;
-  }
-  .hero-buttons { flex-wrap: wrap; gap: 10px; }
-}
-.nav-toggle {
-  display: none; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0;
-  background: transparent; border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 20px; cursor: pointer;
+  /* Hide desktop links and show Btrust drawer burger */
+  .nav-links, .nav-actions, .btn-launch { display: none !important; }
+  .btrust-burger { display: flex !important; }
+  body.has-tabbar { padding-bottom: 0 !important; }
+  .has-tabbar .nav-links { display: none !important; }
 }
 
-/* ---------- Responsive: phones ---------- */
 @media (max-width: 640px) {
   .profile-name-text { display: none !important; }
   .profile-pill { padding: 4px !important; }
@@ -73,12 +209,14 @@ code, .mono, .hash-chip { word-break: break-all; }
   .chain-pill .gas { display: none; }
   .ledger-table th:nth-child(4), .ledger-table td:nth-child(4) { display: none; }
 }
+
 @media (max-width: 480px) {
   .stat-grid { grid-template-columns: 1fr !important; }
   .navbar-wrap { padding: 0 8px !important; }
   .logo-text { font-size: 15px !important; }
   .btrust-navbar { gap: 6px !important; }
 }
+
 @media (hover: none) { .btn-secondary:hover, .nav-btn:hover { background: inherit; } }
 
 /* ---------- On-chain UI components ---------- */

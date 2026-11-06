@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>UjuziChain - Verifiable Credential Infrastructure</title>
+    <title>UjuziChain - Cryptographic Talent Verification for East Africa</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-base: #090a0d;
-            --bg-card: rgba(16, 18, 22, 0.85);
+            --bg-card: rgba(16, 18, 22, 0.7);
             --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.22);
+            --border-hover: rgba(255, 255, 255, 0.2);
             --text-primary: #ffffff;
             --text-secondary: #9ca3af;
             --text-muted: #6b7280;
@@ -22,33 +22,30 @@
             margin: 0;
             padding: 0;
             font-family: 'Inter', sans-serif;
-            word-wrap: break-word;
+            scroll-behavior: smooth;
         }
 
-        html, body {
-            width: 100%;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
+        body {
             background-color: var(--bg-base);
             color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
             background-image: 
-                radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.03) 0%, transparent 60%),
-                url("data:image/svg+xml,%3Csvg width='1200' height='800' viewBox='0 0 1200 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-100,200 C300,100 600,400 1300,150 M-100,260 C300,160 600,460 1300,210 M-100,320 C300,220 600,520 1300,270 M-100,380 C300,280 600,580 1300,330' stroke='rgba(255,255,255,0.025)' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
-            background-size: cover;
+                radial-gradient(circle at 15% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.03) 0%, transparent 40%);
         }
 
-        /* Btrust-style Floating Navbar with Dropdown */
+        /* Fixed Btrust Top Navbar */
         .navbar-wrap {
             position: sticky;
             top: 14px;
             z-index: 100;
-            padding: 0 20px;
-            max-width: 1200px;
             width: 100%;
+            max-width: 1200px;
             margin: 14px auto 0;
+            padding: 0 20px;
         }
 
         .btrust-navbar {
@@ -231,7 +228,8 @@
             font-size: 14.5px;
             font-weight: 500;
             text-decoration: none;
-            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
             transition: all 0.2s;
         }
         .btn-outline:hover {
@@ -239,102 +237,144 @@
             background: rgba(255, 255, 255, 0.04);
         }
 
-        /* Sections & Minimal Cards */
-        .section {
-            padding: 70px 0;
-            border-top: 1px solid var(--border-subtle);
+        /* Pillars Section */
+        .section-header {
+            margin-bottom: 40px;
         }
-
-        .section-label {
-            font-family: 'Space Grotesk', sans-serif;
-            text-transform: uppercase;
-            font-size: 11.5px;
-            letter-spacing: 1.5px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            display: inline-block;
-            font-weight: 700;
-        }
-
-        .section-title {
+        .section-header h2 {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 32px;
             font-weight: 700;
-            letter-spacing: -1px;
-            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 15px;
         }
 
         .grid-3 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 18px;
-            margin-top: 28px;
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
-            margin-top: 28px;
+            margin-bottom: 80px;
         }
 
-        .glass-card {
+        .btrust-card {
             background: var(--bg-card);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border-subtle);
-            border-radius: 10px;
-            padding: 22px;
-            transition: border-color 0.2s, transform 0.2s;
+            border-radius: 12px;
+            padding: 28px;
+            transition: all 0.25s ease;
+            position: relative;
         }
-        .glass-card:hover {
+        .btrust-card:hover {
             border-color: var(--border-hover);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
         }
 
-        .glass-card h3 {
+        .card-num {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 17px;
-            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 16px;
         }
-
-        .glass-card p {
-            font-size: 13px;
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .card-desc {
+            font-size: 14px;
             color: var(--text-secondary);
             line-height: 1.6;
         }
 
-        .step-num {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 26px;
-            height: 26px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.08);
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 12px;
-            margin-bottom: 12px;
-            font-family: 'Space Grotesk', sans-serif;
+        /* Verification Flow Section */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 80px;
         }
 
-        /* Modals */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.78);
-            backdrop-filter: blur(12px);
-            display: none;
+        .flow-step {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+        .step-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            color: #ffffff;
+        }
+        .step-body h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+        .step-body p {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Metrics / Trust Banner */
+        .metrics-banner {
+            background: linear-gradient(180deg, rgba(16, 18, 22, 0.8) 0%, rgba(10, 11, 14, 0.9) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 80px;
+            text-align: center;
+        }
+        .metric-val {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+        .metric-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 1000;
+            align-items: center;
+            justify-content: center;
             padding: 16px;
         }
 
-        .modal-box {
-            background: #0f1115;
-            border: 1px solid var(--border-hover);
+        .modal-card {
+            background: #111317;
+            border: 1px solid var(--border-subtle);
             border-radius: 12px;
             max-width: 580px;
             width: 100%;
@@ -386,14 +426,13 @@
         @media (max-width: 900px) {
             .grid-3, .grid-2 { grid-template-columns: 1fr; }
             .hero h1 { font-size: 36px; }
-            .nav-links { display: none; }
         }
     </style>
     <link rel="stylesheet" href="css/chain.css">
 </head>
 <body id="home">
 
-    <!-- Top Navbar with Btrust Dropdowns -->
+    <!-- Top Navbar with Btrust Styling -->
     <div class="navbar-wrap">
         <nav class="btrust-navbar">
             <a href="#home" class="nav-brand">
@@ -401,7 +440,7 @@
                 <div class="logo-text">UjuziChain</div>
             </a>
 
-            <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" onclick="toggleNav(this)">&#9776;</button>
+            <!-- Desktop Links -->
             <div class="nav-links" id="navLinks">
                 <a href="#home" class="nav-item">Home</a>
 
@@ -430,7 +469,59 @@
             </div>
 
             <a href="login.html" class="btn-launch">Launch Portal <span>&rarr;</span></a>
+
+            <!-- Btrust Two-Bar Mobile Burger Button -->
+            <button class="btrust-burger" type="button" aria-label="Open Navigation" onclick="toggleBtrustDrawer(true)">
+                <span></span>
+                <span></span>
+            </button>
         </nav>
+    </div>
+
+    <!-- Btrust Full-Height Mobile Drawer -->
+    <div class="btrust-drawer-overlay" id="mobileDrawerOverlay" onclick="handleOverlayClick(event)">
+        <div class="btrust-drawer" id="mobileDrawer">
+            <div class="btrust-drawer-header">
+                <div class="nav-brand">
+                    <div class="logo-box">UC</div>
+                    <div class="logo-text">UjuziChain</div>
+                </div>
+                <button class="btrust-drawer-close" aria-label="Close menu" onclick="toggleBtrustDrawer(false)">&times;</button>
+            </div>
+
+            <div class="btrust-drawer-menu">
+                <a href="#home" class="btrust-drawer-link" onclick="toggleBtrustDrawer(false)">Home</a>
+                
+                <button class="btrust-drawer-link" onclick="toggleSubmenu('subBuilders')">
+                    <span>Builders</span>
+                    <span style="font-size: 13px;">&#x2304;</span>
+                </button>
+                <div class="btrust-drawer-submenu" id="subBuilders">
+                    <a href="login.html" class="btrust-drawer-sublink">Applicant Portal</a>
+                    <a href="#journeys" class="btrust-drawer-sublink" onclick="toggleBtrustDrawer(false)">Take Simulation</a>
+                    <a href="#verification-flow" class="btrust-drawer-sublink" onclick="toggleBtrustDrawer(false)">Verified Credentials</a>
+                </div>
+
+                <button class="btrust-drawer-link" onclick="toggleSubmenu('subRecruiters')">
+                    <span>Recruiters</span>
+                    <span style="font-size: 13px;">&#x2304;</span>
+                </button>
+                <div class="btrust-drawer-submenu" id="subRecruiters">
+                    <a href="login.html?role=recruiter" class="btrust-drawer-sublink">Applications Inbox</a>
+                    <a href="login.html?role=recruiter" class="btrust-drawer-sublink">Post East Africa Job</a>
+                    <a href="#verification-flow" class="btrust-drawer-sublink" onclick="toggleBtrustDrawer(false)">Verify Credential</a>
+                </div>
+
+                <a href="#target-users" class="btrust-drawer-link" onclick="toggleBtrustDrawer(false)">About Us</a>
+                <button class="btrust-drawer-link" onclick="toggleBtrustDrawer(false); openSetupModal();">Setup Guide</button>
+            </div>
+
+            <div class="btrust-drawer-footer">
+                <a href="login.html" class="btn-btrust-hero" style="justify-content: center; width: 100%;">
+                    Launch Portal <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
     </div>
 
     <main class="container">
@@ -438,108 +529,132 @@
         <section class="hero">
             <h1>We Verify Open-Source & Engineering Talent in the Global South</h1>
             <p>
-                UjuziChain anchors African university credentials on Ethereum Sepolia and evaluates candidate ability through role simulations—eliminating resume fraud for East African tech hiring.
+                Eliminating paper credential fraud and unqualified application spam in East Africa's tech ecosystem through decentralized smart contracts and practical competency benchmarks.
             </p>
             <div class="hero-buttons">
-                <a href="login.html" class="btn-btrust-hero">Connect Portal <span>&rarr;</span></a>
-                <button class="btn-outline" onclick="openSetupModal()">3-Minute Setup Guide</button>
+                <a href="login.html" class="btn-btrust-hero">Launch Platform &rarr;</a>
+                <a href="#verification-flow" class="btn-outline">How Verification Works</a>
             </div>
         </section>
 
-        <!-- 1. TARGET USERS -->
-        <section id="target-users" class="section">
-            <span class="section-label">Stakeholder Profiles</span>
-            <h2 class="section-title">Who Is UjuziChain Built For?</h2>
-            <p style="color: var(--text-secondary); max-width: 650px; font-size: 14px;">Designed around the distinct challenges of African higher education and regional technical hiring.</p>
+        <!-- Metrics Banner -->
+        <div class="metrics-banner">
+            <div>
+                <div class="metric-val">100%</div>
+                <div class="metric-label">Non-Custodial SSI Authentication</div>
+            </div>
+            <div>
+                <div class="metric-val">0</div>
+                <div class="metric-label">Document PII Stored Off-Chain</div>
+            </div>
+            <div>
+                <div class="metric-val">&ge;70%</div>
+                <div class="metric-label">Automated Gate Competency Filter</div>
+            </div>
+            <div>
+                <div class="metric-val">Sepolia</div>
+                <div class="metric-label">EVM Smart Contract Attestation</div>
+            </div>
+        </div>
+
+        <!-- Pillars Section -->
+        <section class="pillars" id="journeys">
+            <div class="section-header">
+                <h2>Built for East Africa's Engineering Ecosystem</h2>
+                <p>Designed around the requirements of tech builders and engineering hiring teams in Nairobi, Kigali, Kampala, and Dar es Salaam.</p>
+            </div>
 
             <div class="grid-3">
-                <div class="glass-card">
-                    <span class="step-num">01</span>
-                    <h3>East African Developers</h3>
-                    <p>Graduates from ALU, Moringa, and regional universities who need sovereign, tamper-proof proof of qualification that cannot be faked or held hostage.</p>
+                <div class="btrust-card">
+                    <div class="card-num">01 / APPLICANTS</div>
+                    <div class="card-title">Sovereign Proof of Skill</div>
+                    <div class="card-desc">
+                        Connect using your non-custodial Web3 wallet. Hash your degrees and certifications client-side via SHA-256 and prove your practical skills through applied engineering simulations.
+                    </div>
                 </div>
-                <div class="glass-card">
-                    <span class="step-num">02</span>
-                    <h3>Accredited Universities</h3>
-                    <p>Institutions like African Leadership University authorized to mint immutable degree credentials directly to our smart contract, protecting academic reputation.</p>
+
+                <div class="btrust-card">
+                    <div class="card-num">02 / RECRUITERS</div>
+                    <div class="card-title">Spam-Free Candidate Pipelines</div>
+                    <div class="card-desc">
+                        Never screen fake resumes again. Applicants must either hit a 70% verified match score or pass an applied simulation before their application can reach your inbox.
+                    </div>
                 </div>
-                <div class="glass-card">
-                    <span class="step-num">03</span>
-                    <h3>Regional Tech Recruiters</h3>
-                    <p>Engineering managers in Nairobi, Kigali, Kampala, and Dar es Salaam who waste weeks vetting unverified CVs and need instant on-chain validation.</p>
+
+                <div class="btrust-card">
+                    <div class="card-num">03 / INSTITUTIONS</div>
+                    <div class="card-title">Immutable Degree Attestation</div>
+                    <div class="card-desc">
+                        Universities and academies issue non-transferable, cryptographically signed educational credentials directly onto the Ethereum Sepolia blockchain registry.
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 2. USER JOURNEYS -->
-        <section id="journeys" class="section">
-            <span class="section-label">Operational Workflows</span>
-            <h2 class="section-title">Two Dedicated User Journeys</h2>
+        <!-- Verification Mechanism Section -->
+        <section class="verification-flow" id="verification-flow">
+            <div class="section-header">
+                <h2>Cryptographic Verification Pipeline</h2>
+                <p>How UjuziChain replaces manual resume checks with zero-knowledge, deterministic validation.</p>
+            </div>
 
             <div class="grid-2">
-                <div class="glass-card">
-                    <h3 style="font-size: 18px; margin-bottom: 14px;">Applicant Journey</h3>
-                    
-                    <div style="margin-bottom: 12px;">
-                        <span class="step-num">1</span>
-                        <strong style="display: block; font-size: 13.5px;">Connect Sovereign Wallet</strong>
-                        <p style="font-size: 12.5px;">Login with MetaMask via EIP-1193. Zero passwords or centralized database honeypots.</p>
+                <div class="btrust-card">
+                    <div class="flow-step">
+                        <div class="step-icon">1</div>
+                        <div class="step-body">
+                            <h4>Client-Side Document Digest</h4>
+                            <p>Degrees and certificates are processed in the applicant's browser using native Web Crypto APIs. Only the irreversible SHA-256 hash is produced—no raw PDF files are ever stored on a central server.</p>
+                        </div>
                     </div>
-                    <div style="margin-bottom: 12px;">
-                        <span class="step-num">2</span>
-                        <strong style="display: block; font-size: 13.5px;">Claim On-Chain Credential</strong>
-                        <p style="font-size: 12.5px;">Attach ALU BSc degree or certificate issued on Sepolia (<code>0xA40d...132F</code>).</p>
-                    </div>
-                    <div>
-                        <span class="step-num">3</span>
-                        <strong style="display: block; font-size: 13.5px;">Assessment or Auto-Apply</strong>
-                        <p style="font-size: 12.5px;">Scores &ge; 70% unlock 1-click Auto Apply. Below 70% candidates pass a practical coding simulation.</p>
+
+                    <div class="flow-step">
+                        <div class="step-icon">2</div>
+                        <div class="step-body">
+                            <h4>On-Chain Registry Attestation</h4>
+                            <p>Authorized academic institutions commit credential digests to the UjuziChain Ethereum Sepolia smart contract with immutable timestamps and revocation capabilities.</p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="glass-card">
-                    <h3 style="font-size: 18px; margin-bottom: 14px;">Recruiter Journey</h3>
+                <div class="btrust-card">
+                    <div class="flow-step">
+                        <div class="step-icon">3</div>
+                        <div class="step-body">
+                            <h4>Deterministic 70% Match Gate</h4>
+                            <p>Our client-side competency algorithm measures candidate skill vectors against required job criteria. Only scores &ge;70% unlock instantaneous One-Click Auto Apply.</p>
+                        </div>
+                    </div>
 
-                    <div style="margin-bottom: 12px;">
-                        <span class="step-num">1</span>
-                        <strong style="display: block; font-size: 13.5px;">Publish Regional Openings</strong>
-                        <p style="font-size: 12.5px;">Post roles targeted to Nairobi, Kigali, Kampala, or Dar es Salaam with required skill criteria.</p>
-                    </div>
-                    <div style="margin-bottom: 12px;">
-                        <span class="step-num">2</span>
-                        <strong style="display: block; font-size: 13.5px;">Access Candidate Inbox</strong>
-                        <p style="font-size: 12.5px;">Review pre-screened applications with verified wallet identities and practical simulation proof.</p>
-                    </div>
-                    <div>
-                        <span class="step-num">3</span>
-                        <strong style="display: block; font-size: 13.5px;">Cryptographic Verification</strong>
-                        <p style="font-size: 12.5px;">Verify credentials directly against Ethereum Sepolia in 1-click without contacting registrar offices.</p>
+                    <div class="flow-step">
+                        <div class="step-icon">4</div>
+                        <div class="step-body">
+                            <h4>Applied Competency Simulation</h4>
+                            <p>Candidates scoring under 70% can unlock application access by completing an interactive engineering simulation to prove applied knowledge regardless of traditional background.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 3. VERIFICATION PROCESS -->
-        <section id="verification-flow" class="section">
-            <span class="section-label">Trust Architecture</span>
-            <h2 class="section-title">The On-Chain Verification Process</h2>
-            <p style="color: var(--text-secondary); max-width: 650px; font-size: 14px;">Separating who issues, who holds, and who verifies credentials according to the W3C decentralized trust triad.</p>
-
+        <!-- Target Regional Ecosystem -->
+        <section id="target-users" style="margin-bottom: 80px;">
+            <div class="section-header">
+                <h2>Target Regional Hubs</h2>
+                <p>Actively connecting software engineers and engineering teams across East Africa's tech corridor.</p>
+            </div>
             <div class="grid-3">
-                <div class="glass-card">
-                    <span class="step-num">1</span>
-                    <h3>The Issuer (ALU)</h3>
-                    <p>African Leadership University registers as an authorized issuer, hashes the degree, and calls <code>issueCredential(bytes32 id)</code> on Sepolia.</p>
+                <div class="btrust-card">
+                    <div class="card-title">Nairobi Silicon Savannah</div>
+                    <div class="card-desc">Empowering local developers with cryptographic verification for fast-growing Kenyan fintech and Web3 startups.</div>
                 </div>
-                <div class="glass-card">
-                    <span class="step-num">2</span>
-                    <h3>The Holder (Candidate)</h3>
-                    <p>The student controls their Ethereum address. They hold their credential ID (<code>UC-2026-001</code>) and present it with their verified wallet.</p>
+                <div class="btrust-card">
+                    <div class="card-title">Kigali Innovation Hub</div>
+                    <div class="card-desc">Partnering with regional institutions like African Leadership University to anchor student accomplishments directly on-chain.</div>
                 </div>
-                <div class="glass-card">
-                    <span class="step-num">3</span>
-                    <h3>The Verifier (Recruiter)</h3>
-                    <p>Employers run a gasless <code>verifyCredential</code> query against our smart contract. The EVM checks the state and confirms legitimacy.</p>
+                <div class="btrust-card">
+                    <div class="card-title">Kampala & Dar es Salaam</div>
+                    <div class="card-desc">Bridging cross-border technical talent with international companies seeking verified remote software engineering talent.</div>
                 </div>
             </div>
         </section>
@@ -547,98 +662,92 @@
 
     <!-- Setup Guide Modal -->
     <div class="modal-overlay" id="setupModal" onclick="closeSetupModal(event)">
-        <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-card" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h3>UjuziChain Quickstart Setup</h3>
+                <h3>UjuziChain Quick Setup Guide</h3>
                 <button class="close-btn" onclick="closeSetupModal()">&times;</button>
             </div>
-            
-            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 18px;">Connect to the Sepolia testnet environment in 3 minutes:</p>
-
-            <div style="margin-bottom: 14px;">
-                <strong style="font-size: 13px; color: #ffffff;">1. Install MetaMask Extension</strong>
-                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Download MetaMask for Firefox, Chrome, or Brave from <code>metamask.io</code>.</p>
+            <div class="legal-body">
+                <h4>1. Install MetaMask</h4>
+                <p>Ensure you have MetaMask or an EIP-1193 compatible wallet extension installed in your browser.</p>
+                <h4>2. Connect to Sepolia Testnet</h4>
+                <p>UjuziChain runs on Ethereum Sepolia Testnet. Switch your wallet network to Sepolia. You can obtain free SepoliaETH from any public faucet.</p>
+                <h4>3. Login to the Portal</h4>
+                <p>Click "Launch Platform" or "Applicant Portal", connect your wallet, and approve the one-time cryptographic challenge to authenticate.</p>
+                <h4>4. Try the Verification Engine</h4>
+                <p>Upload a demo credential PDF in the Dashboard to generate its SHA-256 digest, or verify existing credentials directly against the smart contract.</p>
             </div>
-
-            <div style="margin-bottom: 14px;">
-                <strong style="font-size: 13px; color: #ffffff;">2. Switch to Sepolia Test Network</strong>
-                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">In MetaMask, toggle "Show test networks" and select <b>Ethereum Sepolia</b>.</p>
-            </div>
-
-            <div style="margin-bottom: 14px;">
-                <strong style="font-size: 13px; color: #ffffff;">3. Gasless Verification</strong>
-                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Verification and applications are 100% gas-free (view queries). No ETH balance required.</p>
-            </div>
-
-            <div style="margin-bottom: 18px;">
-                <strong style="font-size: 13px; color: #ffffff;">4. Test Credential ID</strong>
-                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Use sample credential ID <code>UC-2026-001</code> to test on-chain verification against contract <code>0xA40d77d6e31F5044C7151dAd78C8bA6C3313132F</code>.</p>
-            </div>
-
-            <button class="btn-btrust-hero" style="width: 100%; justify-content: center;" onclick="window.location.href='login.html'">Proceed to Portal Login <span>&rarr;</span></button>
         </div>
     </div>
 
     <!-- Terms Modal -->
     <div class="modal-overlay" id="termsModal" onclick="closeTermsModal(event)">
-        <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-card" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <h3>Terms of Service</h3>
                 <button class="close-btn" onclick="closeTermsModal()">&times;</button>
             </div>
             <div class="legal-body">
-                <p>Welcome to <strong>UjuziChain</strong>. By connecting an Ethereum wallet address, you agree to these Terms of Service governing decentralized talent matching across East Africa.</p>
-                <h4>1. Non-Custodial Sovereign Identity</h4>
-                <p>Authentication operates entirely via public key cryptography (EIP-1193 / MetaMask). UjuziChain does not hold custody of private keys or personal credentials.</p>
-                <h4>2. On-Chain Verification</h4>
-                <p>Academic credentials recorded on the Ethereum Sepolia smart contract (<code>0xA40d77d6e31F5044C7151dAd78C8bA6C3313132F</code>) are public and immutable.</p>
-                <h4>3. Role Assessments</h4>
-                <p>Practical assessments determine application eligibility objectively for candidate matching.</p>
+                <h4>1. Platform Purpose</h4>
+                <p>UjuziChain is a decentralized academic credential and competency verification platform. All blockchain transactions occur on the Ethereum Sepolia Testnet for research and academic demonstration purposes.</p>
+                <h4>2. Self-Sovereign Identity</h4>
+                <p>Users are solely responsible for safeguarding their private keys and wallet credentials. UjuziChain does not hold custody of user keys or funds.</p>
+                <h4>3. Document Privacy</h4>
+                <p>Document digests (SHA-256 hashes) are generated locally in the browser. UjuziChain does not store or process raw document files or personally identifiable information on centralized servers.</p>
             </div>
-            <button class="btn-btrust-hero" style="width: 100%; justify-content: center; margin-top: 14px;" onclick="closeTermsModal()">Close Terms</button>
         </div>
     </div>
 
     <!-- Privacy Modal -->
     <div class="modal-overlay" id="privacyModal" onclick="closePrivacyModal(event)">
-        <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-card" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h3>Decentralized Privacy Policy</h3>
+                <h3>Privacy Policy</h3>
                 <button class="close-btn" onclick="closePrivacyModal()">&times;</button>
             </div>
             <div class="legal-body">
-                <p>UjuziChain complies with the <strong>Kenya Data Protection Act (2019)</strong> and <strong>GDPR</strong> principles.</p>
-                <h4>1. Zero Plaintext Document Storage</h4>
-                <p>Uploaded documents are hashed on your client machine using SHA-256. Raw PDF bytes and personal contact information are never stored on central servers.</p>
-                <h4>2. Non-Custodial Identification</h4>
-                <p>We do not store passwords, session cookies, or tracking pixels.</p>
-                <h4>3. Data Sovereignty</h4>
-                <p>Candidates retain complete ownership of their career identity.</p>
+                <h4>Zero-PII Storage Architecture</h4>
+                <p>UjuziChain adheres to strict zero-PII storage principles. Uploaded certificates and transcripts are processed exclusively in client-side memory via the Web Cryptography API. Only mathematical cryptographic digests are anchored to the public blockchain registry.</p>
+                <h4>On-Chain Transparency</h4>
+                <p>Interactions with Ethereum Sepolia smart contracts are public and immutable. By attesting or verifying credentials, users acknowledge that the associated cryptographic hash and wallet addresses are recorded on the public ledger.</p>
             </div>
-            <button class="btn-btrust-hero" style="width: 100%; justify-content: center; margin-top: 14px;" onclick="closePrivacyModal()">Close Privacy Policy</button>
         </div>
     </div>
 
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2026 UjuziChain. Ethereum Sepolia Smart Contract: <code>0xA40d77d6e31F5044C7151dAd78C8bA6C3313132F</code></p>
+        <div>&copy; 2026 UjuziChain Infrastructure. Built for the East African Software Ecosystem.</div>
         <div class="footer-links">
             <a onclick="openTermsModal()">Terms of Service</a>
-            <span>·</span>
+            <span>&bull;</span>
             <a onclick="openPrivacyModal()">Privacy Policy</a>
-            <span>·</span>
-            <a onclick="openSetupModal()">Setup Guide</a>
+            <span>&bull;</span>
+            <a href="https://github.com" target="_blank" rel="noopener">GitHub Repository</a>
         </div>
     </footer>
 
     <script>
-        function toggleNav(btn) {
-            const open = document.getElementById('navLinks').classList.toggle('open');
-            btn.setAttribute('aria-expanded', open); btn.innerHTML = open ? '&times;' : '&#9776;';
+        function toggleBtrustDrawer(open) {
+            const overlay = document.getElementById('mobileDrawerOverlay');
+            if (overlay) {
+                overlay.classList.toggle('active', open);
+                document.body.style.overflow = open ? 'hidden' : '';
+            }
         }
-        document.addEventListener('click', e => {
-            const l = document.getElementById('navLinks');
-            if (l && l.classList.contains('open') && e.target.closest('a.nav-item, a.dropdown-link')) { l.classList.remove('open'); }
-        });
+
+        function handleOverlayClick(e) {
+            if (e.target.id === 'mobileDrawerOverlay') {
+                toggleBtrustDrawer(false);
+            }
+        }
+
+        function toggleSubmenu(id) {
+            const sub = document.getElementById(id);
+            if (sub) {
+                sub.classList.toggle('open');
+            }
+        }
+
         function openSetupModal() { document.getElementById('setupModal').style.display = 'flex'; }
         function closeSetupModal(e) {
             if (!e || e.target.id === 'setupModal' || e.target.tagName === 'BUTTON') {
