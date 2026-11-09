@@ -1,287 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>UjuziChain - Access Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
-    <style>
-        :root {
-            --bg-base: #090a0d;
-            --bg-card: rgba(16, 18, 22, 0.85);
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.22);
-            --text-primary: #ffffff;
-            --text-secondary: #9ca3af;
-            --text-muted: #6b7280;
-            --accent-green: #10b981;
-        }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; word-wrap: break-word; }
-
-        html, body {
-            width: 100%;
-            overflow-x: hidden;
-            background-color: var(--bg-base);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-image: 
-                radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.03) 0%, transparent 60%),
-                url("data:image/svg+xml,%3Csvg width='1200' height='800' viewBox='0 0 1200 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-100,200 C300,100 600,400 1300,150 M-100,260 C300,160 600,460 1300,210 M-100,320 C300,220 600,520 1300,270 M-100,380 C300,280 600,580 1300,330' stroke='rgba(255,255,255,0.025)' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
-            background-size: cover;
-        }
-
-        .navbar-wrap {
-            position: sticky;
-            top: 14px;
-            z-index: 100;
-            padding: 0 20px;
-            max-width: 1200px;
-            width: 100%;
-            margin: 14px auto 0;
-        }
-
-        .btrust-navbar {
-            background: rgba(14, 16, 20, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 10px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #ffffff; cursor: pointer; }
-        .logo-box {
-            background: #ffffff;
-            color: #000000;
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            border-radius: 6px;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-        }
-        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
-
-        .btn-nav-back {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-subtle);
-            color: #ffffff;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12.5px;
-            font-weight: 500;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .auth-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 30px 16px 50px;
-            width: 100%;
-        }
-
-        .auth-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 14px;
-            width: 100%;
-            max-width: 480px;
-            padding: 30px 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            text-align: center;
-        }
-
-        .role-switch {
-            display: flex;
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            padding: 3px;
-            margin-bottom: 20px;
-            gap: 4px;
-        }
-
-        .role-tab {
-            flex: 1;
-            padding: 8px;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 500;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .role-tab.active { background: #ffffff; color: #000000; font-weight: 600; }
-
-        .form-title { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; text-align: left; }
-        .form-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; text-align: left; }
-
-        .input-group { margin-bottom: 13px; text-align: left; }
-        .input-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 5px; }
-        .form-input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--border-subtle);
-            border-radius: 6px;
-            padding: 10px 12px;
-            font-size: 13px;
-            color: #ffffff;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .form-input:focus { border-color: rgba(255, 255, 255, 0.3); }
-
-        .verifier-box {
-            background: rgba(16, 185, 129, 0.05);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 8px;
-            padding: 14px;
-            margin: 14px 0;
-            text-align: left;
-        }
-        .verifier-box-title {
-            font-size: 12.5px;
-            font-weight: 600;
-            color: #34d399;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 6px;
-        }
-
-        .terms-box {
-            background: rgba(0, 0, 0, 0.25);
-            border: 1px solid var(--border-subtle);
-            border-radius: 6px;
-            padding: 12px;
-            margin: 16px 0 10px;
-            text-align: left;
-            font-size: 12px;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            line-height: 1.45;
-        }
-
-        .terms-link {
-            color: #ffffff;
-            text-decoration: underline;
-            cursor: pointer;
-            font-weight: 600;
-            transition: color 0.15s ease;
-        }
-        .terms-link:hover { color: #34d399; }
-
-        .btn-action {
-            width: 100%;
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            border-radius: 6px;
-            padding: 12px 18px;
-            font-size: 13.5px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 10px;
-            transition: all 0.2s ease;
-        }
-        .btn-action:disabled { opacity: 0.45; cursor: not-allowed; }
-
-        .toggle-mode { text-align: center; margin-top: 18px; font-size: 12.5px; color: var(--text-muted); }
-        .toggle-mode a { color: #ffffff; text-decoration: underline; cursor: pointer; font-weight: 500; }
-
-        /* Modal Styles */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-
-        .modal-card {
-            background: #111317;
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            max-width: 540px;
-            width: 100%;
-            padding: 24px;
-            max-height: 85vh;
-            overflow-y: auto;
-            text-align: left;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            border-bottom: 1px solid var(--border-subtle);
-            padding-bottom: 12px;
-        }
-        .modal-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; color: #ffffff; }
-        .close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; line-height: 1; }
-        .close-btn:hover { color: #ffffff; }
-
-        .legal-body { font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; }
-        .legal-body h4 { font-size: 13.5px; color: #ffffff; margin: 14px 0 4px; }
-        .legal-body p { margin-bottom: 10px; }
-    </style>
-    <link rel="stylesheet" href="css/chain.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<script src="js/theme.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/chain.css">
+<link rel="stylesheet" href="css/site.css">
+<title>Sign in · UjuziChain</title>
 </head>
 <body>
-
-    <div class="navbar-wrap">
-        <nav class="btrust-navbar">
-            <a href="index.html" class="nav-brand">
-                <div class="logo-box">UC</div>
-                <div class="logo-text">UjuziChain</div>
-            </a>
-            <div style="display: flex; gap: 12px; align-items: center;">
-                <a href="index.html" class="btn-nav-back">&larr; Back to Home</a>
-            </div>
-        </nav>
+<header class="site-header" id="siteHeader">
+  <nav class="site-nav" aria-label="Main">
+    <a class="brand" href="index.html"><span class="logo-box">UC</span>UjuziChain</a>
+    <div class="nav-menu" id="navMenu"><a class="nav-item" href="index.html#how">How it works</a><a class="nav-item" href="index.html#why">Why UjuziChain</a><a class="nav-item" href="index.html#who">Who it is for</a><a class="nav-item" href="privacy.html">Privacy</a><a class="nav-item" href="login.html">Sign in</a></div>
+    <div class="nav-actions"><button class="theme-toggle" type="button" aria-label="Switch between dark and light mode" onclick="UJTheme.toggle()"><svg class="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg><svg class="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg></button><a class="btn-pill" href="login.html">Get started</a>
+      <button class="nav-burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navMenu" onclick="toggleMenu(this)"><svg class="i-open" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
+  </nav>
+</header>
+
 
     <div class="auth-wrapper">
         <div class="auth-card">
-            <div class="role-switch">
+            <div class="role-switch" style="grid-template-columns:repeat(3,1fr)">
                 <button class="role-tab active" id="tabApplicant" onclick="setRole('Applicant')">Applicant</button>
                 <button class="role-tab" id="tabRecruiter" onclick="setRole('Recruiter')">Recruiter</button>
+                <button class="role-tab" id="tabInstitution" onclick="setRole('Institution')">Institution</button>
             </div>
 
             <h2 class="form-title" id="formHeader">Applicant Sign In</h2>
@@ -298,7 +48,7 @@
                     <input type="text" id="regTitle" class="form-input" placeholder="e.g. Full Stack Web3 Developer">
                 </div>
 
-                <div class="input-group" id="groupSkills">
+                <div class="input-group" id="groupSkills" style="display:none">
                     <label>Technical Skills (comma-separated)</label>
                     <input type="text" id="regSkills" class="form-input" placeholder="e.g. JavaScript, Git, REST APIs, Solidity, SQL">
                 </div>
@@ -306,24 +56,24 @@
                 <!-- Automated Verification Dispatch Target -->
                 <div class="verifier-box" id="verifierSection">
                     <div class="verifier-box-title">
-                        <span>✉️</span> Automated Credential Verification Target
+                        Automated Credential Verification Target
                     </div>
                     <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px;">
                         An automated verification dispatch will be sent to your institution/former employer, registering them to UjuziChain to attest your record.
                     </p>
                     
                     <div class="input-group" style="margin-bottom: 10px;">
-                        <label style="color: #ffffff;">Former Institution or Company Name</label>
+                        <label >Former Institution or Company Name</label>
                         <input type="text" id="regVerifierOrg" class="form-input" placeholder="e.g. African Leadership University or Safaricom">
                     </div>
 
                     <div class="input-group" style="margin-bottom: 0;">
-                        <label style="color: #ffffff;">Official Institutional / Work Email</label>
-                        <input type="email" id="regVerifierEmail" class="form-input" placeholder="e.g. registrar@alueducation.com or hr@safaricom.co.ke">
+                        <label >Official Institutional / Work Email</label>
+                        <input type="email" id="regVerifierEmail" class="form-input" placeholder="e.g. registrar@example.edu or hr@example.co.ke">
                     </div>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group" id="groupDoc">
                     <label>Upload Document / Certificate to Verify (PDF)</label>
                     <input type="file" id="regDocFile" class="form-input" style="padding: 7px 10px; cursor: pointer;">
                 </div>
@@ -333,7 +83,7 @@
             <div class="terms-box">
                 <input type="checkbox" id="termsCheck" onchange="toggleAuthBtnState()" style="margin-top: 3px; cursor: pointer;">
                 <label for="termsCheck" style="cursor: pointer;">
-                    I agree to the <span class="terms-link" onclick="openTermsModal(event)">Terms of Service</span> &amp; <span class="terms-link" onclick="openPrivacyModal(event)">Privacy Policy</span>. Verification requests transmit cryptographic hashes (SHA-256) with zero raw PII disclosure.
+                    I have read and agree to the <a href="privacy.html#terms" target="_blank" rel="noopener" style="color:#38bdf8">Terms of Service</a> and <a href="privacy.html#privacy" target="_blank" rel="noopener" style="color:#38bdf8">Privacy Policy</a>. I understand that credential records written to the blockchain are public and permanent, and that my documents stay on my device.
                 </label>
             </div>
 
@@ -349,66 +99,20 @@
         </div>
     </div>
 
-    <!-- Terms Modal -->
-    <div class="modal-overlay" id="termsModal" onclick="closeTermsModal(event)">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3>Terms of Service</h3>
-                <button class="close-btn" onclick="closeTermsModal()">&times;</button>
-            </div>
-            <div class="legal-body">
-                <h4>1. Platform Purpose</h4>
-                <p>UjuziChain is a decentralized academic credential and competency verification platform. All blockchain transactions occur on the Ethereum Sepolia Testnet for research and academic demonstration purposes.</p>
-                <h4>2. Self-Sovereign Identity</h4>
-                <p>Users are solely responsible for safeguarding their private keys and wallet credentials. UjuziChain does not hold custody of user keys or funds.</p>
-                <h4>3. Document Privacy</h4>
-                <p>Document digests (SHA-256 hashes) are generated locally in the browser. UjuziChain does not store or process raw document files or personally identifiable information on centralized servers.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Privacy Modal -->
-    <div class="modal-overlay" id="privacyModal" onclick="closePrivacyModal(event)">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3>Privacy Policy</h3>
-                <button class="close-btn" onclick="closePrivacyModal()">&times;</button>
-            </div>
-            <div class="legal-body">
-                <h4>Zero-PII Storage Architecture</h4>
-                <p>UjuziChain adheres to strict zero-PII storage principles. Uploaded certificates and transcripts are processed exclusively in client-side memory via the Web Cryptography API. Only mathematical cryptographic digests are anchored to the public blockchain registry.</p>
-                <h4>On-Chain Transparency</h4>
-                <p>Interactions with Ethereum Sepolia smart contracts are public and immutable. By attesting or verifying credentials, users acknowledge that the associated cryptographic hash and wallet addresses are recorded on the public ledger.</p>
-            </div>
-        </div>
-    </div>
-
     <script src="js/auth.js"></script>
     <script>
         function toggleAuthBtnState() {
             const check = document.getElementById('termsCheck');
             document.getElementById('authSubmitBtn').disabled = !check.checked;
         }
-
-        function openTermsModal(e) {
-            if (e) e.preventDefault();
-            document.getElementById('termsModal').style.display = 'flex';
-        }
-        function closeTermsModal(e) {
-            if (!e || e.target.id === 'termsModal' || e.target.tagName === 'BUTTON') {
-                document.getElementById('termsModal').style.display = 'none';
-            }
-        }
-
-        function openPrivacyModal(e) {
-            if (e) e.preventDefault();
-            document.getElementById('privacyModal').style.display = 'flex';
-        }
-        function closePrivacyModal(e) {
-            if (!e || e.target.id === 'privacyModal' || e.target.tagName === 'BUTTON') {
-                document.getElementById('privacyModal').style.display = 'none';
-            }
-        }
     </script>
+<script>
+function toggleMenu(btn) {
+  var h = document.getElementById('siteHeader'); var open = h.classList.toggle('nav-open');
+  btn.setAttribute('aria-expanded', open); btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+}
+document.addEventListener('click', function (e) { var h = document.getElementById('siteHeader'); if (h && h.classList.contains('nav-open') && (e.target.closest('a') || !e.target.closest('.site-nav'))) h.classList.remove('nav-open'); });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { var h = document.getElementById('siteHeader'); if (h) h.classList.remove('nav-open'); } });
+</script>
 </body>
 </html>

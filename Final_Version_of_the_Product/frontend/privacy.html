@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<script src="js/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/chain.css">
+<link rel="stylesheet" href="css/site.css">
+<title>Privacy Policy and Terms · UjuziChain</title>
+</head>
+<body>
+<header class="site-header" id="siteHeader">
+  <nav class="site-nav" aria-label="Main">
+    <a class="brand" href="index.html"><span class="logo-box">UC</span>UjuziChain</a>
+    <div class="nav-menu" id="navMenu"><a class="nav-item" href="index.html#how">How it works</a><a class="nav-item" href="index.html#why">Why UjuziChain</a><a class="nav-item" href="index.html#who">Who it is for</a><a class="nav-item" href="privacy.html">Privacy</a><a class="nav-item" href="login.html">Sign in</a></div>
+    <div class="nav-actions"><button class="theme-toggle" type="button" aria-label="Switch between dark and light mode" onclick="UJTheme.toggle()"><svg class="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg><svg class="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg></button><a class="btn-pill" href="login.html">Get started</a>
+      <button class="nav-burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navMenu" onclick="toggleMenu(this)"><svg class="i-open" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+  </nav>
+</header>
+<div class="doc">
+<div class="pills"><a href="#privacy">Privacy Policy</a><a href="#terms">Terms of Service (EULA)</a><a href="#delete">Delete my data</a></div>
+<p style="color:var(--text-muted);font-size:13px">Version 1.0 · Last updated 8 November 2026 · Student capstone prototype, Ethereum Sepolia test network only</p>
+
+<h1 id="privacy">Privacy Policy</h1>
+<div class="box"><strong>In short.</strong> UjuziChain is a university capstone prototype. Please do not enter real personal data. Your documents never leave your device. Anything written to the blockchain is public and cannot be deleted. Skill scoring is automated, you can see why you got your score, and you can ask for a human review.</div>
+
+<h2>1. Who is responsible</h2>
+<p>UjuziChain is built by Maxwel Okoth as a capstone project at African Leadership University (ALU). Contact for privacy questions: <strong>[author's ALU email]</strong>.</p>
+
+<h2>2. What data the app handles</h2>
+<div class="scroll"><table>
+<tr><th>Data</th><th>Where it goes</th><th>How long</th></tr>
+<tr><td>Wallet address and a signed login message</td><td>Your browser's session storage only</td><td>Until you close the tab</td></tr>
+<tr><td>Profile details and skills you type</td><td>Your browser's local storage only. Not sent to our servers</td><td>Until you delete it (section 6)</td></tr>
+<tr><td>Documents you select</td><td>Read in your browser to compute a SHA-256 fingerprint. The file is never uploaded</td><td>Not kept</td></tr>
+<tr><td>Attestation request: candidate name, document name, document fingerprint, institution name and official email</td><td>Sent to a Netlify Function that emails the institution. The function does not log or store these details. If an email service is configured, that provider processes the recipient email and message</td><td>Not kept by us; the email provider's policy applies</td></tr>
+<tr><td>Optional certified check by a recruiter: credential ID, recruiter wallet address, result and fee paid</td><td>Public Ethereum Sepolia blockchain, and a small fee goes to the platform owner</td><td><strong>Permanent and public</strong></td></tr>
+<tr><td>Credential record: credential reference, student reference, credential title</td><td>Public Ethereum Sepolia blockchain</td><td><strong>Permanent and public</strong></td></tr>
+<tr><td>Your colour theme choice (dark or light)</td><td>Your browser's local storage only</td><td>Until you delete it</td></tr>
+<tr><td>Your IP address and requests</td><td>Seen by the blockchain read service, Netlify (hosting) and Google Fonts when pages load</td><td>Per each provider's policy</td></tr>
+</table></div>
+<p>We do not use cookies for tracking, advertising pixels or analytics.</p>
+
+<h2>3. Why we use it</h2>
+<p>Only to let institutions record credentials, let recruiters check them, and score skills against jobs. You agree to this when you tick the consent box before signing in. You can stop at any time by not using the app and deleting your local data.</p>
+
+<h2>3a. Fees</h2>
+<p>Applicants and institutions pay no platform fee (institutions pay normal network gas to write records). Reading and verifying a credential is free for everyone. A recruiter may choose to pay a small fee to record a certified check on-chain. The fee is capped by the smart contract, is shown before you sign, and is sent to the platform owner to cover running costs. You can never be charged more than the cap.</p>
+
+<h2>4. What is public and permanent</h2>
+<p>A blockchain cannot delete records. Institutions must use a pseudonymous student reference, never a name, national ID or email. The app builds the student reference from a short hash of your wallet address and builds the credential ID from your wallet address and document fingerprint, so neither shows your name or the fingerprint itself. Because the record is permanent, we cannot erase it. We can only mark a credential as revoked.</p>
+
+<h2>5. Automated skill scoring</h2>
+<p>The app compares your skills with a job's required skills and shows a score from 30 to 95. Institution, name and background are not used. A score of 70 or more lets you apply directly. A lower score asks you to take a short practical simulation. The job page lists which required skills matched and which are missing. If a result looks unfair, choose <strong>Request human review</strong> on that job and a person will look at your profile.</p>
+
+<h2>6. Your rights</h2>
+<p>You can see, correct and delete the data we hold about you, object to processing, and ask for human review of automated decisions. Data in your browser can be removed instantly with the button at the end of this page. Data on the blockchain cannot be erased, as explained above. To use a right or complain, write to the contact above. In Kenya you may also complain to the Office of the Data Protection Commissioner, and in Rwanda to the National Cyber Security Authority.</p>
+
+<h2>7. Security</h2>
+<p>We never hold your private key. Documents stay on your device. Pages are served over HTTPS. This is a prototype and has not had a professional security audit.</p>
+
+<h2>8. Children and changes</h2>
+<p>The app is for adults aged 18 and over. If this policy changes, the version and date above will change.</p>
+
+<h1 id="terms">Terms of Service (End-User Licence Agreement)</h1>
+<h2>1. Licence</h2>
+<p>You may use UjuziChain for academic evaluation and demonstration. You may not resell it or present it as a production service.</p>
+<h2>2. Testnet only</h2>
+<p>UjuziChain runs on the Ethereum Sepolia test network. Test tokens have no value. Records may disappear if the test network is reset.</p>
+<h2>3. Your wallet and keys</h2>
+<p>You alone control your private key and seed phrase. We cannot recover them. If you lose them you lose access to your wallet identity.</p>
+<h2>4. What a "verified" result means</h2>
+<p>A verified result means an approved institution wallet recorded that credential. It does not prove the institution was right to approve it. The admin decides which institutions are approved.</p>
+<h2>5. Acceptable use</h2>
+<p>Do not enter other people's personal data, impersonate an institution, or try to disrupt the app or the contract.</p>
+<h2>6. Ownership and third-party software</h2>
+<p>The UjuziChain code and design are the work of Maxwel Okoth. Third-party libraries and fonts remain the property of their authors and are used under their own licences, listed in the project's THIRD_PARTY_NOTICES file.</p>
+<h2>7. No warranty and liability</h2>
+<p>The prototype is provided "as is" without warranty. To the extent the law allows, the author is not liable for losses from its use. Nothing here removes rights you have under Kenyan law.</p>
+<h2>8. Governing law</h2>
+<p>These terms are governed by the laws of Kenya.</p>
+
+<h1 id="delete">Delete my data on this device</h1>
+<div class="box"><p>This removes everything UjuziChain stored in this browser: profile, applications, consent record and session. It does not affect anything already written to the blockchain.</p>
+<button class="btn-btrust-action" type="button" onclick="clearLocal()">Delete my local data</button><div id="clearMsg" role="status" style="margin-top:10px;color:var(--accent-green);font-size:14px"></div></div>
+</div>
+<script>
+function toggleMenu(btn) {
+  var h = document.getElementById('siteHeader'); var open = h.classList.toggle('nav-open');
+  btn.setAttribute('aria-expanded', open); btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+}
+document.addEventListener('click', function (e) { var h = document.getElementById('siteHeader'); if (h && h.classList.contains('nav-open') && (e.target.closest('a') || !e.target.closest('.site-nav'))) h.classList.remove('nav-open'); });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { var h = document.getElementById('siteHeader'); if (h) h.classList.remove('nav-open'); } });
+</script>
+<script>
+function clearLocal() {
+  let n = 0;
+  try {
+    Object.keys(localStorage).filter(k => k.startsWith('ujuzi')).forEach(k => { localStorage.removeItem(k); n++; });
+    sessionStorage.clear();
+  } catch (e) {}
+  document.getElementById('clearMsg').textContent = 'Done. Removed ' + n + ' stored item(s) from this browser.';
+}
+</script>
+</body>
+</html>

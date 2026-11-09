@@ -1,1705 +1,253 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>UjuziChain - East Africa Talent & Credential Infrastructure</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
-    <script src="js/chain.js"></script>
-    <style>
-        :root {
-            --bg-base: #090a0d;
-            --bg-card: rgba(16, 18, 22, 0.85);
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.22);
-            --text-primary: #ffffff;
-            --text-secondary: #9ca3af;
-            --text-muted: #6b7280;
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
-            --accent-blue: #38bdf8;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; word-wrap: break-word; }
-
-        html, body {
-            width: 100%;
-            overflow-x: hidden;
-            background-color: var(--bg-base);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-image: 
-                radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.03) 0%, transparent 60%),
-                url("data:image/svg+xml,%3Csvg width='1200' height='800' viewBox='0 0 1200 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-100,200 C300,100 600,400 1300,150 M-100,260 C300,160 600,460 1300,210 M-100,320 C300,220 600,520 1300,270 M-100,380 C300,280 600,580 1300,330' stroke='rgba(255,255,255,0.025)' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
-            background-size: cover;
-        }
-
-        .navbar-wrap {
-            position: sticky;
-            top: 14px;
-            z-index: 100;
-            padding: 0 20px;
-            max-width: 1320px;
-            width: 100%;
-            margin: 14px auto 0;
-        }
-
-        .btrust-navbar {
-            background: rgba(14, 16, 20, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 10px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            gap: 12px;
-        }
-
-        .nav-brand { display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0; }
-        .logo-box {
-            background: #ffffff;
-            color: #000000;
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            border-radius: 6px;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-        }
-        .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; }
-        .role-badge { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-subtle); color: var(--text-secondary); font-size: 11px; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
-
-        .nav-links { display: flex; align-items: center; gap: 6px; }
-        .nav-btn {
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 500;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.15s ease-in-out;
-        }
-        .nav-btn:hover { color: #ffffff; background: rgba(255, 255, 255, 0.06); }
-        .nav-btn.active { background: #ffffff; color: #000000; font-weight: 600; }
-        .nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-        .btrust-navbar { gap: 16px; padding: 8px 18px; }
-        .nav-btn {
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 500;
-            padding: 7px 11px;
-            border-radius: 6px;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        .nav-btn:hover { color: #ffffff; background: rgba(255, 255, 255, 0.05); }
-        .nav-btn.active { background: #ffffff; color: #000000; font-weight: 600; }
-
-        .nav-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-        .profile-pill {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-subtle);
-            border-radius: 20px;
-            padding: 4px 10px 4px 5px;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            cursor: pointer;
-        }
-        .profile-avatar { width: 24px; height: 24px; border-radius: 50%; background: #222634; color: #ffffff; font-size: 10.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-        .profile-name-text { font-size: 12px; font-weight: 500; color: #ffffff; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-        .wallet-pill { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); color: #34d399; font-size: 11.5px; font-family: monospace; padding: 5px 10px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
-        .wallet-dot { width: 5px; height: 5px; border-radius: 50%; background: #10b981; }
-
-        .btn-logout { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); font-size: 11.5px; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
-        .btn-logout:hover { color: #f87171; border-color: rgba(248, 113, 113, 0.3); }
-
-        main { max-width: 1320px; width: 100%; margin: 24px auto 60px; padding: 0 20px; flex: 1; }
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; }
-
-        .hero-banner { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; gap: 14px; }
-        .hero-banner h1 { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -1px; }
-        .hero-banner p { font-size: 14px; color: var(--text-secondary); margin-top: 6px; }
-
-        .btn-btrust-action {
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            border-radius: 6px;
-            padding: 10px 18px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: #ffffff;
-            border: 1px solid var(--border-subtle);
-            border-radius: 6px;
-            padding: 8px 14px;
-            font-size: 12.5px;
-            font-weight: 500;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            white-space: nowrap;
-        }
-        .btn-secondary:hover { border-color: var(--border-hover); background: rgba(255, 255, 255, 0.04); }
-
-        .glass-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 10px;
-            padding: 22px;
-            transition: border-color 0.2s;
-        }
-
-        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
-        .stat-card p.label { font-size: 12.5px; color: var(--text-secondary); font-weight: 500; }
-        .stat-card h2 { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; margin: 6px 0; }
-        .stat-card p.sub { font-size: 11.5px; color: var(--text-muted); }
-
-        .dashboard-split { display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; margin-bottom: 24px; }
-        .card-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 8px; }
-        .card-header-bar h3 { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; }
-        .card-sub { font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px; }
-
-        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); gap: 10px; }
-        .list-row:last-child { border-bottom: none; }
-
-        .badge-verified-onchain {
-            background: rgba(16, 185, 129, 0.12);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 3px 8px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .status-pill { background: rgba(16, 185, 129, 0.12); color: #34d399; padding: 3px 8px; border-radius: 20px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
-
-        .jobs-split-layout { display: grid; grid-template-columns: 1.15fr 1.6fr; gap: 18px; }
-        .search-box-input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-subtle);
-            border-radius: 6px;
-            padding: 10px 12px;
-            font-size: 13px;
-            color: #ffffff;
-            margin: 10px 0 14px;
-            outline: none;
-        }
-        .job-select-item {
-            background: rgba(0, 0, 0, 0.15);
-            border: 1px solid var(--border-subtle);
-            border-radius: 6px;
-            padding: 12px 14px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-        }
-        .job-select-item.selected { border-color: #ffffff; background: rgba(255, 255, 255, 0.06); }
-
-        .tag-pill {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-subtle);
-            padding: 3px 7px;
-            border-radius: 4px;
-            font-size: 11px;
-            display: inline-block;
-            margin-right: 4px;
-        }
-        .match-bar-track { width: 100%; height: 5px; background: var(--border-subtle); border-radius: 4px; overflow: hidden; margin: 8px 0; }
-        .match-bar-fill { height: 100%; background: #ffffff; border-radius: 4px; }
-
-        .assessment-box { background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px; margin: 16px 0; }
-        .quiz-option {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-subtle);
-            border-radius: 6px;
-            padding: 11px 13px;
-            margin: 8px 0;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 12.5px;
-        }
-        .quiz-option.active { border-color: #ffffff; background: rgba(255, 255, 255, 0.06); }
-
-        /* Irembo-Style In-Browser Document Viewer Modal */
-        .doc-viewer-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.88);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
-        }
-
-        .doc-viewer-container {
-            background: #0d0f14;
-            border: 1px solid var(--border-hover);
-            border-radius: 12px;
-            max-width: 900px;
-            width: 100%;
-            height: 88vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
-        }
-
-        .doc-viewer-header {
-            padding: 14px 20px;
-            border-bottom: 1px solid var(--border-subtle);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #12151b;
-        }
-
-        .doc-viewer-body {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 310px;
-            overflow: hidden;
-        }
-
-        .doc-preview-pane {
-            background: #050608;
-            padding: 24px;
-            overflow-y: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .cert-paper {
-            width: 100%;
-            max-width: 480px;
-            background: #ffffff;
-            color: #0f172a;
-            border-radius: 8px;
-            padding: 32px 28px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            font-family: serif;
-            text-align: center;
-            border: 8px double #cbd5e1;
-            position: relative;
-        }
-
-        .doc-meta-sidebar {
-            background: #0f1217;
-            border-left: 1px solid var(--border-subtle);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .meta-field { margin-bottom: 14px; font-family: 'Inter', sans-serif; }
-        .meta-field label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); display: block; margin-bottom: 3px; }
-        .meta-field p { font-size: 12.5px; color: #ffffff; word-break: break-all; }
-
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.78);
-            backdrop-filter: blur(12px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 16px;
-        }
-        .modal-container {
-            background: #0f1115;
-            border: 1px solid var(--border-hover);
-            border-radius: 12px;
-            max-width: 600px;
-            width: 100%;
-            padding: 22px;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 11.5px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
-        .form-input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--border-subtle);
-            border-radius: 6px;
-            padding: 9px 12px;
-            font-size: 12.5px;
-            color: #ffffff;
-            outline: none;
-        }
-
-        @media (max-width: 900px) {
-            .stat-grid { grid-template-columns: repeat(2, 1fr); }
-            .dashboard-split, .jobs-split-layout { grid-template-columns: 1fr; }
-            .doc-viewer-body { grid-template-columns: 1fr; }
-            .doc-meta-sidebar { border-left: none; border-top: 1px solid var(--border-subtle); }
-            .nav-links { display: none; }
-        }
-    
-        /* ================= MICRO1 SIDEBAR LAYOUT ================= */
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            min-height: 100vh;
-            background: #090a0d;
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-        }
-
-        /* Fixed Left Sidebar */
-        .micro-sidebar {
-            width: 250px;
-            background: #0d0f14;
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 1000;
-            padding: 24px 16px;
-            box-sizing: border-box;
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .sidebar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0 8px 24px 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            cursor: pointer;
-        }
-
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-top: 20px;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .sidebar-nav .nav-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            padding: 11px 14px;
-            border-radius: 8px;
-            font-size: 13.5px;
-            font-weight: 500;
-            color: #94a3b8;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.15s ease;
-        }
-
-        .sidebar-nav .nav-btn:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .sidebar-nav .nav-btn.active {
-            color: #000000;
-            background: #ffffff;
-            font-weight: 600;
-        }
-
-        .sidebar-nav .nav-btn.active svg {
-            stroke: #000000;
-        }
-
-        .sidebar-nav svg {
-            width: 18px;
-            height: 18px;
-            stroke: #94a3b8;
-            flex-shrink: 0;
-            transition: stroke 0.15s;
-        }
-
-        .sidebar-footer {
-            padding-top: 16px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        /* Main Content Container beside Sidebar */
-        .micro-main-area {
-            margin-left: 250px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-            min-height: 100vh;
-        }
-
-        /* Slim Micro1 Topbar */
-        .micro-topbar {
-            height: 64px;
-            background: rgba(13, 15, 20, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            position: sticky;
-            top: 0;
-            z-index: 900;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 32px;
-        }
-
-        .topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .topbar-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 15px;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        main {
-            padding: 32px;
-            max-width: 1280px;
-            width: 100%;
-            margin: 0 auto 60px;
-            box-sizing: border-box;
-        }
-
-        /* Responsive Breakpoints */
-        @media (max-width: 900px) {
-            .micro-sidebar {
-                transform: translateX(-100%);
-            }
-            .micro-sidebar.open {
-                transform: translateX(0);
-            }
-            .micro-main-area {
-                margin-left: 0;
-            }
-            .micro-topbar {
-                padding: 0 16px;
-            }
-            main {
-                padding: 16px;
-            }
-            .sidebar-backdrop {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0, 0, 0, 0.7);
-                backdrop-filter: blur(4px);
-                z-index: 999;
-            }
-            .sidebar-backdrop.active {
-                display: block;
-            }
-        }
-
-    </style>
-    <link rel="stylesheet" href="css/chain.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<title>Workspace · UjuziChain</title>
+<script src="js/theme.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+<script src="js/config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/chain.css">
+<link rel="stylesheet" href="css/app.css">
 </head>
-<body class="has-tabbar">
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <div class="side-brand" onclick="switchNav('overview')"><div class="logo-box">UC</div><div class="logo-text">UjuziChain</div></div>
+    <span class="role-badge" id="roleBadge">Portal</span>
+    <nav class="side-nav" id="sideNav"></nav>
+    <div class="side-foot">
+      <div class="user-card">
+        <div class="profile-avatar" id="avatar">U</div>
+        <div class="who" onclick="openProfileModal()" title="Edit profile"><div class="nm" id="userName">User</div><div class="rl" id="userRole">Role</div></div>
+        <button class="icon-btn" type="button" aria-label="Log out" title="Log out" onclick="performLogout()"><svg viewBox="0 0 24 24"><path d="M9 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M16 8l4 4-4 4M20 12H9"/></svg></button>
+      </div>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim" onclick="toggleSidebar(false)"></div>
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-btn" type="button" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false" id="menuBtn" onclick="toggleSidebar()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+        <span class="mobile-brand">UjuziChain</span>
+        <h1 class="page-title" id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="chain-pill" id="chainPill"><span class="pulse-dot"></span><span id="chainPillText">Sepolia · …</span></div>
+        <button class="connect-btn off" id="connectBtn" type="button">Connect wallet</button>
+        <div class="wallet-menu" id="walletMenu" role="dialog" aria-label="Wallet details"></div>
+        <button class="theme-toggle" type="button" aria-label="Switch between dark and light mode" onclick="UJTheme.toggle()"><svg class="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg><svg class="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg></button>
+      </div>
+    </header>
+    <main>
+      <div id="walletBanner"></div>
 
-        <!-- Sidebar Backdrop for Mobile -->
-    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar(false)"></div>
+      <div id="pane-overview" class="tab-pane active"><div id="overviewRoot"></div></div>
 
-    <!-- Micro1 Left Sidebar -->
-    <aside class="micro-sidebar" id="appSidebar">
-        <div class="sidebar-brand" onclick="switchNav('overview')">
-            <div class="logo-box">UC</div>
-            <div>
-                <div class="logo-text">UjuziChain</div>
-                <div class="role-badge" id="topRoleBadge" style="font-size: 10px; padding: 2px 6px; display: inline-block; margin-top: 3px;">Applicant Portal</div>
+      <!-- Applicant: jobs -->
+      <div id="pane-jobs" class="tab-pane">
+        <div class="jobs-split-layout">
+          <div class="glass-card">
+            <div class="card-header-bar"><h3>Open roles</h3></div>
+            <p class="card-sub">Sample roles from fictional East African employers, plus any roles posted by recruiters in this browser.</p>
+            <input class="search-box-input" id="jobSearch" placeholder="Search by title, company or skill" oninput="renderJobs()" style="margin-bottom:12px">
+            <div id="jobsListingCards"></div>
+          </div>
+          <div class="glass-card" id="jobDetailCard">
+            <h3 id="detailHeading">Select a role</h3>
+            <p class="card-sub" id="detailSub"></p>
+            <div id="detailBody">
+              <p class="fine" id="detailDescription"></p>
+              <div style="display:flex;justify-content:space-between;margin-top:16px;font-size:14px"><strong>Skill match</strong><strong id="detailScore">…</strong></div>
+              <div class="match-bar-track"><div class="match-bar-fill" id="detailBar" style="width:0"></div></div>
+              <p style="font-size:13px" id="detailMatchGuidance"></p>
+              <p class="fine" style="margin-top:8px;line-height:1.55" id="detailExplain"></p>
+              <h4 style="font-size:14px;margin:18px 0 6px">Required skills</h4>
+              <ul id="detailRequirements" style="margin:0;padding-left:20px;color:var(--text-secondary);font-size:14px"></ul>
+              <div style="margin-top:20px" id="jobActionArea"></div>
             </div>
+          </div>
         </div>
+      </div>
 
-        <nav class="sidebar-nav">
-            <button class="nav-btn active" id="btn-tab-overview" onclick="sidebarSelect('overview')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                Overview
-            </button>
-            <button class="nav-btn" id="btn-tab-jobs" onclick="sidebarSelect('jobs')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-                Active Jobs
-            </button>
-            <button class="nav-btn" id="btn-tab-applications" onclick="sidebarSelect('applications')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                Applications
-            </button>
-            <button class="nav-btn" id="btn-tab-simulations" onclick="sidebarSelect('simulations')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                Assessments
-            </button>
-            <button class="nav-btn" id="btn-tab-credentials" onclick="sidebarSelect('credentials')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                Credentials
-            </button>
-            <button class="nav-btn" id="btn-tab-verify" onclick="sidebarSelect('verify')" style="display: none;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                Verify Credential
-            </button>
-            <!-- Issuer Console (hidden dynamically if Applicant) -->
-            <button class="nav-btn" id="btn-tab-issuer" onclick="sidebarSelect('issuer')" style="display: none;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                Issuer Console
-            </button>
-        </nav>
+      <!-- Applications (role aware) -->
+      <div id="pane-applications" class="tab-pane"><div id="applicationsRoot"></div></div>
 
-        <div class="sidebar-footer">
-            <button class="btn-logout" style="width: 100%; min-height: 38px; border-radius: 6px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); color: #f87171; cursor: pointer; font-weight: 500;" onclick="performLogout()">
-                Logout
-            </button>
+      <!-- Applicant: simulation -->
+      <div id="pane-simulations" class="tab-pane">
+        <div class="glass-card" style="max-width:760px">
+          <div class="card-header-bar"><h3>Practical simulation</h3><span class="tag-pill" id="simRoleTag">No role selected</span></div>
+          <p class="card-sub" id="simCompanyTag"></p>
+          <p style="font-size:14px;color:var(--text-secondary);margin-bottom:6px">A short practical check for roles where your skill match is below 70%. Passing unlocks applying. If you fail you can ask for a human review.</p>
+          <div class="assessment-box" id="simBox">
+            <p style="font-size:14px;font-weight:600;margin-bottom:10px">Which method reads on-chain credential validity without requiring gas fees?</p>
+            <div class="quiz-option" id="optA" onclick="pickQuizOption('A')"><input type="radio" name="quiz"><span><strong>Option A:</strong> Call <code>contract.verifyCredential(bytes32)</code> as a <code>view</code> query through a JSON-RPC provider</span></div>
+            <div class="quiz-option" id="optB" onclick="pickQuizOption('B')"><input type="radio" name="quiz"><span><strong>Option B:</strong> Broadcast a state-changing Ethereum transaction that needs an ETH gas fee</span></div>
+            <div style="margin-top:16px"><button class="btn-btrust-action" onclick="submitSimulationAnswer()">Submit answer</button></div>
+          </div>
         </div>
-    </aside>
+      </div>
 
-    <!-- Main Content Area beside Sidebar -->
-    <div class="micro-main-area">
-        <!-- Slim Clean Topbar -->
-        <header class="micro-topbar">
-            <div class="topbar-left">
-                <button class="btrust-burger" type="button" aria-label="Open Navigation" onclick="toggleSidebar(true)" style="display: none;">
-                    <span></span>
-                    <span></span>
-                </button>
-                <div class="topbar-title" id="pageHeaderTitle">Applicant Workspace</div>
+      <!-- Applicant: credentials -->
+      <div id="pane-credentials" class="tab-pane">
+        <div class="hero-banner"><div><h1>Your credentials</h1><p>Documents are fingerprinted in your browser and never uploaded. Only an approved institution can anchor one on the blockchain.</p></div><button class="btn-btrust-action" onclick="openProfileModal()">Add a document</button></div>
+        <div class="dashboard-split">
+          <div class="glass-card"><div class="card-header-bar"><h3>My documents</h3></div><p class="card-sub">Fingerprints stored in this browser.</p><div id="credentialsAttachedList"></div></div>
+          <div style="display:grid;gap:20px;min-width:0">
+            <div class="glass-card"><div class="card-header-bar"><h3>Anchored on-chain</h3></div><p class="card-sub">Attestations written by institutions for your wallet.</p><div id="attestList"></div></div>
+            <div class="glass-card"><div class="card-header-bar"><h3>Ask an institution to attest</h3></div>
+              <p class="card-sub">Sends the institution a link by email. Only your name, the document name and its fingerprint are shared.</p>
+              <div class="form-group"><label>Institution name</label><input class="form-input" id="reqOrg" placeholder="e.g. African Leadership University"></div>
+              <div class="form-group"><label>Registrar or HR email</label><input class="form-input" id="reqEmail" type="email" placeholder="registrar@example.edu"></div>
+              <div class="form-group"><label>Document</label><select class="form-input" id="reqDoc"></select></div>
+              <button class="btn-btrust-action" onclick="sendAttestationRequest()">Send request</button><p class="fine" id="reqStatus" style="margin-top:10px"></p>
             </div>
-
-            <div class="topbar-right">
-                <div class="profile-pill" onclick="openProfileModal()" title="Edit Profile & Documents">
-                    <div class="profile-avatar" id="navAvatarInitials">MO</div>
-                    <span class="profile-name-text" id="navDisplayName">Demo User</span>
-                </div>
-                <div class="chain-pill" id="chainPill"><span class="pulse-dot"></span><span id="chainPillText">Sepolia · …</span></div>
-                <div class="wallet-pill">
-                    <span class="wallet-dot"></span>
-                    <span id="navWalletAddress">0x...</span>
-                </div>
-            </div>
-        </header>
-
-        <main>
-        <!-- 1. OVERVIEW -->
-        <div id="pane-overview" class="tab-pane active">
-            <div class="hero-banner">
-                <div>
-                    <h1 id="overviewGreeting">Welcome to UjuziChain East Africa</h1>
-                    <p id="overviewSubtext">Non-custodial, cryptographic talent verification across Nairobi, Kigali, Kampala, and Dar es Salaam.</p>
-                </div>
-                <div id="overviewHeroAction">
-                    <button class="btn-btrust-action" onclick="switchNav('jobs')">Browse East Africa Jobs <span>&rarr;</span></button>
-                </div>
-            </div>
-
-            <div class="stat-grid">
-                <div class="glass-card stat-card">
-                    <p class="label">Regional Roles</p>
-                    <h2 id="metricJobsCount">4</h2>
-                    <p class="sub" id="metricFeedStatus">Live & Verified</p>
-                </div>
-                <div class="glass-card stat-card">
-                    <p class="label" id="lblMetricApps">Applications</p>
-                    <h2 id="metricApps">1</h2>
-                    <p class="sub">Verified submissions</p>
-                </div>
-                <div class="glass-card stat-card">
-                    <p class="label">Simulations Passed</p>
-                    <h2 id="metricSims">1</h2>
-                    <p class="sub">Practical competency</p>
-                </div>
-                <div class="glass-card stat-card">
-                    <p class="label">Verified Documents</p>
-                    <h2 id="metricDocsCount">1</h2>
-                    <p class="sub">SHA-256 Hashed (Zero-PII)</p>
-                </div>
-            </div>
-
-            <div class="dashboard-split">
-                <div class="glass-card">
-                    <div class="card-header-bar">
-                        <h3>East Africa Openings</h3>
-                        <a onclick="switchNav('jobs')" style="color:var(--text-secondary); text-decoration:none; font-size:12px;">View all</a>
-                    </div>
-                    <p class="card-sub">Dynamic matching against your verified skill profile.</p>
-                    <div id="overviewQuickJobs"></div>
-                </div>
-
-                <div class="glass-card">
-                    <div class="card-header-bar">
-                        <h3>Trust & Verification Profile</h3>
-                        <a onclick="openProfileModal()" style="color:var(--text-secondary); text-decoration:none; font-size:12px;">Edit Details</a>
-                    </div>
-                    <p class="card-sub">Composite Verification Breakdown</p>
-
-                    <div style="margin-bottom: 12px;">
-                        <span style="font-size: 11.5px; color: var(--text-muted); display: block; margin-bottom: 6px;">Identity Status:</span>
-                        <div id="identityStatusBadge"></div>
-                    </div>
-
-                    <div class="list-row">
-                        <div>
-                            <span style="font-size: 12.5px; font-weight: 600;">Academic Credential</span>
-                            <p style="font-size: 11px; color: var(--text-muted);">African Leadership University</p>
-                        </div>
-                        <div style="display: flex; gap: 8px; align-items: center;">
-                            <span class="badge-verified-onchain">✓ Sepolia</span>
-                            <button class="btn-secondary" style="padding: 3px 8px; font-size: 11px;" onclick="launchIremboViewer('ALU_BSc_Software_Engineering_Degree.pdf', 'African Leadership University', 'BSc Software Engineering', '0x8f3c7e4a1b9d...f02a', 'UC-2026-001')">👁️ View</button>
-                        </div>
-                    </div>
-
-                    <div class="list-row">
-                        <div>
-                            <span style="font-size: 12.5px; font-weight: 600;">Applied Assessment</span>
-                            <p style="font-size: 11px; color: var(--text-muted);">Practical Simulation Engine</p>
-                        </div>
-                        <span class="status-pill">Passed (100%)</span>
-                    </div>
-                </div>
-            </div>
+            <div class="glass-card"><div class="card-header-bar"><h3>My requests</h3></div><div id="myRequests"></div></div>
+          </div>
         </div>
+      </div>
 
-        <!-- 2. JOBS -->
-        <div id="pane-jobs" class="tab-pane">
-            <div class="jobs-split-layout">
-                <div class="glass-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
-                        <h3>East Africa Jobs</h3>
-                        <button class="btn-btrust-action" id="btnPostJobTrigger" onclick="openPostJobModal()" style="display: none; padding: 5px 10px; font-size: 11.5px;">+ Post Role</button>
-                    </div>
-                    <p class="card-sub" id="jobsTotalSub">Verified roles in East Africa</p>
-                    <input type="text" class="search-box-input" id="jobSearchBox" oninput="filterJobsList()" placeholder="Search Nairobi, Kigali, Kampala, skills...">
-                    <div id="jobsListingCards"></div>
-                </div>
-
-                <div class="glass-card">
-                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px;" id="detailHeading">Junior Software Engineer</h2>
-                    <p style="font-size: 12.5px; color: var(--text-secondary); margin: 4px 0 14px;" id="detailSub">Nairobi Tech Labs · Nairobi, Kenya · Hybrid</p>
-                    
-                    <div style="margin-bottom: 18px;">
-                        <span class="tag-pill" id="detailJobType">Full-time</span>
-                        <span class="tag-pill" id="detailJobSource">East Africa Verified</span>
-                    </div>
-
-                    <div style="margin-bottom: 18px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-subtle); padding: 14px; border-radius: 6px;">
-                        <div style="display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 600;">
-                            <span>Composite Qualification Score</span>
-                            <span id="detailScore" style="font-family: 'Space Grotesk', sans-serif;">85%</span>
-                        </div>
-                        <div class="match-bar-track">
-                            <div class="match-bar-fill" id="detailBar" style="width: 85%;"></div>
-                        </div>
-                        <p style="font-size: 11.5px; color: var(--text-muted);" id="detailMatchGuidance"></p>
-                    </div>
-
-                    <h4 style="font-size: 13.5px; margin-bottom: 6px;">About the role</h4>
-                    <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;" id="detailDescription"></p>
-
-                    <h4 style="font-size: 13.5px; margin-bottom: 6px;">Key requirements</h4>
-                    <ul style="font-size: 12.5px; color: var(--text-secondary); margin-left: 18px; margin-bottom: 20px; line-height: 1.6;" id="detailRequirements"></ul>
-
-                    <div id="jobActionArea"></div>
-                </div>
-            </div>
+      <!-- Verify (all roles) -->
+      <div id="pane-verify" class="tab-pane">
+        <div class="hero-banner"><div><h1>Verify a credential</h1><p>Paste a credential ID. The check reads the registry on Sepolia and costs nothing.</p></div></div>
+        <div class="glass-card" style="max-width:760px">
+          <div class="form-group"><label>Credential ID or reference</label>
+            <div style="display:flex;gap:10px;flex-wrap:wrap"><input class="form-input" id="verifyIdField" placeholder="UC-2026-001 or 0x… (bytes32)" style="flex:1;min-width:200px"><button class="btn-btrust-action" onclick="verifyOnSepolia()">Verify</button></div></div>
+          <div id="verifyOut" style="display:none"></div>
         </div>
+        <div class="glass-card" style="max-width:760px;margin-top:20px" id="feeCard"><div class="card-header-bar"><h3>Fees</h3></div><div id="feeInfo"></div></div>
+      </div>
 
-        <!-- 3. APPLICATIONS -->
-        <div id="pane-applications" class="tab-pane">
-            <div class="glass-card" style="min-height: 400px;">
-                <div class="card-header-bar">
-                    <h3 id="appsPaneTitle">Applications</h3>
-                </div>
-                <p class="card-sub" id="appsPaneSub">Applications submitted and reviewed through UjuziChain verification.</p>
-                <div id="emptyAppsView" style="text-align: center; margin-top: 80px; display: none;">
-                    <h4 style="font-size: 15px; margin-bottom: 4px;">No applications yet</h4>
-                    <p style="font-size: 12.5px; color: var(--text-muted);">Applications will appear here.</p>
-                </div>
-                <div id="submittedAppsList"></div>
-            </div>
+      <!-- Recruiter: roles -->
+      <div id="pane-roles" class="tab-pane">
+        <div class="hero-banner"><div><h1>My roles</h1><p>Post a role with the skills you need. Applicants are scored against these skills only.</p></div></div>
+        <div class="dashboard-split">
+          <div class="glass-card"><div class="card-header-bar"><h3>Roles I posted</h3></div><div id="myRolesList"></div></div>
+          <div class="glass-card"><div class="card-header-bar"><h3>Post a role</h3></div>
+            <div class="form-group"><label>Job title</label><input class="form-input" id="roleTitle" placeholder="e.g. Frontend Developer"></div>
+            <div class="form-group"><label>Company</label><input class="form-input" id="roleCompany" placeholder="Your company"></div>
+            <div class="form-group"><label>Location</label><input class="form-input" id="roleLocation" placeholder="e.g. Nairobi, Kenya · Hybrid"></div>
+            <div class="form-group"><label>Required skills (comma-separated)</label><input class="form-input" id="roleSkills" placeholder="e.g. JavaScript, React, Git"></div>
+            <div class="form-group"><label>Short description</label><input class="form-input" id="roleDesc" placeholder="What will the person do?"></div>
+            <button class="btn-btrust-action" onclick="postRole()">Post role</button><p class="fine" id="roleStatus" style="margin-top:10px"></p>
+          </div>
         </div>
+      </div>
 
-        <!-- 4. JOB-SPECIFIC ASSESSMENTS -->
-        <div id="pane-simulations" class="tab-pane">
-            <div class="glass-card">
-                <div class="card-header-bar">
-                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Technical Competency Assessment</h2>
-                    <span class="tag-pill" id="simRoleTag" style="background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3);">Role Assessment</span>
-                </div>
-                <p style="font-size: 13px; color: var(--text-muted); margin: 6px 0 16px;" id="simCompanyTag">Targeting: Role Assessment</p>
-                <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:12px 14px; margin-bottom:18px;">
-                    <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
-                        This practical assessment measures applied competency against requirements for 
-                        <strong id="assessmentTargetTitle" style="color:#ffffff;">Junior Software Engineer</strong>. 
-                        Scoring &ge;70% or passing this benchmark unlocks <strong>Verified via Assessment</strong> status.
-                    </p>
-                </div>
-
-                <div class="assessment-box" id="dynamicAssessmentContainer">
-                    <p id="assessmentQuestionText" style="font-size: 13.5px; font-weight: 600; margin-bottom: 12px; line-height: 1.5;">
-                        Loading question...
-                    </p>
-                    
-                    <div class="quiz-option active" id="optA" onclick="pickQuizOption('A')" style="cursor:pointer; margin-bottom:8px; padding:12px; border:1px solid var(--border-subtle); border-radius:8px;">
-                        <input type="radio" name="quiz" checked style="margin-right:8px;">
-                        <span id="optAText">Option A</span>
-                    </div>
-                    <div class="quiz-option" id="optB" onclick="pickQuizOption('B')" style="cursor:pointer; margin-bottom:16px; padding:12px; border:1px solid var(--border-subtle); border-radius:8px;">
-                        <input type="radio" name="quiz" style="margin-right:8px;">
-                        <span id="optBText">Option B</span>
-                    </div>
-
-                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                        <button class="btn-btrust-action" onclick="submitSimulationAnswer()">Submit Assessment <span>&rarr;</span></button>
-                        <button class="btn-secondary" onclick="demoFailSimulation()" style="color: #f87171; border-color: rgba(248,113,113,0.3);">Test Fail</button>
-                        <button class="btn-secondary" onclick="sidebarSelect('jobs')" style="margin-left:auto;">&larr; Back to Jobs</button>
-                    </div>
-                </div>
-            </div>
+      <!-- Institution: issue and revoke -->
+      <div id="pane-issuer" class="tab-pane">
+        <div class="hero-banner"><div><h1>Issue and revoke</h1><p>Every action is a signed transaction on Sepolia, visible to anyone on Etherscan.</p></div></div>
+        <div class="glass-card" style="margin-bottom:20px"><div class="role-badges" id="issuerRoles"></div><p class="fine" id="roleHint"></p></div>
+        <div class="chain-grid">
+          <div class="glass-card">
+            <div class="card-header-bar"><h3>Issue credential</h3><button class="btn-secondary" onclick="UC.fillDemo()">Fill demo</button></div>
+            <p class="card-sub">Approved institutions only.</p>
+            <div class="chain-field"><label>Credential reference</label><input class="form-input" id="issRef" placeholder="UC-2026-001"></div>
+            <div class="chain-field"><label>Student reference (pseudonymous)</label><input class="form-input" id="issStudent" placeholder="STU-0001"></div>
+            <div class="chain-field"><label>Credential title</label><input class="form-input" id="issDegree" placeholder="BSc Software Engineering"></div>
+            <div class="chain-note">Everything you submit is public and permanent. Use a pseudonymous student reference, never a name, national ID or email.</div>
+            <button class="btn-btrust-action" id="btnIssue" onclick="UC.issue()">Sign and issue</button><div id="txIssue"></div>
+          </div>
+          <div class="glass-card">
+            <div class="card-header-bar"><h3>Revoke credential</h3></div>
+            <p class="card-sub">Marks the record revoked. It is never deleted.</p>
+            <div class="chain-field"><label>Credential reference</label><input class="form-input" id="revRef" placeholder="UC-2026-001"></div>
+            <button class="btn-secondary" id="btnRevoke" style="color:var(--accent-red)" onclick="UC.revoke()">Revoke on-chain</button><div id="txRevoke"></div>
+          </div>
         </div>
-
-        <!-- 5. CREDENTIALS -->
-        <div id="pane-credentials" class="tab-pane">
-            <div class="glass-card">
-                <div class="card-header-bar">
-                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Credentials & Zero-Knowledge Document Registry</h2>
-                    <button class="btn-secondary" onclick="openProfileModal()">+ Add Document Hash</button>
-                </div>
-                <p class="card-sub">Distinguishing Institutional Issuers from Client-Hashed Verification Records.</p>
-
-                <div style="border: 1px solid var(--border-subtle); background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                                <h4 style="font-size: 14.5px;">BSc Software Engineering</h4>
-                                <span class="badge-verified-onchain">✓ On-Chain Verified Identity</span>
-                            </div>
-                            <p style="font-size: 12px; color: var(--text-secondary);">Issuer: African Leadership University (ALU)</p>
-                            <p style="font-size: 11px; color: var(--text-muted); font-family: monospace; margin-top: 3px;">Credential ID: UC-2026-001 · Contract: 0xA40d...132F</p>
-                        </div>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn-btrust-action" style="font-size: 11.5px; padding: 5px 10px;" onclick="launchIremboViewer('ALU_BSc_Software_Engineering_Degree.pdf', 'African Leadership University', 'BSc Software Engineering', '0x8f3c7e4a1b9d...f02a', 'UC-2026-001')">👁️ View Document</button>
-                            <button class="btn-secondary" style="font-size: 11.5px; padding: 5px 10px;" onclick="switchNav('verify')">Verify Proof</button>
-                        </div>
-                    </div>
-                </div>
-
-                <h4 style="font-size: 13.5px; margin-bottom: 10px;">On-chain attestations from institutions:</h4>
-                <div id="attestList" style="margin-bottom: 20px;"></div>
-                <h4 style="font-size: 13.5px; margin-bottom: 10px;">Attached Verification Hashes:</h4>
-                <div id="credentialsAttachedList"></div>
-            </div>
+        <div class="glass-card">
+          <div class="card-header-bar"><h3>Registry ledger</h3><button class="btn-secondary" onclick="UC.loadLedger()">Refresh</button></div>
+          <p class="card-sub">Recent events emitted by the contract.</p>
+          <div class="ledger-wrap"><table class="ledger-table"><thead><tr><th>Event</th><th>Subject</th><th>Block</th><th>Transaction</th></tr></thead><tbody id="ledgerBody"></tbody></table></div>
         </div>
+      </div>
 
-        <!-- 6. VERIFY CREDENTIAL -->
-        <div id="pane-verify" class="tab-pane">
-            <div class="glass-card">
-                <div class="card-header-bar">
-                    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px;">Verify Credential On-Chain</h2>
-                </div>
-                <p class="card-sub">Gasless mathematical lookup against Ethereum Sepolia.</p>
+      <!-- Institution: attestation requests -->
+      <div id="pane-requests" class="tab-pane"><div id="requestsRoot"></div></div>
 
-                <div style="margin-top: 18px;">
-                    <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">Credential ID</label>
-                    <div style="display: flex; gap: 8px; max-width: 580px; flex-wrap: wrap;">
-                        <input type="text" id="verifyIdField" value="UC-2026-001" style="flex: 1; min-width: 200px; padding: 10px 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 6px; color: #ffffff; font-size: 12.5px; outline: none;">
-                        <button class="btn-btrust-action" onclick="verifyOnSepolia()">Verify</button>
-                    </div>
-                </div>
-
-                <div id="verifyResultPane" style="margin-top: 16px; font-size: 12.5px; max-width: 640px;"></div>
-            </div>
+      <!-- Admin (platform owner) -->
+      <div id="pane-admin" class="tab-pane">
+        <div class="hero-banner"><div><h1>Platform admin</h1><p>Approve institutions and manage the small recruiter fee that keeps the platform running.</p></div></div>
+        <div class="glass-card" style="margin-bottom:20px"><div class="role-badges" id="adminStatus"></div></div>
+        <div class="chain-grid">
+          <div class="glass-card">
+            <div class="card-header-bar"><h3>Institutions</h3></div>
+            <p class="card-sub">Only approved wallets can issue and revoke credentials.</p>
+            <div class="chain-field"><label>Institution wallet</label><input class="form-input" id="instAddr" placeholder="0x…"></div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn-btrust-action" id="btnRegInst" onclick="UC.registerInstitution()">Approve</button><button class="btn-secondary" id="btnRemInst" onclick="UC.removeInstitution()">Remove</button></div>
+            <div id="txReg"></div>
+          </div>
+          <div class="glass-card">
+            <div class="card-header-bar"><h3>Verification fee</h3></div>
+            <p class="card-sub" id="feeState">Reading…</p>
+            <div class="chain-field"><label>New fee in ETH</label><input class="form-input" id="feeInput" placeholder="0.00005"></div>
+            <button class="btn-btrust-action" id="btnSetFee" onclick="UC.setFee()">Update fee</button><div id="txFee"></div>
+            <p class="fine" style="margin-top:14px" id="feesCollected"></p>
+            <p class="fine" style="margin-top:8px">Fees are sent to the owner wallet in the same transaction. The contract holds no balance, and the fee can never exceed the hard cap.</p>
+          </div>
         </div>
-
-        <!-- 7. ISSUER CONSOLE -->
-        <div id="pane-issuer" class="tab-pane">
-            <div class="hero-banner">
-                <div>
-                    <h1>Issuer Console</h1>
-                    <p>Write to the registry. Every action here is a signed transaction on Ethereum Sepolia, visible to anyone on Etherscan.</p>
-                </div>
-                <div><button class="btn-btrust-action" onclick="UC.connectIssuer()">Connect issuer wallet <span>&rarr;</span></button></div>
-            </div>
-            <div class="demo-banner" id="issuerDemoNote" style="display:none">No wallet session. Sign in first so the console can use your wallet.</div>
-            <div class="glass-card" style="margin-bottom:18px">
-                <div id="issuerWallet" style="font-size:12.5px">Wallet not connected.</div>
-                <div class="role-badges" id="issuerRoles"></div>
-                <p id="roleHint" style="font-size:11.5px;color:var(--text-muted)"></p>
-            </div>
-            <div class="chain-grid">
-                <div class="glass-card">
-                    <div class="card-header-bar"><h3>Issue credential</h3><button class="btn-secondary" onclick="UC.fillDemo()">Fill demo</button></div>
-                    <p class="card-sub">Calls <code>issueCredential(bytes32, string, string)</code>. Approved institutions only.</p>
-                    <div class="chain-field"><label>Credential reference</label><input class="form-input" id="issRef" placeholder="UC-2026-001"></div>
-                    <div class="chain-field"><label>Student reference (pseudonymous)</label><input class="form-input" id="issStudent" placeholder="STU-0001"></div>
-                    <div class="chain-field"><label>Credential title</label><input class="form-input" id="issDegree" placeholder="BSc Software Engineering"></div>
-                    <div class="chain-note">Everything you submit is public and permanent. Use a pseudonymous student reference, never a name, national ID or email.</div>
-                    <button class="btn-btrust-action" id="btnIssue" onclick="UC.issue()">Sign &amp; issue</button>
-                    <div id="txIssue"></div>
-                </div>
-                <div class="glass-card">
-                    <div class="card-header-bar"><h3>Governance</h3></div>
-                    <p class="card-sub">Admin approves institutions. Approved institutions can revoke.</p>
-                    <div class="chain-field"><label>Institution wallet to approve</label><input class="form-input" id="instAddr" placeholder="0x…"></div>
-                    <button class="btn-secondary" id="btnRegInst" onclick="UC.registerInstitution()">Register institution (admin)</button>
-                    <div id="txReg"></div>
-                    <hr style="border:0;border-top:1px solid var(--border-subtle);margin:16px 0">
-                    <div class="chain-field"><label>Revoke credential reference</label><input class="form-input" id="revRef" placeholder="UC-2026-001"></div>
-                    <button class="btn-secondary" id="btnRevoke" style="color:#f87171" onclick="UC.revoke()">Revoke on-chain</button>
-                    <div id="txRevoke"></div>
-                </div>
-            </div>
-            <div class="glass-card">
-                <div class="card-header-bar"><h3>Registry ledger</h3><button class="btn-secondary" onclick="UC.loadLedger()">Refresh</button></div>
-                <p class="card-sub">Recent events emitted by the contract (read straight from Sepolia logs).</p>
-                <div class="ledger-wrap"><table class="ledger-table"><thead><tr><th>Event</th><th>Subject</th><th>Block</th><th>Transaction</th></tr></thead><tbody id="ledgerBody"></tbody></table></div>
-            </div>
-        </div>
+      </div>
     </main>
+  </div>
+</div>
 
-    <!-- IREMBO-STYLE IN-BROWSER DOCUMENT VIEWER MODAL -->
-    <div class="doc-viewer-overlay" id="iremboViewerModal" onclick="closeIremboViewer(event)">
-        <div class="doc-viewer-container" onclick="event.stopPropagation()">
-            <div class="doc-viewer-header">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 16px;">📄</span>
-                    <div>
-                        <h4 style="font-size: 14px; font-weight: 700; color: #ffffff;" id="ivDocTitle">Document Inspection</h4>
-                        <p style="font-size: 11px; color: var(--text-muted);">Verified Document Previewer (No Download Required)</p>
-                    </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <span class="badge-verified-onchain" id="ivVerifyBadge">✓ Cryptographically Attested</span>
-                    <button onclick="closeIremboViewer()" style="background: transparent; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer;">&times;</button>
-                </div>
-            </div>
-
-            <div class="doc-viewer-body">
-                <!-- Preview Canvas -->
-                <div class="doc-preview-pane">
-                    <div class="cert-paper">
-                        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #64748b; margin-bottom: 8px;">Republic of Rwanda · Higher Education Attestation</div>
-                        <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px; color: #0f172a;" id="ivCertOrg">African Leadership University</h2>
-                        <div style="width: 40px; height: 2px; background: #0f172a; margin: 12px auto;"></div>
-                        <p style="font-size: 12px; color: #475569; font-style: italic; margin-bottom: 12px;">This document certifies that</p>
-                        <h3 style="font-size: 18px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; margin-bottom: 8px; color: #0284c7;" id="ivCertCandidate">Maxwel Okoth</h3>
-                        <p style="font-size: 12px; color: #475569; margin-bottom: 14px;">has satisfied all academic requirements and is awarded the degree of</p>
-                        <h4 style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 18px;" id="ivCertDegree">Bachelor of Science in Software Engineering</h4>
-                        
-                        <div style="border-top: 1px dashed #cbd5e1; padding-top: 14px; display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: #64748b; font-family: 'Inter', sans-serif;">
-                            <div>
-                                <span>Registry ID:</span><br>
-                                <strong id="ivCertRegId" style="color: #0f172a;">UC-2026-001</strong>
-                            </div>
-                            <div style="border: 2px solid #059669; color: #059669; padding: 4px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase;">
-                                [ SEAL VERIFIED ]
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cryptographic Metadata Sidebar -->
-                <div class="doc-meta-sidebar">
-                    <h4 style="font-size: 13.5px; font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px;">Attestation Metadata</h4>
-                    
-                    <div class="meta-field">
-                        <label>Issuing Authority</label>
-                        <p id="ivMetaOrg">African Leadership University</p>
-                    </div>
-
-                    <div class="meta-field">
-                        <label>Smart Contract Registry</label>
-                        <p style="font-family: monospace; font-size: 11.5px; color: #38bdf8;">0xA40d77d6e31F5044C7151dAd78C8bA6C3313132F</p>
-                    </div>
-
-                    <div class="meta-field">
-                        <label>SHA-256 Digest (Zero-Knowledge)</label>
-                        <p style="font-family: monospace; font-size: 11px;" id="ivMetaHash">0x8f3c7e4a1b9d...f02a</p>
-                    </div>
-
-                    <div class="meta-field">
-                        <label>Network & Hardfork</label>
-                        <p>Ethereum Sepolia (Paris EVM)</p>
-                    </div>
-
-                    <div class="meta-field">
-                        <label>Validation Standard</label>
-                        <p>W3C Decentralized Identifiers (DID)</p>
-                    </div>
-
-                    <div class="meta-field">
-                        <label>Live on-chain proof</label>
-                        <div id="ivProof"></div>
-                    </div>
-                    <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-subtle);">
-                        <button class="btn-btrust-action" style="width: 100%; justify-content: center;" onclick="closeIremboViewer()">Done Inspecting</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- Credential viewer -->
+<div class="doc-viewer-overlay" id="iremboViewerModal" onclick="closeViewer(event)">
+  <div class="doc-viewer-container" onclick="event.stopPropagation()">
+    <div class="doc-viewer-header">
+      <div><h4 style="font-size:15px" id="ivDocTitle">Document</h4><p class="fine">Preview of the record. The original file stays on its owner's device.</p></div>
+      <button class="icon-btn" type="button" aria-label="Close" onclick="closeViewer()"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
-
-    <!-- Profile & Document Editor Modal -->
-    <div class="modal-overlay" id="profileModal" onclick="closeProfileModal(event)">
-        <div class="modal-container" onclick="event.stopPropagation()">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
-                <h3 id="modalProfileTitle" style="font-size: 17px;">Edit Profile & Document Hashes</h3>
-                <button onclick="closeProfileModal()" style="background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer;">&times;</button>
-            </div>
-
-            <form id="profileForm" onsubmit="saveProfileDetails(event)">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="inputFullName" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label>Professional Title</label>
-                    <input type="text" id="inputHeadline" class="form-input">
-                </div>
-                <div class="form-group">
-                    <label>Technical Skills (comma-separated)</label>
-                    <input type="text" id="inputSkills" class="form-input">
-                </div>
-
-                <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 14px 0;">
-
-                <h4 style="font-size: 13px; margin-bottom: 4px;">Zero-Knowledge Document Hashing</h4>
-                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Select a file to compute a SHA-256 fingerprint. Raw bytes are not stored.</p>
-
-                <div style="border: 2px dashed var(--border-subtle); border-radius: 6px; padding: 14px; text-align: center; cursor: pointer; margin-bottom: 12px;" onclick="document.getElementById('docFileInput').click()">
-                    <p style="font-size: 12px;">+ Select Document (PDF / DOCX) to Hash</p>
-                    <input type="file" id="docFileInput" style="display: none;" onchange="handleDocUpload(event)">
-                </div>
-
-                <div id="uploadedDocsList"></div>
-
-                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
-                    <button type="button" class="btn-secondary" onclick="closeProfileModal()">Cancel</button>
-                    <button type="submit" class="btn-btrust-action">Save Changes</button>
-                </div>
-            </form>
+    <div class="doc-viewer-body">
+      <div class="doc-preview-pane">
+        <div class="cert-paper">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#64748b;margin-bottom:10px">Credential record</div>
+          <h2 style="font-size:20px;color:#0f172a" id="ivCertOrg">Issuer</h2>
+          <div style="width:40px;height:2px;background:#0f172a;margin:12px auto"></div>
+          <p style="font-size:12px;color:#475569;font-style:italic;margin-bottom:10px">Holder</p>
+          <h3 style="font-size:18px;color:#0284c7;margin-bottom:12px" id="ivCertCandidate">Name</h3>
+          <p style="font-size:13px;color:#475569;margin-bottom:14px" id="ivCertDegree">Document</p>
+          <div style="border-top:1px dashed #cbd5e1;padding-top:12px;font-size:11px;color:#64748b;text-align:left">Registry key<br><strong id="ivCertRegId" style="color:#0f172a;word-break:break-all;font-size:10.5px">-</strong></div>
         </div>
+      </div>
+      <div class="doc-meta-sidebar">
+        <h4 style="font-size:14px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border-subtle)">Record details</h4>
+        <div class="meta-field"><label>Issuing authority</label><p id="ivMetaOrg">-</p></div>
+        <div class="meta-field"><label>Registry contract</label><p class="mono" style="font-size:12px;color:var(--accent-blue)" id="ivContract"></p></div>
+        <div class="meta-field"><label>SHA-256 digest</label><p class="mono" style="font-size:12px" id="ivMetaHash">-</p></div>
+        <div class="meta-field"><label>Network</label><p>Ethereum Sepolia (test network)</p></div>
+        <div class="meta-field"><label>Live on-chain proof</label><div id="ivProof"></div></div>
+        <div style="margin-top:auto;padding-top:14px"><button class="btn-btrust-action" style="width:100%" onclick="closeViewer()">Done</button></div>
+      </div>
     </div>
+  </div>
+</div>
 
-    <script>
-        const contractAddress = "0xA40d77d6e31F5044C7151dAd78C8bA6C3313132F";
-        const contractABI = [
-          "function verifyCredential(bytes32 credentialId) external view returns (bool, string, string)"
-        ];
+<!-- Profile -->
+<div class="modal-overlay" id="profileModal" onclick="closeProfileModal(event)">
+  <div class="modal-container" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h3 id="modalProfileTitle">Edit profile</h3><button class="icon-btn" type="button" aria-label="Close" onclick="closeProfileModal()"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <form id="profileForm" onsubmit="saveProfileDetails(event)">
+      <div class="form-group"><label id="lblName">Full name</label><input class="form-input" id="inputFullName" required></div>
+      <div class="form-group"><label id="lblHead">Professional title</label><input class="form-input" id="inputHeadline"></div>
+      <div class="form-group" id="grpSkills"><label>Skills (comma-separated)</label><input class="form-input" id="inputSkills" placeholder="JavaScript, Git, SQL"></div>
+      <div id="grpDocs">
+        <hr style="border:0;border-top:1px solid var(--border-subtle);margin:14px 0">
+        <h4 style="font-size:14px;margin-bottom:4px">Add a document</h4>
+        <p class="fine" style="margin-bottom:10px">Your browser computes a SHA-256 fingerprint. The file is not uploaded or stored.</p>
+        <div style="border:2px dashed var(--border-subtle);border-radius:10px;padding:16px;text-align:center;cursor:pointer;margin-bottom:12px" onclick="document.getElementById('docFileInput').click()"><p style="font-size:13px">Select a PDF or DOCX to fingerprint</p><input type="file" id="docFileInput" style="display:none" onchange="handleDocUpload(event)"></div>
+        <div id="uploadedDocsList"></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px"><button type="button" class="btn-secondary" onclick="closeProfileModal()">Cancel</button><button type="submit" class="btn-btrust-action">Save</button></div>
+    </form>
+  </div>
+</div>
 
-        const currentRole = sessionStorage.getItem("userRole") || "Applicant";
-        const currentWallet = sessionStorage.getItem("userAddress") || "0xE174F15fc91870c2B0e92E437962955EA08F5d51";
-
-        // Curated regional base with contextual role assessments
-        const baseCuratedJobs = [
-            { 
-                id: 0, 
-                title: "Junior Software Engineer", 
-                company: "Nairobi Tech Labs", 
-                location: "Nairobi, Kenya · Hybrid", 
-                match: 85, 
-                status: 'untested', 
-                requirements: ["JavaScript", "Git", "REST APIs", "SQL"], 
-                description: "Support core engineering team building decentralized verification infrastructure across East Africa.",
-                assessment: {
-                    q: "In a production REST service handling candidate verifications, how should idempotency be maintained for duplicate network retries?",
-                    optA: "A: Require an Idempotency-Key header on state-changing requests and verify hash before reprocessing",
-                    optB: "B: Increment the applicant count blindly on every incoming HTTP request payload",
-                    correct: "A"
-                }
-            },
-            { 
-                id: 1, 
-                title: "Graduate QA Engineer", 
-                company: "Kivu Digital", 
-                location: "Kigali, Rwanda · Hybrid", 
-                match: 61, 
-                status: 'untested', 
-                requirements: ["Testing", "Cypress", "REST APIs", "Git"], 
-                description: "Ensure rigorous reliability for cross-border settlement tooling built out of Kigali.",
-                assessment: {
-                    q: "When running end-to-end integration tests on credential issuing endpoints, what assertion best confirms a non-tampered response?",
-                    optA: "A: Assert HTTP status 200 and verify returned SHA-256 digest matches expected cryptographic hash buffer",
-                    optB: "B: Only check that the HTTP response body string contains more than 10 characters",
-                    correct: "A"
-                }
-            },
-            { 
-                id: 2, 
-                title: "Backend Developer Intern", 
-                company: "East Africa Systems", 
-                location: "Dar es Salaam, Tanzania · Remote EA", 
-                match: 42, 
-                status: 'untested', 
-                requirements: ["Node.js", "PostgreSQL", "Docker", "REST APIs"], 
-                description: "Work with distributed systems teams across Kenya, Tanzania, and Rwanda.",
-                assessment: {
-                    q: "In PostgreSQL, how do you prevent race conditions when two recruiters review the same application concurrently?",
-                    optA: "A: Query the row using SELECT ... FOR UPDATE within an explicit database transaction block",
-                    optB: "B: Read the application row into local memory with no database locking mechanism",
-                    correct: "A"
-                }
-            },
-            { 
-                id: 3, 
-                title: "Web3 Smart Contract Trainee", 
-                company: "Pearl Blockchain Labs", 
-                location: "Kampala, Uganda · On-site", 
-                match: 78, 
-                status: 'untested', 
-                requirements: ["Solidity", "Hardhat", "Git", "Testing"], 
-                description: "Develop immutable registry contracts tailored for African universities.",
-                assessment: {
-                    q: "Which Solidity design pattern prevents reentrancy attacks when external contracts interact with registry state?",
-                    optA: "A: The Checks-Effects-Interactions pattern (or OpenZeppelin ReentrancyGuard modifier)",
-                    optB: "B: Performing external contract calls before updating internal state variables",
-                    correct: "A"
-                }
-            }
-        ];
-
-        // Fetch Live Remote Tech Jobs from Public API (Remotive)
-        async function fetchLiveJobFeed() {
-            try {
-                const res = await fetch("https://remotive.com/api/remote-jobs?category=software-dev&limit=4");
-                if (!res.ok) throw new Error("API rate-limit or network");
-                const data = await res.json();
-                if (data && data.jobs && data.jobs.length > 0) {
-                    const liveJobs = data.jobs.map((j, i) => ({
-                        id: 100 + i,
-                        title: j.title,
-                        company: j.company_name,
-                        location: j.candidate_required_location || "Global Remote",
-                        match: 65,
-                        status: 'untested',
-                        requirements: ["JavaScript", "Git", "REST APIs", "Node.js"],
-                        description: j.description ? j.description.replace(/<[^>]*>?/gm, '').slice(0, 180) + '...' : 'Live verified technical opening.',
-                        sourceUrl: j.url,
-                        assessment: {
-                            q: `Practical Assessment for ${j.title}: How do you ensure high availability and zero data-loss in this distributed role?`,
-                            optA: "A: Employ stateless microservices behind a load-balancer with distributed logging and health checks",
-                            optB: "B: Run everything in a single unmonitored container with no automated health recovery",
-                            correct: "A"
-                        }
-                    }));
-                    jobsList = [...baseCuratedJobs, ...liveJobs];
-                    recomputeMatches();
-                    renderOverviewSummary();
-                    renderJobs();
-                    console.log("Live jobs feed loaded successfully from Remotive API.");
-                }
-            } catch (e) {
-                console.log("Using cached East Africa job listings (offline or blocked API):", e);
-            }
-        }
-
-        let jobsList = JSON.parse(localStorage.getItem('ujuzi_ea_jobs')) || baseCuratedJobs;
-        let applicationsList = JSON.parse(localStorage.getItem('ujuzi_ea_applications')) || [
-            {
-                id: "app-101",
-                jobTitle: "Junior Software Engineer",
-                company: "Nairobi Tech Labs (Nairobi, Kenya)",
-                applicantName: "Maxwel Okoth",
-                applicantAddress: "0xE174F15fc91870c2B0e92E437962955EA08F5d51",
-                match: 85,
-                submissionType: "Auto Apply (Match &ge; 70%)",
-                credentialName: "ALU BSc Degree (Sepolia Verified: 0xA40d...132F)",
-                verifiedStatus: "On-Chain Verified",
-                date: "Today"
-            }
-        ];
-
-        let profileData = JSON.parse(localStorage.getItem(`ujuzi_profile_${currentRole}`)) || {
-            name: currentRole === "Recruiter" ? "Nairobi Tech Talent" : "Maxwel Okoth",
-            headline: currentRole === "Recruiter" ? "Lead Technical Recruiter - East Africa" : "Full Stack Web3 Developer",
-            skills: ["JavaScript", "Git", "REST APIs", "SQL", "Solidity"],
-            isOnChainVerified: true,
-            docs: [
-                { name: "ALU_BSc_Software_Engineering_Degree.pdf", sha256: "0x8f3c7e4a1b9d...f02a", size: "2.4 MB", verifiedBy: "African Leadership University" }
-            ]
-        };
-
-        let selectedJobIndex = 0;
-        let selectedQuiz = 'A';
-
-        // Launch Irembo Rwanda Style Viewer
-        function launchIremboViewer(docName, org, degree, hash, regId) {
-            document.getElementById("ivDocTitle").innerText = docName;
-            document.getElementById("ivCertOrg").innerText = org;
-            document.getElementById("ivCertDegree").innerText = degree;
-            document.getElementById("ivCertCandidate").innerText = profileData.name;
-            document.getElementById("ivCertRegId").innerText = regId;
-            document.getElementById("ivMetaOrg").innerText = org;
-            document.getElementById("ivMetaHash").innerText = hash;
-            document.getElementById("iremboViewerModal").style.display = "flex";
-            UC.viewerProof(regId, hash);
-        }
-
-        function closeIremboViewer(e) {
-            if (!e || e.target.id === "iremboViewerModal" || e.target.tagName === "BUTTON") {
-                document.getElementById("iremboViewerModal").style.display = "none";
-            }
-        }
-
-        async function computeFileSHA256(file) {
-            const buffer = await file.arrayBuffer();
-            const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return "0x" + hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        async function handleDocUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const fileHash = await computeFileSHA256(file);
-            profileData.docs.push({
-                name: file.name,
-                sha256: fileHash,
-                size: (file.size / 1024 / 1024).toFixed(2) + " MB",
-                verifiedBy: "Client-Side SHA-256 Hashed"
-            });
-            renderDocs();
-            alert(`Document hashed in your browser.\nSHA-256: ${UC.short(fileHash, 18, 10)}\nThe file itself was not uploaded anywhere.`);
-        }
-
-        
-        function toggleSidebar(open) {
-            const sb = document.getElementById('appSidebar');
-            const bd = document.getElementById('sidebarBackdrop');
-            if (sb) sb.classList.toggle('open', open);
-            if (bd) bd.classList.toggle('active', open);
-        }
-
-        function sidebarSelect(tabId) {
-            toggleSidebar(false);
-            switchNav(tabId);
-            const titles = {
-                'overview': 'Applicant Workspace',
-                'jobs': 'East Africa Engineering Roles',
-                'applications': 'My Verified Applications',
-                'simulations': 'Applied Competency Simulation',
-                'credentials': 'Document & Credential Registry',
-                'verify': 'Cryptographic Credential Verification',
-                'issuer': 'Institutional Issuer Console'
-            };
-            const pTitle = document.getElementById('pageHeaderTitle');
-            if (pTitle && titles[tabId]) pTitle.innerText = titles[tabId];
-        }
-
-        function initRoleUI() {
-            const isApplicant = (currentRole === "Applicant");
-
-            // 1. Update Top Bar and Sidebar Branding
-            const topRoleBadge = document.getElementById("topRoleBadge");
-            if (topRoleBadge) topRoleBadge.innerText = isApplicant ? "Applicant Portal" : "Recruiter Portal";
-
-            const pageHeaderTitle = document.getElementById("pageHeaderTitle");
-            if (pageHeaderTitle) pageHeaderTitle.innerText = isApplicant ? "Applicant Workspace" : "Recruiter Workspace";
-
-            // 2. Sidebar Navigation Role Filtering
-            // Applicants get: Overview, Jobs, Applications, Simulations, Credentials
-            // Recruiters get: Overview, Jobs, Applications (Inbox), Verify Credential, Issuer Console
-            const btnSims = document.getElementById("btn-tab-simulations");
-            const btnCreds = document.getElementById("btn-tab-credentials");
-            const btnVerify = document.getElementById("btn-tab-verify");
-            const btnIssuer = document.getElementById("btn-tab-issuer");
-            const btnApps = document.getElementById("btn-tab-applications");
-
-            // Recruiters review applications and verify credentials, they do not browse active jobs to apply
-            const btnJobs = document.getElementById("btn-tab-jobs");
-            if (btnJobs) btnJobs.style.display = isApplicant ? "flex" : "none";
-
-            if (btnSims) btnSims.style.display = isApplicant ? "flex" : "none";
-            if (btnCreds) btnCreds.style.display = isApplicant ? "flex" : "none";
-            if (btnVerify) btnVerify.style.display = isApplicant ? "none" : "flex";
-            if (btnIssuer) btnIssuer.style.display = isApplicant ? "none" : "flex";
-            if (btnApps) {
-                const label = btnApps.querySelector("span") || btnApps.lastChild;
-                if (label) label.textContent = isApplicant ? " My Applications" : " Applications Inbox";
-            }
-
-            // 3. Hero Banner & CTAs
-            const overviewHeroAction = document.getElementById("overviewHeroAction");
-            if (overviewHeroAction) {
-                overviewHeroAction.innerHTML = isApplicant
-                    ? `<button class="btn-btrust-action" onclick="sidebarSelect('jobs')">Browse East Africa Jobs <span>&rarr;</span></button>`
-                    : `<button class="btn-btrust-action" onclick="sidebarSelect('applications')">Review Candidate Pipeline <span>&rarr;</span></button>`;
-            }
-
-            // 4. Overview Metrics & Card Labels
-            const stat3 = document.querySelector(".stat-grid .stat-card:nth-child(3)");
-            const stat4 = document.querySelector(".stat-grid .stat-card:nth-child(4)");
-            if (!isApplicant) {
-                if (stat3) {
-                    stat3.querySelector(".label").innerText = "Shortlisted";
-                    stat3.querySelector(".sub").innerText = "Simulation Qualified";
-                }
-                if (stat4) {
-                    stat4.querySelector(".label").innerText = "Verified Candidates";
-                    stat4.querySelector(".sub").innerText = "On-Chain Attested";
-                }
-                const profileCard = document.querySelector(".dashboard-split .glass-card:nth-child(2)");
-                if (profileCard) {
-                    profileCard.innerHTML = `
-                        <div class="card-header-bar">
-                            <h3>Candidate Verification</h3>
-                            <a onclick="sidebarSelect('verify')" style="color:var(--text-secondary); text-decoration:none; font-size:12px; cursor:pointer;">Verify Tool</a>
-                        </div>
-                        <p class="card-sub">Instant zero-knowledge checks via Ethereum Sepolia.</p>
-                        <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 10px;">
-                            <div class="list-row">
-                                <div>
-                                    <h4 style="font-size: 13.5px;">Gasless Verification (eth_call)</h4>
-                                    <p style="font-size: 11.5px; color: var(--text-muted);">Direct Sepolia smart contract query</p>
-                                </div>
-                                <span class="badge-verified-onchain">Active</span>
-                            </div>
-                            <div class="list-row">
-                                <div>
-                                    <h4 style="font-size: 13.5px;">EIP-191 Signature Verification</h4>
-                                    <p style="font-size: 11.5px; color: var(--text-muted);">Cryptographic ecrecover proof</p>
-                                </div>
-                                <span class="badge-verified-onchain">Active</span>
-                            </div>
-                            <button class="btn-btrust-action" style="margin-top: 8px; justify-content: center;" onclick="sidebarSelect('verify')">
-                                Open Verification Console &rarr;
-                            </button>
-                        </div>
-                    `;
-                }
-            }
-
-            // Fallback safety redirect
-            const activePane = document.querySelector(".tab-pane.active");
-            if (!isApplicant && activePane && (activePane.id === "pane-jobs" || activePane.id === "pane-simulations" || activePane.id === "pane-credentials")) {
-                switchNav("applications");
-            }
-            if (isApplicant && activePane && (activePane.id === "pane-issuer" || activePane.id === "pane-verify")) {
-                switchNav("overview");
-            }
-            renderOverviewSummary();
-            renderJobs();
-            renderApplications();
-            renderAttachedDocs();
-        }
-
-        function renderOverviewSummary() {
-            document.getElementById("metricJobsCount").innerText = jobsList.length;
-            document.getElementById("metricApps").innerText = applicationsList.length;
-            document.getElementById("metricDocsCount").innerText = profileData.docs ? profileData.docs.length : 1;
-
-            const quickBox = document.getElementById("overviewQuickJobs");
-            quickBox.innerHTML = jobsList.slice(0, 3).map(j => `
-                <div class="list-row">
-                    <div>
-                        <h4 style="font-size: 13.5px;">${j.title}</h4>
-                        <p style="font-size: 11.5px; color: var(--text-muted);">${j.company} · ${j.location}</p>
-                    </div>
-                    <span style="font-size: 12.5px; font-weight: 700; color: ${j.match >= 70 ? 'var(--accent-green)' : '#9ca3af'};">
-                        ${j.match}% (${j.match >= 70 ? 'Auto Apply' : 'Sim Required'})
-                    </span>
-                </div>
-            `).join("");
-        }
-
-        function renderJobs() {
-            const container = document.getElementById("jobsListingCards");
-            container.innerHTML = jobsList.map((job, idx) => `
-                <div class="job-select-item ${idx === selectedJobIndex ? 'selected' : ''}" onclick="selectJob(${idx})">
-                    <div>
-                        <h4 style="font-size: 13.5px;">${job.title}</h4>
-                        <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">${job.company} · ${job.location}</p>
-                    </div>
-                    <span style="font-weight: 700; font-size: 12.5px; color: ${job.match >= 70 ? 'var(--accent-green)' : '#9ca3af'};">${job.match}%</span>
-                </div>
-            `).join("");
-            renderJobDetails();
-        }
-
-        function selectJob(idx) { selectedJobIndex = idx; renderJobs(); }
-
-        function renderJobDetails() {
-            const job = jobsList[selectedJobIndex];
-            if (!job) return;
-
-            document.getElementById("detailHeading").innerText = job.title;
-            document.getElementById("detailSub").innerText = `${job.company} · ${job.location}`;
-            document.getElementById("detailScore").innerText = `${job.match}%`;
-            document.getElementById("detailBar").style.width = `${job.match}%`;
-            document.getElementById("detailDescription").innerText = job.description;
-
-            const reqList = document.getElementById("detailRequirements");
-            reqList.innerHTML = job.requirements.map(r => `<li>${r}</li>`).join("");
-
-            const actionArea = document.getElementById("jobActionArea");
-            const guidance = document.getElementById("detailMatchGuidance");
-
-            if (job.status === 'failed') {
-                guidance.innerHTML = `<span style="color: var(--accent-red); font-weight: 600;">✗ Ineligible: Simulation failed. Application locked.</span>`;
-                actionArea.innerHTML = `<button class="btn-secondary" disabled style="opacity:0.5;">Ineligible (Simulation Failed)</button>`;
-            } else if (job.match >= 70) {
-                guidance.innerHTML = `<span style="color: var(--accent-green); font-weight: 600;">✓ Qualified: Match score is &ge; 70%. 1-Click Auto Apply unlocked!</span>`;
-                actionArea.innerHTML = `<button class="btn-btrust-action" onclick="handleCandidateApply('Direct Auto Apply')">Auto Apply Now <span>&rarr;</span></button>`;
-            } else if (job.status === 'passed') {
-                guidance.innerHTML = `<span style="color: var(--accent-green); font-weight: 600;">✓ Simulation Passed (100%). Application unlocked!</span>`;
-                actionArea.innerHTML = `<button class="btn-btrust-action" onclick="handleCandidateApply('Verified via Simulation')">Apply Now <span>&rarr;</span></button>`;
-            } else {
-                guidance.innerText = `Match score is below 70%. Complete practical assessment to unlock application.`;
-                actionArea.innerHTML = `<button class="btn-btrust-action" onclick="setupAssessmentForCurrentJob(); switchNav('simulations')">Take Simulation to Apply <span>&rarr;</span></button>`;
-            }
-        }
-
-        function pickQuizOption(opt) {
-            selectedQuiz = opt;
-            document.getElementById('optA').classList.toggle('active', opt === 'A');
-            document.getElementById('optB').classList.toggle('active', opt === 'B');
-        }
-
-
-        function setupAssessmentForCurrentJob() {
-            const job = jobsList[selectedJobIndex] || jobsList[0];
-            if (!job) return;
-
-            const t = document.getElementById("assessmentTargetTitle");
-            if (t) t.innerText = `${job.title} (${job.company})`;
-            const rTag = document.getElementById("simRoleTag");
-            if (rTag) rTag.innerText = job.title;
-            const cTag = document.getElementById("simCompanyTag");
-            if (cTag) cTag.innerText = `Location: ${job.location}`;
-
-            const q = job.assessment || {
-                q: "Which method reads on-chain credential validity without requiring gas fees?",
-                optA: "A: Call contract.verifyCredential(bytes32) as a view query via JSON-RPC provider",
-                optB: "B: Broadcast an Ethereum state-changing transaction requiring ETH gas fee",
-                correct: "A"
-            };
-
-            const qText = document.getElementById("assessmentQuestionText");
-            if (qText) qText.innerText = q.q;
-            const optAText = document.getElementById("optAText");
-            if (optAText) optAText.innerText = q.optA;
-            const optBText = document.getElementById("optBText");
-            if (optBText) optBText.innerText = q.optB;
-            pickQuizOption('A');
-        }
-
-        function submitSimulationAnswer() {
-            const job = jobsList[selectedJobIndex];
-            const correctOpt = (job.assessment && job.assessment.correct) ? job.assessment.correct : 'A';
-
-            if (selectedQuiz === correctOpt) {
-                job.status = 'passed';
-                alert(`✓ Assessment Passed for ${job.title}! Practical competency score: 100%. Job application unlocked.`);
-            } else {
-                job.status = 'failed';
-                alert(`✗ Assessment Failed for ${job.title}. Marked Ineligible for this role.`);
-            }
-            sidebarSelect('jobs');
-            renderJobs();
-        }
-
-
-        function demoFailSimulation() {
-            jobsList[selectedJobIndex].status = 'failed';
-            alert("Assessment marked Failed for demonstration.");
-            switchNav('jobs');
-            renderJobs();
-        }
-
-        async function handleCandidateApply(subType) {
-            const job = jobsList[selectedJobIndex];
-            let proof = null;
-            if (window.ethereum && sessionStorage.getItem("userAddress")) {
-                try { proof = await UC.signApplication(job, subType, currentWallet); }
-                catch (e) { alert("Application not sent: the wallet signature was not completed.\n" + (e.shortMessage || e.message || e)); return; }
-            }
-            applicationsList.unshift({
-                id: `app-${Date.now()}`,
-                jobTitle: job.title,
-                company: `${job.company} (${job.location})`,
-                applicantName: profileData.name,
-                applicantAddress: currentWallet,
-                match: job.match,
-                submissionType: subType,
-                credentialName: "ALU BSc Degree (Sepolia Verified: 0xA40d...132F)",
-                verifiedStatus: proof ? "Wallet-signed" : "Unsigned (demo)",
-                message: proof ? proof.message : null,
-                signature: proof ? proof.signature : null,
-                date: "Just now"
-            });
-            localStorage.setItem('ujuzi_ea_applications', JSON.stringify(applicationsList));
-            alert(`Application submitted to ${job.company}!`);
-            renderApplications();
-            switchNav('applications');
-        }
-        function renderApplications() {
-            const list = document.getElementById("submittedAppsList");
-            const empty = document.getElementById("emptyAppsView");
-
-            if (!applicationsList || applicationsList.length === 0) {
-                list.style.display = "none";
-                empty.style.display = "block";
-                return;
-            }
-
-            list.style.display = "block";
-            empty.style.display = "none";
-
-            const isApplicant = (currentRole === "Applicant");
-            list.innerHTML = applicationsList.map(app => {
-                const status = app.reviewStatus || "Under Review";
-                const isForwarded = status === "Forwarded to Company";
-                const isRejected = status === "Rejected";
-
-                return `
-                <div class="glass-card" style="margin-bottom: 12px; padding: 18px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 260px;">
-                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                                <h4 style="font-size: 15px; font-weight: 600;">${app.applicantName}</h4>
-                                <span class="badge-verified-onchain">✓ ${app.verifiedStatus}</span>
-                                <span class="status-pill" style="border: 1px solid rgba(255,255,255,0.1); font-size: 11px;">${app.submissionType}</span>
-                                ${isForwarded ? '<span style="color:#34d399; font-size: 11.5px; font-weight: 600;">✈️ Forwarded to ' + esc(app.company) + '</span>' : ''}
-                                ${isRejected ? '<span style="color:#f87171; font-size: 11.5px; font-weight: 600;">✗ Rejected</span>' : ''}
-                            </div>
-                            <p style="font-size: 11.5px; color: var(--text-muted); font-family: monospace; margin: 4px 0;">Wallet: ${app.applicantAddress}</p>
-                            <p style="font-size: 13px; margin: 4px 0;">Target Role: <strong>${app.jobTitle}</strong> · <span style="color:var(--text-secondary);">${app.company}</span></p>
-                            ${UC.sigRow(app)}
-                        </div>
-
-                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-                            <div style="display: flex; gap: 8px;">
-                                <button class="btn-secondary" style="padding: 6px 12px; font-size: 11.5px;" onclick="launchIremboViewer('Candidate_Verified_Credentials.pdf', 'African Leadership University', 'BSc Software Engineering', '0x8f3c7e4a1b9d...f02a', 'UC-2026-001')">
-                                    🔍 Inspect Credentials
-                                </button>
-                                ${!isApplicant && !isForwarded && !isRejected ? `
-                                    <button class="btn-btrust-action" style="padding: 6px 14px; font-size: 11.5px; background: #10b981; color: #ffffff;" onclick="approveAndForward('${app.id}')">
-                                        ✓ Approve &amp; Forward to Company
-                                    </button>
-                                    <button class="btn-secondary" style="padding: 6px 10px; font-size: 11.5px; color: #f87171; border-color: rgba(248,113,113,0.3);" onclick="rejectApplication('${app.id}')">
-                                        ✗ Reject
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-            }).join("");
-        }
-
-        
-        function approveAndForward(appId) {
-            const app = applicationsList.find(a => a.id === appId);
-            if (!app) return;
-            app.reviewStatus = "Forwarded to Company";
-            localStorage.setItem('ujuzi_ea_applications', JSON.stringify(applicationsList));
-            renderApplications();
-            alert("✓ Success: " + app.applicantName + "'s verified credentials and wallet signature have been forwarded to " + app.company + ".");
-        }
-
-        function rejectApplication(appId) {
-            const app = applicationsList.find(a => a.id === appId);
-            if (!app) return;
-            if (!confirm(`Mark ${app.applicantName}'s application as rejected?`)) return;
-            app.reviewStatus = "Rejected";
-            localStorage.setItem('ujuzi_ea_applications', JSON.stringify(applicationsList));
-            renderApplications();
-        }
-
-        function renderAttachedDocs() {
-            const container = document.getElementById("credentialsAttachedList");
-            if (!container) return;
-            container.innerHTML = (profileData.docs || []).map(d => `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-subtle); border-radius: 6px; margin-bottom: 8px; font-size: 12px;">
-                    <div>
-                        <strong>${d.name}</strong>
-                        <div style="font-size: 10.5px; color: var(--text-muted); font-family: monospace;">SHA-256: ${d.sha256}</div>
-                    </div>
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <span class="badge-verified-onchain">${d.verifiedBy || 'Attested'}</span>
-                        <button class="btn-secondary" style="padding: 3px 8px; font-size: 11px;" onclick="launchIremboViewer('${d.name}', 'African Leadership University', 'Software Engineering Attestation', '${d.sha256}', 'UC-2026-001')">👁️ View</button>
-                    </div>
-                </div>
-            `).join("");
-        }
-
-        function switchNav(tabName) {
-            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(`pane-${tabName}`).classList.add('active');
-            document.getElementById(`btn-tab-${tabName}`).classList.add('active');
-            if (tabName === 'jobs') renderJobs();
-            if (tabName === 'applications') renderApplications();
-            if (tabName === 'credentials') { renderAttachedDocs(); UC.renderAttestations(); }
-            if (tabName === 'issuer') UC.issuerInit();
-            window.scrollTo({ top: 0 });
-        }
-
-        function toggleDashDrawer(open) {
-            const overlay = document.getElementById('dashDrawerOverlay');
-            if (overlay) {
-                overlay.classList.toggle('active', open);
-                document.body.style.overflow = open ? 'hidden' : '';
-                const u = sessionStorage.getItem("userAddress");
-                const n = sessionStorage.getItem("userName") || "Demo User";
-                if (document.getElementById("mobDisplayName")) document.getElementById("mobDisplayName").innerText = n;
-                if (document.getElementById("mobWalletAddress") && u) document.getElementById("mobWalletAddress").innerText = u.slice(0, 6) + "..." + u.slice(-4);
-                if (document.getElementById("mobAvatarInitials")) document.getElementById("mobAvatarInitials").innerText = n.split(" ").map(p => p[0]).join("").toUpperCase();
-            }
-        }
-        function handleDashOverlayClick(e) {
-            if (e.target.id === 'dashDrawerOverlay') toggleDashDrawer(false);
-        }
-        function dashSelect(tabId) {
-            toggleDashDrawer(false);
-            switchNav(tabId);
-        }
-        function performLogout() { sessionStorage.clear(); window.location.href = "login.html"; }
-
-        function openProfileModal() {
-            const isApplicant = (currentRole === "Applicant");
-            document.getElementById("inputFullName").value = profileData.name;
-            document.getElementById("inputHeadline").value = profileData.headline;
-            
-            const skillsGroup = document.getElementById("inputSkills")?.closest(".form-group");
-            const docsSection = document.getElementById("uploadedDocsList")?.closest("div");
-            const docHeader = docsSection?.previousElementSibling;
-            const docHr = docHeader?.previousElementSibling;
-
-            // Tailor modal labels and sections for Recruiter
-            const nameLabel = document.querySelector("#profileForm .form-group:nth-child(1) label");
-            const titleLabel = document.querySelector("#profileForm .form-group:nth-child(2) label");
-
-            if (!isApplicant) {
-                if (nameLabel) nameLabel.innerText = "Recruiter Name";
-                if (titleLabel) titleLabel.innerText = "Company / Organization & Title";
-                if (skillsGroup) skillsGroup.style.display = "none";
-                if (docsSection) docsSection.style.display = "none";
-                if (docHeader) docHeader.style.display = "none";
-                if (docHr) docHr.style.display = "none";
-            } else {
-                if (nameLabel) nameLabel.innerText = "Full Name";
-                if (titleLabel) titleLabel.innerText = "Professional Title";
-                if (skillsGroup) skillsGroup.style.display = "block";
-                if (docsSection) docsSection.style.display = "block";
-                if (docHeader) docHeader.style.display = "block";
-                if (docHr) docHr.style.display = "block";
-                document.getElementById("inputSkills").value = profileData.skills ? profileData.skills.join(", ") : "";
-                renderDocs();
-            }
-
-            document.getElementById("profileModal").style.display = "flex";
-        }
-        function closeProfileModal(e) {
-            if (!e || e.target.id === "profileModal" || e.target.tagName === 'BUTTON') {
-                document.getElementById("profileModal").style.display = "none";
-            }
-        }
-
-        function renderDocs() {
-            const container = document.getElementById("uploadedDocsList");
-            container.innerHTML = (profileData.docs || []).map((doc, idx) => `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-subtle); border-radius: 4px; margin-bottom: 6px; font-size: 11.5px;">
-                    <div>
-                        <strong>${doc.name}</strong>
-                        <div style="font-size: 10px; color: var(--text-muted); font-family: monospace;">${doc.sha256}</div>
-                    </div>
-                    <button type="button" onclick="profileData.docs.splice(${idx},1); renderDocs();" style="background:transparent; border:none; color:var(--accent-red); cursor:pointer;">&times;</button>
-                </div>
-            `).join("");
-        }
-
-        function saveProfileDetails(e) {
-            e.preventDefault();
-            profileData.name = document.getElementById("inputFullName").value.trim();
-            profileData.headline = document.getElementById("inputHeadline").value.trim();
-            const raw = document.getElementById("inputSkills").value.trim();
-            profileData.skills = raw ? raw.split(",").map(s => s.trim()).filter(Boolean) : [];
-
-            localStorage.setItem(`ujuzi_profile_${currentRole}`, JSON.stringify(profileData));
-            document.getElementById("navDisplayName").innerText = profileData.name;
-            const initials = profileData.name.split(" ").filter(Boolean).map(n => n[0]).join("").substring(0, 2).toUpperCase() || "UC";
-            const avatarEl = document.getElementById("navAvatarInitials");
-            if (avatarEl) avatarEl.innerText = initials;
-            const mobAvatar = document.getElementById("mobAvatarInitials");
-            if (mobAvatar) mobAvatar.innerText = initials;
-            document.getElementById("profileModal").style.display = "none";
-            renderOverviewSummary();
-            renderAttachedDocs();
-            recomputeMatches();
-            alert("Profile details and document hashes updated!");
-        }
-
-        async function verifyOnSepolia() {
-            UC.verifyUI(document.getElementById("verifyIdField").value.trim(), "verifyResultPane");
-        }
-        // Skill scoring now comes from the tested engine instead of hard-coded percentages.
-        function recomputeMatches() {
-            if (!window.CompetencyAlgorithm) return;
-            jobsList.forEach(j => { j.match = window.CompetencyAlgorithm.calculateScore(profileData.skills || [], j.requirements || []); });
-            renderOverviewSummary(); renderJobs();
-        }
-        import('./js/services/UjuziEngine.js').then(m => { window.CompetencyAlgorithm = m.CompetencyAlgorithm; recomputeMatches(); }).catch(e => console.warn("Engine not loaded, using stored scores", e));
-        initRoleUI();
-        fetchLiveJobFeed();
-    </script>
-    </div><!-- /.micro-main-area -->
+<script src="js/chain.js"></script>
+<script src="js/dashboard.js"></script>
 </body>
 </html>
