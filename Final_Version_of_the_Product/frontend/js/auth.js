@@ -4,19 +4,22 @@ let isSignUp = false;
 window.onload = () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('role') === 'recruiter') setRole('Recruiter');
+    if (params.get('role') === 'institution') setRole('Institution');
     if (params.get('mode') === 'signup') toggleAuthMode();
 };
 
+const INTRO = {
+    Applicant: "Connect your MetaMask wallet to verify your identity on Ethereum Sepolia.",
+    Recruiter: "Connect your wallet to post roles, review applications and verify credentials.",
+    Institution: "Connect the wallet your institution uses. The platform owner must approve it before it can issue credentials."
+};
 function setRole(role) {
     currentRole = role;
-    document.getElementById('tabApplicant').classList.toggle('active', role === 'Applicant');
-    document.getElementById('tabRecruiter').classList.toggle('active', role === 'Recruiter');
-    
-    // Hide verifier invite box if signing up as a recruiter
-    const verifierBox = document.getElementById('verifierSection');
-    if (verifierBox) {
-        verifierBox.style.display = role === 'Applicant' ? 'block' : 'none';
-    }
+    ['Applicant', 'Recruiter', 'Institution'].forEach(r => document.getElementById('tab' + r).classList.toggle('active', role === r));
+    const app = role === 'Applicant';
+    ['verifierSection', 'groupSkills', 'groupDoc'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = app ? 'block' : 'none'; });
+    document.getElementById('lblTitle').parentElement.style.display = role === 'Institution' ? 'none' : 'block';
+    document.getElementById('lblName').innerText = app ? 'Full name' : role === 'Recruiter' ? 'Your name or company' : 'Institution name';
     updateFormLabels();
 }
 
@@ -40,11 +43,12 @@ function updateFormLabels() {
 
     if (isSignUp) {
         header.innerText = `Create ${currentRole} Account`;
-        sub.innerText = `Register your identity, skills, and send verification requests to your institutions.`;
-        btn.innerHTML = `Register & Send Verification <span>&rarr;</span>`;
+        sub.innerText = currentRole === 'Applicant' ? `Register your skills and ask your institution to attest your document.` : `Add a display name. It is stored in this browser only.`;
+        btn.innerHTML = currentRole === 'Applicant' ? `Register & Send Verification <span>&rarr;</span>` : `Create account <span>&rarr;</span>`;
+        return;
     } else {
         header.innerText = `${currentRole} Sign In`;
-        sub.innerText = `Connect your MetaMask wallet to verify your identity on Ethereum Sepolia.`;
+        sub.innerText = INTRO[currentRole];
         btn.innerHTML = `Sign In with MetaMask <span>&rarr;</span>`;
     }
 }
@@ -65,37 +69,22 @@ async function executeAuth() {
         return;
     }
 
-    let regName = "";
-    let regTitle = "";
-    let regSkills = [];
-    let verifierOrg = "";
-    let verifierEmail = "";
-    let docObj = null;
+    let regName = "", regTitle = "", regSkills = [], verifierOrg = "", verifierEmail = "", docObj = null;
 
     if (isSignUp) {
         regName = document.getElementById('regFullName').value.trim();
         regTitle = document.getElementById('regTitle').value.trim();
-        const rawSkills = document.getElementById('regSkills').value.trim();
-        regSkills = rawSkills ? rawSkills.split(',').map(s => s.trim()).filter(Boolean) : ["JavaScript", "Git", "REST APIs", "SQL"];
-        
-        verifierOrg = document.getElementById('regVerifierOrg').value.trim() || "African Leadership University";
-        verifierEmail = document.getElementById('regVerifierEmail').value.trim() || "registrar@alueducation.com";
-
-        const fileInput = document.getElementById('regDocFile');
-        if (fileInput && fileInput.files && fileInput.files[0]) {
+        if (!regName) { alert("Please enter a name."); return; }
+        if (currentRole === 'Applicant') {
+            regSkills = document.getElementById('regSkills').value.split(',').map(x => x.trim()).filter(Boolean);
+            verifierOrg = document.getElementById('regVerifierOrg').value.trim();
+            verifierEmail = document.getElementById('regVerifierEmail').value.trim();
+            const fileInput = document.getElementById('regDocFile');
+            if (!regSkills.length) { alert("Add at least one skill so your job scores mean something."); return; }
+            if (!verifierOrg || !/^\S+@\S+\.\S+$/.test(verifierEmail)) { alert("Enter your institution's name and a valid official email. Nothing is sent to anyone you do not name."); return; }
+            if (!fileInput || !fileInput.files || !fileInput.files[0]) { alert("Select the document you want your institution to attest. It is fingerprinted in your browser and never uploaded."); return; }
             const file = fileInput.files[0];
-            const sha = await computeSHA256(file);
-            docObj = {
-                name: file.name,
-                sha256: sha,
-                size: (file.size / 1024 / 1024).toFixed(2) + " MB",
-                verified: false
-            };
-        }
-
-        if (!regName) {
-            alert("Please enter your full name.");
-            return;
+            docObj = { name: file.name, sha256: await computeSHA256(file), size: (file.size / 1024 / 1024).toFixed(2) + " MB" };
         }
     }
 
@@ -113,70 +102,49 @@ async function executeAuth() {
         const signer = await new ethers.BrowserProvider(window.ethereum).getSigner();
         const signature = await signer.signMessage(challenge);
         if (ethers.verifyMessage(challenge, signature).toLowerCase() !== walletAddress.toLowerCase()) throw new Error("Signature did not match the wallet");
+        localStorage.setItem("ujuzi_consent", JSON.stringify({ policyVersion: "1.0", acceptedAt: new Date().toISOString(), wallet: walletAddress }));
         sessionStorage.setItem("authSignature", signature);
         sessionStorage.setItem("authChallenge", challenge);
         sessionStorage.setItem("userRole", currentRole);
         sessionStorage.setItem("userAddress", walletAddress);
 
         if (isSignUp) {
-            const initialDocs = [
-                { name: "ALU_BSc_Software_Engineering_Degree.pdf", sha256: "0x8f3c7e4a1b9d...f02a", size: "2.4 MB", verified: true }
-            ];
-            if (docObj) initialDocs.unshift(docObj);
-
-            // 1. Save applicant profile
-            const newProfile = {
+            const profileKey = `ujuzi_profile_${currentRole}_${walletAddress.toLowerCase()}`;
+            localStorage.setItem(profileKey, JSON.stringify({
                 name: regName,
-                headline: regTitle || (currentRole === 'Recruiter' ? 'Technical Recruiter' : 'Software Engineer'),
+                headline: regTitle,
                 skills: regSkills,
-                isOnChainVerified: false,
-                docs: initialDocs
-            };
-            localStorage.setItem(`ujuzi_profile_${currentRole}`, JSON.stringify(newProfile));
+                docs: docObj ? [docObj] : []
+            }));
 
-            // 2. Add institution/company to platform directory
-            const institutionDirectory = JSON.parse(localStorage.getItem('ujuzi_institutions_directory')) || [];
-            const token = "vreq_" + Math.random().toString(36).substring(2, 10);
-            
-            const newEntry = {
-                id: token,
-                orgName: verifierOrg,
-                officialEmail: verifierEmail,
-                candidateName: regName,
-                candidateWallet: walletAddress,
-                documentName: docObj ? docObj.name : "Academic Transcript / Degree",
-                docHash: docObj ? docObj.sha256 : "0x7a4e8d2c...b819",
-                status: "Pending Verification",
-                dateSent: new Date().toLocaleDateString()
-            };
-
-            institutionDirectory.unshift(newEntry);
-            localStorage.setItem('ujuzi_institutions_directory', JSON.stringify(institutionDirectory));
-
-            // 3. Dispatch automated email via Netlify serverless function
-            try {
+            if (currentRole === 'Applicant') {
+                const directory = JSON.parse(localStorage.getItem('ujuzi_institutions_directory')) || [];
+                const entry = {
+                    id: "vreq_" + Math.random().toString(36).substring(2, 10),
+                    orgName: verifierOrg, officialEmail: verifierEmail,
+                    candidateName: regName, candidateWallet: walletAddress,
+                    documentName: docObj.name, docHash: docObj.sha256,
+                    status: "Pending Verification", dateSent: new Date().toLocaleDateString()
+                };
+                directory.unshift(entry);
+                localStorage.setItem('ujuzi_institutions_directory', JSON.stringify(directory));
                 fetch('/.netlify/functions/send-verification', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newEntry)
-                }).catch(() => console.log("Using direct fallback verification link."));
-            } catch (e) {}
-
-            statusText.style.display = 'block';
-            statusText.style.color = '#34d399';
-            statusText.innerHTML = `
-                ✓ Verification email sent to <strong>${verifierEmail}</strong>!<br>
-                Added <em>${verifierOrg}</em> to platform verifier registry.
-            `;
-
-            setTimeout(() => {
-                window.location.href = 'dashboard.html';
-            }, 1800);
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(entry)
+                }).catch(() => console.log("Attestation email function not reachable; the request is recorded locally."));
+                statusText.style.display = 'block';
+                statusText.style.color = 'var(--accent-green)';
+                statusText.textContent = "Account created. Attestation request recorded for " + verifierOrg + ".";
+            } else {
+                statusText.style.display = 'block';
+                statusText.style.color = 'var(--accent-green)';
+                statusText.textContent = "Account created. Opening your workspace...";
+            }
+            setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
             return;
         }
 
         statusText.style.display = 'block';
-        statusText.style.color = '#34d399';
+        statusText.style.color = 'var(--accent-green)';
         statusText.innerText = `Wallet verified! Redirecting to ${currentRole} workspace...`;
 
         setTimeout(() => {
@@ -188,7 +156,7 @@ async function executeAuth() {
         btn.innerHTML = isSignUp ? `Register & Send Verification <span>&rarr;</span>` : `Sign In with MetaMask <span>&rarr;</span>`;
         btn.style.opacity = "1";
         statusText.style.display = 'block';
-        statusText.style.color = '#f87171';
+        statusText.style.color = 'var(--accent-red)';
         statusText.innerText = "Connection rejected or failed. Please try again.";
     }
 }
